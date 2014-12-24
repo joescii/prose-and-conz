@@ -31,7 +31,8 @@ class Boot {
 
     // Build SiteMap
     val entries = List(
-      Menu.i("Home") / "index" // the simple way to declare a menu
+      Menu.i("Home") / "index", // the simple way to declare a menu
+      Menu(Loc("blog", Link(List("blog"), true, "/blog"), "Blog"))
     )
 
     // set the sitemap.  Note if you don't want access control for
@@ -59,6 +60,11 @@ class Boot {
     JQueryModule.init()
 
     LiftRules.contentParsers :+= ContentParser.basic("adoc", parseAdoc)
+
+    LiftRules.externalTemplateResolver.default.set(() => (() => {
+      case (locale, "blog" :: rest) =>
+        Templates.findRawTemplate("vintage" :: rest, locale).map(com.joescii.pac.snippet.WordPress.render)
+    }))
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
