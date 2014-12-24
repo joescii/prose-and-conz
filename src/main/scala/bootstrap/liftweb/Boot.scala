@@ -27,7 +27,7 @@ import net.liftweb.util
 class Boot {
   def boot {
     // where to search snippet
-    LiftRules.addToPackages("net.liftweb.test")
+    LiftRules.addToPackages("com.joescii.pac")
 
     // Build SiteMap
     val entries = List(

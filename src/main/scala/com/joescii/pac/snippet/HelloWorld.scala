@@ -1,4 +1,4 @@
-package net.liftweb.test
+package com.joescii.pac
 package snippet
 
 import lib._
