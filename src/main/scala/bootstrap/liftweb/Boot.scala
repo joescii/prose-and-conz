@@ -65,6 +65,14 @@ class Boot {
       case (locale, "blog" :: rest) =>
         Templates.findRawTemplate("vintage" :: rest, locale).map(com.joescii.pac.snippet.WordPress.render)
     }))
+
+    LiftRules.statelessRewrite.prepend(NamedPF("BlogRewrite") {
+      case RewriteRequest(
+      ParsePath(year :: month :: day :: title :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "blog" :: s"$year-$month-$day-$title" :: Nil
+        )
+    })
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
