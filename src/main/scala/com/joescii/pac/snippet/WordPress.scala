@@ -20,7 +20,7 @@ object WordPress {
     val stripPostData = ".post-data" #> ClearNodes
     val stripPostEdit = ".post-edit" #> ClearNodes
     val stripNavigation = ".navigation" #> ClearNodes
-    val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="default" at="content">{ns}</lift:surround> }
+    val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="foundation" at="content">{ns}</lift:surround> }
 
     val post = (extractPost &
       cleanPostMeta &

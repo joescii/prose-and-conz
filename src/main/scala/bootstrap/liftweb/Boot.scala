@@ -65,7 +65,7 @@ class Boot {
     LiftRules.externalTemplateResolver.default.set(() => (() => {
       case (locale, "blog" :: rest) =>
         Templates.findRawTemplate("vintage" :: rest, locale).map(com.joescii.pac.snippet.WordPress.render).or(
-          Templates.findRawTemplate("modern" :: rest, locale).map(template => <lift:surround with="default" at="content">{template}</lift:surround>)
+          Templates.findRawTemplate("modern" :: rest, locale).map(template => <lift:surround with="foundation" at="content">{template}</lift:surround>)
         )
     }))
 
