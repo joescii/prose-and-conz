@@ -1,19 +1,19 @@
 package com.joescii.pac
 package snippet
 
-import net.liftweb.util.ClearNodes
 import net.liftweb.util.Helpers._
-
 import scala.xml.NodeSeq
 
 object WordPress {
+  import net.liftweb.util.ClearNodes
+
   def render(page:NodeSeq):NodeSeq = {
     val extractPost = ".post ^^" #> "noop"
     val extractComments = ".commentlist ^^" #> "noop"
     val cleanPostMeta = ".post-meta *" #> {
       ".byline" #> ClearNodes &
-      ".author" #> ClearNodes &
-      ".comments-link" #> ClearNodes
+        ".author" #> ClearNodes &
+        ".comments-link" #> ClearNodes
     }
     val stripAds  = "#wordads-preview-parent" #> ClearNodes
     val stripShareLikeRelated = "#jp-post-flair" #> ClearNodes
@@ -35,4 +35,12 @@ object WordPress {
 
     surround(post ++ commentHeader ++ comments)
   }
+}
+
+object Copyright {
+  import java.util.{GregorianCalendar, Calendar}
+  def year = new GregorianCalendar().get(Calendar.YEAR)
+  def copyright(sym:String) = s"Joe Barnes. Copyright $sym 2012 - $year"
+  def meta = <meta name="copyright" content={copyright("(c)")}/>
+  def footer = "p *" #> copyright("©")
 }
