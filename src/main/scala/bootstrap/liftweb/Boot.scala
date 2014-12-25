@@ -71,10 +71,15 @@ class Boot {
 
     LiftRules.statelessRewrite.prepend(NamedPF("BlogRewrite") {
       case RewriteRequest(
-      ParsePath(year :: month :: day :: title :: Nil, _, _,_), _, _) =>
-        RewriteResponse(
-          "blog" :: s"$year-$month-$day-$title" :: Nil
-        )
+        ParsePath(year :: month :: day :: title :: Nil, _, _,_), _, _) =>
+          RewriteResponse(
+            "blog" :: s"$year-$month-$day-$title" :: Nil
+          )
+      case RewriteRequest(
+        ParsePath(year :: month :: day :: title :: "index" :: Nil, _, _,_), _, _) =>
+          RewriteResponse(
+            "blog" :: s"$year-$month-$day-$title" :: Nil
+          )
     })
   }
 
