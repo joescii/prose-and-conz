@@ -32,6 +32,7 @@ class Boot {
     // Build SiteMap
     val entries = List(
       Menu.i("Home") / "index", // the simple way to declare a menu
+      Menu.i("Template") / "template",
       Menu(Loc("blog", Link(List("blog"), true, "/blog"), "Blog"))
     )
 
