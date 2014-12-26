@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<!--[if !IE]>      <html class="no-js non-ie" lang="en"> <![endif]-->
+<!--[if IE 7 ]>	   <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>	   <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]>	   <html class="no-js ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<title>Static typing doesn&#8217;t have to suck: Implicit Conversions | prose :: and :: conz by joescii</title>
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="http://proseand.co.nz/xmlrpc.php" />
+
+<meta name="google-site-verification" content="T5mAKdXJl7Ch5vDzeer4zgB-Ye-xyWlevilHRD05cIU" />
+<link rel="alternate" type="application/rss+xml" title="prose :: and :: conz by joescii &raquo; Feed" href="http://proseand.co.nz/feed/" />
+<link rel="alternate" type="application/rss+xml" title="prose :: and :: conz by joescii &raquo; Comments Feed" href="http://proseand.co.nz/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="prose :: and :: conz by joescii &raquo; Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions Comments Feed" href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/feed/" />
+<script type="text/javascript">
+/* <![CDATA[ */
+function addLoadEvent(func){var oldonload=window.onload;if(typeof window.onload!='function'){window.onload=func;}else{window.onload=function(){oldonload();func();}}}
+/* ]]> */
+</script>
+<link rel='stylesheet' id='all-css-0' href='https://s1.wp.com/wp-content/mu-plugins/smileyproject/smileyproject.css?m=1412325662g' type='text/css' media='all' />
+<link rel='stylesheet' id='open-sans-css'  href='//fonts.googleapis.com/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext&#038;ver=4.1-beta2-30797' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-2' href='https://s1.wp.com/_static/??-eJx9UltywjAMvFBdF0qZ6UenZ/FDJAY58lgOtLevHNoAgfonkezd1UqWPiUVBoejB9aOWXvDfXA08HMMw7OcPOklxHi5UtbkG4hwCgxFx1ElHLswsObRssshlSB6ekeIdGrhezpCVna0FqUUl2+Eewd71kUcHix9zUFLFMOhsqAk4w5qylrwDGgKeJWIyyJr0eaZyL2jqC4zmkhBD1Smsc5BS81RBjmPyZSKiOCDAYQosBYtpu0fq4a9NHxfpvSiwzqNVrrjJE7CERbDfqANkfbh/G3BpDu4moY6rlvoDkghOVMX5CZROzQht9/JInUSdtNOXtIWqRCrDIlyUTvKcZnfUavmTD5R9saLaSRrsFWmbsu5A829ydXj7789jAHyeUcehv+9ZL+5svQZP1ab1fvL+u11vd3/ABG6dAs=' type='text/css' media='all' />
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJx9kesKwjAMRl/IWoaD6Q/xWXbJZmZvNu2Ge3ozmEzrFAol9LRfTipHJ9DUKjZAsud1j+Afy7bvaSf/AUJj58sAe43mBdfWBDBB6iicih0akhQrqj26gJar1iplxxTnp52loIGo7GDjVNsKFYhI4Bkwgbtq7Qb3aYBmQNgKS0QhuLK+CQ+E01f6m4oHxb6NmHtNqvRWuALbSBcr5sixOg4wR6+V0LYBb3DyW6Mmt0719x8t1EWfszwr8iI7nI79E0fRsYw='></script>
+<link rel='stylesheet' id='all-css-0' href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1377793621g' type='text/css' media='all' />
+<!--[if lt IE 8]>
+<link rel='stylesheet' id='highlander-comments-ie7-css'  href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style-ie7.css?m=1351637563g&#038;ver=20110606' type='text/css' media='all' />
+<![endif]-->
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://barnesjd.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Yeah, it&#8217;s a yin&nbsp;yang' href='http://proseand.co.nz/2013/05/11/yeah-its-a-yin-yang/' />
+<link rel='next' title='Pakyow: View-oriented functional goodness for&nbsp;Ruby' href='http://proseand.co.nz/2013/05/16/pakyow-view-oriented-functional-goodness-for-ruby/' />
+<meta name="generator" content="WordPress.com" />
+<link rel='canonical' href='http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/' />
+<link rel='shortlink' href='http://wp.me/p1FlqE-4u' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/1.0/?format=json&amp;url=http%3A%2F%2Fproseand.co.nz%2F2013%2F05%2F12%2Fstatic-typing-doesnt-have-to-suck-implicit-conversions%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/1.0/?format=xml&amp;url=http%3A%2F%2Fproseand.co.nz%2F2013%2F05%2F12%2Fstatic-typing-doesnt-have-to-suck-implicit-conversions%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Static typing doesn&#039;t have to suck: Implicit Conversions" />
+<meta property="og:url" content="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/" />
+<meta property="og:description" content="In my last Static typing doesn&#039;t have to suck post, I introduced type inference. This allows the developer to have the perks of static type checking without the pain of redundantly labeling types. ..." />
+<meta property="article:published_time" content="2013-05-12T23:15:34+00:00" />
+<meta property="article:modified_time" content="2014-02-16T15:03:19+00:00" />
+<meta property="article:author" content="http://proseand.co.nz/author/barnesjd/" />
+<meta property="og:site_name" content="prose :: and :: conz by joescii" />
+<meta property="og:image" content="http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=200" />
+<meta name="twitter:site" content="@josefusbarnabas" />
+<meta name="twitter:image" content="http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=240" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="@josefusbarnabas" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+<link rel="shortcut icon" type="image/x-icon" href="http://0.gravatar.com/blavatar/4f622c7dbe67f120b8828254e187c55a?s=16" sizes="16x16" />
+<link rel="icon" type="image/x-icon" href="http://0.gravatar.com/blavatar/4f622c7dbe67f120b8828254e187c55a?s=16" sizes="16x16" />
+<link rel="apple-touch-icon-precomposed" href="http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=114" />
+<link rel='openid.server' href='http://barnesjd.wordpress.com/?openidserver=1' />
+<link rel='openid.delegate' href='http://barnesjd.wordpress.com/' />
+<link rel="search" type="application/opensearchdescription+xml" href="http://proseand.co.nz/osd.xml" title="prose :: and :: conz by joescii" />
+<link rel="search" type="application/opensearchdescription+xml" href="http://wordpress.com/opensearch.xml" title="WordPress.com" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<style type="text/css" media="print">#wpadminbar { display:none; }</style>
+<style type="text/css" media="screen">
+	html { margin-top: 32px !important; }
+	* html body { margin-top: 32px !important; }
+	@media screen and ( max-width: 782px ) {
+		html { margin-top: 46px !important; }
+		* html body { margin-top: 46px !important; }
+	}
+</style>
+<meta name="application-name" content="prose :: and :: conz by joescii" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="Code, the Universe and Everything" /><meta name="msapplication-task" content="name=Edit post;action-uri=https://wordpress.com/post/24630160/278;icon-uri=http://s2.wp.com/i/icons/post.ico" /><meta name="msapplication-task" content="name=Write a post;action-uri=https://barnesjd.wordpress.com/wp-admin/post-new.php;icon-uri=http://s2.wp.com/i/icons/post.ico" /><meta name="msapplication-task" content="name=Moderate comments;action-uri=https://barnesjd.wordpress.com/wp-admin/edit-comments.php?comment_status=moderated;icon-uri=http://s0.wp.com/i/icons/comment.ico" /><meta name="msapplication-task" content="name=Upload new media;action-uri=https://barnesjd.wordpress.com/wp-admin/media-new.php;icon-uri=http://s2.wp.com/i/icons/media.ico" /><meta name="msapplication-task" content="name=Blog stats;action-uri=https://barnesjd.wordpress.com/wp-admin/index.php?page=stats;icon-uri=http://s1.wp.com/i/icons/stats.ico" /><meta name="title" content="Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions | prose :: and :: conz by joescii on WordPress.com" />
+<meta name="description" content="In my last Static typing doesn&#039;t have to suck post, I introduced type inference. This allows the developer to have the perks of static type checking without the pain of redundantly labeling types. Another feature that is handy in many languages is implicit type conversion. This is a language feature that allows a value of&hellip;" />
+<style type="text/css" id="custom-background-css">
+body.custom-background { background-image: url('http://barnesjd.files.wordpress.com/2013/05/code-white-bg21.png'); background-repeat: repeat-y; background-position: top left; background-attachment: fixed; }
+</style>
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+
+<body class="single single-post postid-278 single-format-standard logged-in admin-bar no-customize-support custom-background mp6 highlander-enabled highlander-light">
+
+<div id="container" class="hfeed">
+
+	<div id="header">
+
+		
+	
+		<div id="logo">
+							<span class="site-name site-title"><a href="http://proseand.co.nz/" title="prose :: and :: conz by joescii" rel="home">prose :: and :: conz by joescii</a></span>
+			<span class="site-description">Code, the Universe and Everything</span>
+		</div>
+
+	
+	
+			<nav role="navigation" class="site-navigation main-navigation">
+			<h1 class="assistive-text">Menu</h1>
+			<div class="assistive-text skip-link"><a href="#content" title="Skip to content">Skip to content</a></div>
+
+			<ul class="menu"><li ><a href="http://proseand.co.nz/">Home</a></li><li class="page_item page-item-2"><a href="http://proseand.co.nz/about/">About</a></li></ul>
+		</nav><!-- .site-navigation .main-navigation -->
+	
+	
+	</div><!-- end of #header -->
+
+	<div id="wrapper" class="clearfix">
+		<div id="content" class="grid col-620">
+
+
+		
+			<div class="breadcrumb-list"><a href="http://proseand.co.nz/">Home</a> <span class="chevron">&#8250;</span> <a href="http://proseand.co.nz/category/software-development/">Software Development</a> <span class="chevron">&#8250;</span> <span class="breadcrumb-current">Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions</span></div>
+			<div id="post-278" class="post-278 post type-post status-publish format-standard hentry category-software-development tag-java tag-javascript tag-scala tag-static-typing">
+				<h1 class="post-title">Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions</h1>
+
+				<div class="post-meta">
+					<span class="meta-prep meta-prep-author posted">Posted on </span><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/" title="6:15 pm" rel="bookmark"><span class="timestamp">May 12, 2013</span></a><span class="byline"> by </span><span class="author vcard"><a class="url fn n" href="http://proseand.co.nz/author/barnesjd/" title="View all posts by barnesjd">barnesjd</a></span>
+											<span class="comments-link">
+							<span class="mdash">&mdash;</span>
+							<a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comments" title="Comment on Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions">5 Comments</a>						</span>
+									</div><!-- end of .post-meta -->
+
+				<div class="post-entry">
+					<p>In my <a href="http://proseand.co.nz/2013/05/08/static-typing-doesnt-have-to-suck-inference/" title="Static typing doesn't have to suck: Inference" target="_blank">last Static typing doesn&#8217;t have to suck post</a>, I introduced type inference.  This allows the developer to have <a href="http://proseand.co.nz/2013/05/04/maybe-type-checking-is-a-good-idea/" title="Maybe type checking is a good idea" target="_blank">the perks of static type checking</a> without the pain of redundantly labeling types.</p>
+<p>Another feature that is handy in many languages is implicit type conversion.  This is a language feature that allows a value of one type be coerced into another type without explicitly converting it.  For a slightly contrived example consider taking a string containing an integer value and dividing it by 6.  In Java, the code would look like this:</p>
+<p><code>String fortyTwo = "42";<br />
+<strong>int</strong> div = fortyTwo / 6;</code></p>
+<p>This of course won&#8217;t compile:</p>
+<p><code>[error] /home/jbarnes/code/sandbox/src/main/java/pac/CoercionJava.java:6: error: bad operand types for binary operator '/'<br />
+[error]     	int div = fortyTwo / 6;<br />
+[error]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^<br />
+[error]   first type:  String<br />
+[error]   second type: int<br />
+[error] 1 error</code></p>
+<p>That is because there is no implicit conversion to make a <code>String</code> into an <code>int</code>. We have to instead use an <em>explicit</em> conversion:</p>
+<p><code><strong>int</strong> div = Integer.parseInt(fortyTwo) / 6;</code></p>
+<p>But wouldn&#8217;t it be cool if we could do something like JavaScript with its <a href="http://i.imgur.com/1u43kum.png" title="JavaScript in one picture" target="_blank">deceptively familiar syntax</a>?  This code actually works the way you&#8217;d expect (<code>div</code> is equal to 7):</p>
+<p><code><strong>var</strong> fortyTwo = "42"<br />
+<strong>var</strong> div = fortyTwo / 6</code></p>
+<p>Now to be fair to Java, it does feature <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html" title="Java type conversions" target="_blank">some implicit conversions</a>. I purposely selected something it cannot do but JavaScript can. But guess what? Scala can&#8217;t do this either. Take a look:</p>
+<p><code><strong>val</strong> fortyTwo = "42"<br />
+<strong>val</strong> div = fortyTwo / 6</code></p>
+<p><code>[error] /home/jbarnes/code/sandbox/src/main/scala/pac/CoercionScala.scala:5: value / is not a member of java.lang.String<br />
+[error]   val div = fortyTwo / 6<br />
+[error]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^<br />
+[error] one error found</code></p>
+<p>So now what? Well the cool thing is that Scala let&#8217;s you <a href="http://msdn.microsoft.com/en-us/library/z5z9kes2.aspx" title="implicit (C# Reference)" target="_blank">declare implicit conversions much like C#</a>. So we can make our code valid by writing a function that takes a <code>String</code> and returns an <code>Int</code> and marking it with the <code><strong>implicit</strong></code> keyword:</p>
+<p><code><strong>implicit def</strong> String2Int(s:String) = Integer.parseInt(s)</code></p>
+<p>I don&#8217;t know how far C# takes this concept, but it doesn&#8217;t stop here with Scala. Notice that Scala figured out which conversion it needed to call to make it happen. It saw the <code>*(Int)</code> function which is not defined for <code>String</code>. So it searches among the implicit converters to find <em>something</em> that takes a <code>String</code> and returns something with a <code>*(Int)</code> function defined. This opens the door to some really neat stuff. For instance, if you&#8217;re a JVM junkie like me you know that most Java Apis specify time in milliseconds. It gets annoying when you want to express three hours, for instance. Since you don&#8217;t want to hardcode the multiplication, you would probably write a util method like this:</p>
+<p><code><strong>public static int</strong> hours(int millis) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>return</strong> millis * 1000 * 60 * 60;<br />
+}<br />
+// Somewhere later in the code...<br />
+<strong>int</strong> threeHrs = hours(3);</code></p>
+<p>Note that this assumes you don&#8217;t want to reuse it anywhere else in your code. You probably want to put it into a utility class, and now you&#8217;re stuck with appending that name to the front of the calls:</p>
+<p><code>TimeUtil.hours(3);</code></p>
+<p>With a Scala implicit conversion, you can write code that reads like English:</p>
+<p><code><strong>val</strong> threeHrs = 3 hours</code></p>
+<p>No, seriously Mom, this can be done. First I should mention that when a function takes one or zero arguments, you can drop both the period and the parenthesis. Really, that code is syntactic sugar for this:</p>
+<p><code><strong>val</strong> threeHours = 3.hours()</code></p>
+<p>And just as before, the Scala compiler sees that <code>Int</code> does not have an <code>hours()</code> function. So it looks for a conversion that will give it something with an <code>hours()</code> function. This class and converter do the trick:</p>
+<p><code><strong>case class</strong> MyInt(i:Int) {<br />
+&nbsp;&nbsp;<strong>def</strong> hours() = i * 1000 * 60 * 60<br />
+}</p>
+<p><strong>implicit def</strong> MakeMyInt(i:Int) = MyInt(i)</code></p>
+<p>Shout out to <a href="http://liftweb.net/" title="Lift is the most powerful, most secure web framework available today." target="_blank">Lift</a> for inspiring the <code>3 hours</code> example in the <a href="http://liftweb.net/api/25-rc1/api/#net.liftweb.util.Helpers$" title="ScalaDocs - net.liftweb.util.Helpers" target="_blank">Helpers</a> object.</p>
+<p>As you can see from these quick examples, you can have nice things like implicit conversions and still have the assurance of static typing.  Keep your eyes open for a <a href="http://proseand.co.nz/2013/05/19/static-typing-doesnt-have-to-suck-structural-typing/" title="Static typing doesn't have to suck: Structural Typing">future post on structural typing</a>, which is a completely foreign concept to Java.  Soon after that I plan to get to lambdas, which while foreign to Java at the moment, is <a href="http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html" title="Project Lambda" target="_blank">slated for Java 8</a>.</p>
+		<div id="wordads-preview-parent" class="wpcnt">
+			<div class="wpa">
+				<a class="wpa-about" href="http://wordpress.com/about-these-ads/" rel="nofollow">About these ads</a>
+				<div class="u">
+					<div class="wpa-notice">
+						<p>Occasionally, some of your visitors may see an advertisement here.</p>
+						<p>
+							<a id="wordads-preview-more" href="http://wordpress.com/about-these-ads/" rel="nofollow">Tell me more</a>
+							|
+							<a id="wordads-preview-dismiss" href="#">Dismiss this message</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div><div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow" class="share-twitter sd-button share-icon" href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?share=twitter" title="Click to share on Twitter" id="sharing-twitter-278"><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow" class="share-facebook sd-button share-icon" href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?share=facebook" title="Share on Facebook" id="sharing-facebook-278"><span>Facebook</span></a></li><li class="share-google-plus-1"><a rel="nofollow" class="share-google-plus-1 sd-button share-icon" href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?share=google-plus-1" title="Click to share on Google+" id="sharing-google-278"><span>Google</span></a></li><li class="share-linkedin"><a rel="nofollow" class="share-linkedin sd-button share-icon" href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?share=linkedin" title="Click to share on LinkedIn" id="sharing-linkedin-278"><span>LinkedIn</span></a></li><li class="share-end"></li></ul></div></div></div><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-24630160-278-549dc2346f2b5' data-src='//widgets.wp.com/likes/#blog_id=24630160&amp;post_id=278&amp;origin=barnesjd.wordpress.com&amp;obj_id=24630160-278-549dc2346f2b5' data-name='like-post-frame-24630160-278-549dc2346f2b5'><h3 class='sd-title'>Like this:</h3><div class='likes-widget-placeholder post-likes-widget-placeholder' style='height:55px'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div></div>
+					
+									</div><!-- end of .post-entry -->
+
+				<div class="navigation">
+					<div class="previous">&#8249; <a href="http://proseand.co.nz/2013/05/11/yeah-its-a-yin-yang/" rel="prev">Yeah, it&#8217;s a yin&nbsp;yang</a></div>
+					<div class="next"><a href="http://proseand.co.nz/2013/05/16/pakyow-view-oriented-functional-goodness-for-ruby/" rel="next">Pakyow: View-oriented functional goodness for&nbsp;Ruby</a> &#8250;</div>
+				</div><!-- end of .navigation -->
+
+				<div class="post-data">
+					Tagged with: <a href="http://proseand.co.nz/tag/java/" rel="tag">Java</a>, <a href="http://proseand.co.nz/tag/javascript/" rel="tag">JavaScript</a>, <a href="http://proseand.co.nz/tag/scala/" rel="tag">Scala</a>, <a href="http://proseand.co.nz/tag/static-typing/" rel="tag">Static typing</a><br />					Posted in <a href="http://proseand.co.nz/category/software-development/" rel="category tag">Software Development</a>				</div><!-- end of .post-data -->
+
+				<div class="post-edit"><a class="post-edit-link" href="https://wordpress.com/post/24630160/278">Edit</a></div>			</div><!-- end of #post-278 -->
+
+			
+
+	<h6 id="comments">
+		5 comments on &ldquo;<span>Static typing doesn&#8217;t have to suck: Implicit&nbsp;Conversions</span>&rdquo;	</h6>
+
+	
+	<ol class="commentlist">
+				<li class="pingback even thread-even depth-1 highlander-comment" id="comment-24">
+				<div id="div-comment-24" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=60' class='avatar avatar-60' height='60' width='60' />			<cite class="fn"><a href='http://proseand.co.nz/2013/05/08/static-typing-doesnt-have-to-suck-inference/' rel='external nofollow' class='url'>Static typing doesn&#8217;t have to suck: Inference | prose :: and :: conz</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comment-24">
+			May 12, 2013 at 6:17 pm</a>&nbsp;&nbsp;<a class="comment-edit-link" href="https://barnesjd.wordpress.com/wp-admin/comment.php?action=editcomment&amp;c=24">(Edit)</a>		</div>
+
+		<p>[&#8230;] relinquishing the perks of static type checking which I argue is a good thing. Next time, I plan to add implicit conversions to this discussion before moving on to structural typing and eventually [&#8230;]</p>
+
+		<div class="reply"><a class='comment-reply-link' href='/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?replytocom=24#respond' onclick='return addComment.moveForm( "div-comment-24", "24", "respond", "278" )' aria-label='Reply to Static typing doesn&#8217;t have to suck: Inference | prose :: and :: conz'>Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="pingback odd alt thread-odd thread-alt depth-1 highlander-comment" id="comment-35">
+				<div id="div-comment-35" class="comment-body">
+				<div class="comment-author vcard">
+						<cite class="fn"><a href='http://jiminychris.wordpress.com/2013/05/15/37/' rel='external nofollow' class='url'>jiminyChris</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comment-35">
+			May 15, 2013 at 5:27 pm</a>&nbsp;&nbsp;<a class="comment-edit-link" href="https://barnesjd.wordpress.com/wp-admin/comment.php?action=editcomment&amp;c=35">(Edit)</a>		</div>
+
+		<p>[&#8230;] at proze :: and :: conz, there&#8217;s all this talk about why static typing does not suck and justifications for it being a pretty all right thing sometimes. While all the points made there are wonderful and good, I&#8217;ve noticed one thing that&#8211;as [&#8230;]</p>
+
+		<div class="reply"><a class='comment-reply-link' href='/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?replytocom=35#respond' onclick='return addComment.moveForm( "div-comment-35", "35", "respond", "278" )' aria-label='Reply to jiminyChris'>Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="pingback even thread-even depth-1 highlander-comment" id="comment-53">
+				<div id="div-comment-53" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=60' class='avatar avatar-60' height='60' width='60' />			<cite class="fn"><a href='http://proseand.co.nz/2013/05/19/static-typing-doesnt-have-to-suck-structural-typing/' rel='external nofollow' class='url'>Static typing doesn&#8217;t have to suck: Structural Typing | prose :: and :: conz</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comment-53">
+			May 19, 2013 at 9:19 pm</a>&nbsp;&nbsp;<a class="comment-edit-link" href="https://barnesjd.wordpress.com/wp-admin/comment.php?action=editcomment&amp;c=53">(Edit)</a>		</div>
+
+		<p>[&#8230;] previous post in my &#8220;Static typing doesn&#8217;t have to suck&#8221; series (now that I&#8217;m on post [&#8230;]</p>
+
+		<div class="reply"><a class='comment-reply-link' href='/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?replytocom=53#respond' onclick='return addComment.moveForm( "div-comment-53", "53", "respond", "278" )' aria-label='Reply to Static typing doesn&#8217;t have to suck: Structural Typing | prose :: and :: conz'>Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="pingback odd alt thread-odd thread-alt depth-1 highlander-comment" id="comment-652">
+				<div id="div-comment-652" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=60' class='avatar avatar-60' height='60' width='60' />			<cite class="fn"><a href='http://proseand.co.nz/2013/09/03/five-things-i-miss-most-when-returning-to-java-from-scala/' rel='external nofollow' class='url'>Five things I miss most when returning to Java from Scala | prose :: and :: conz</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comment-652">
+			September 3, 2013 at 1:45 pm</a>&nbsp;&nbsp;<a class="comment-edit-link" href="https://barnesjd.wordpress.com/wp-admin/comment.php?action=editcomment&amp;c=652">(Edit)</a>		</div>
+
+		<p>[&#8230;] found I really enjoy: case classes, (?:case)+ objects, pattern matching, monadic types, lambdas, implicit conversions, and last but not least&#8230; optional [&#8230;]</p>
+
+		<div class="reply"><a class='comment-reply-link' href='/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?replytocom=652#respond' onclick='return addComment.moveForm( "div-comment-652", "652", "respond", "278" )' aria-label='Reply to Five things I miss most when returning to Java from Scala | prose :: and :: conz'>Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="pingback even thread-even depth-1 highlander-comment" id="comment-1471">
+				<div id="div-comment-1471" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=60' class='avatar avatar-60' height='60' width='60' />			<cite class="fn"><a href='http://proseand.co.nz/2014/02/03/java-properties-made-elegant-in-scala/' rel='external nofollow' class='url'>Java properties made elegant in Scala | prose :: and :: conz</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://proseand.co.nz/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#comment-1471">
+			February 3, 2014 at 5:48 am</a>&nbsp;&nbsp;<a class="comment-edit-link" href="https://barnesjd.wordpress.com/wp-admin/comment.php?action=editcomment&amp;c=1471">(Edit)</a>		</div>
+
+		<p>[&#8230;] object). Here I&#8217;m just treating the prop as an Int. We can actually do this. This is where an implicit conversion comes into play. Let&#8217;s add one to our properties [&#8230;]</p>
+
+		<div class="reply"><a class='comment-reply-link' href='/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/?replytocom=1471#respond' onclick='return addComment.moveForm( "div-comment-1471", "1471", "respond", "278" )' aria-label='Reply to Java properties made elegant in Scala | prose :: and :: conz'>Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+	</ol>
+
+	
+
+	
+									<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://proseand.co.nz/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																																						<input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="3bb30f1f03" /><input type="hidden" name="_wp_http_referer" value="/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/" />
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="wordpress" />
+
+<div class="comment-form-field comment-textarea">
+	<label for="comment">Enter your comment here...</label>
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..."></textarea></div>
+</div>
+
+<div id="comment-form-identity">
+
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li style="display:none;">
+				<a href="#comment-form-guest" id="postas-guest" title="Guest">
+					<span></span>
+				</a>
+			</li>
+			<li class="selected">
+				<a href="#comment-form-load-service:WordPress.com" id="postas-wordpress" title="WordPress.com">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Twitter" id="postas-twitter" title="Twitter">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Facebook" id="postas-facebook" title="Facebook">
+					<span></span>
+				</a>
+			</li>
+			<li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="http://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="text" value="" /></div>
+				</div>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="http://0.gravatar.com/avatar/6d84ae4b05cf9052aa3b0240d237e0f9?s=25&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D25%26amp%3Bd%3Didenticon%26amp%3Bforcedefault%3Dy%26amp%3Br%3DG&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="http://0.gravatar.com/avatar/6d84ae4b05cf9052aa3b0240d237e0f9?s=25&#038;d=https%3A%2F%2Fs2.wp.com%2Fwp-content%2Fmu-plugins%2Fhighlander-comments%2Fimages%2Fwplogo.png&#038;r=G" />
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="6496878" />
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="c55098547db6575dddffd8db08a7710cd50a2ecc" />
+				<p class="comment-form-posting-as pa-wordpress"><strong>barnesjd:</strong> You are commenting using your WordPress.com account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="http://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Twitter picture" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="" />
+				<p class="comment-form-posting-as pa-twitter"><strong></strong> You are commenting using your Twitter account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="http://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Facebook photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="" />
+				<p class="comment-form-posting-as pa-facebook"><strong></strong> You are commenting using your Facebook account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-googleplus" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="http://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Google+ photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="googleplus_avatar" id="googleplus-avatar" class="comment-meta-googleplus" value="" />
+				<input type="hidden" name="googleplus_user_id" id="googleplus-user_id" class="comment-meta-googleplus" value="" />
+				<input type="hidden" name="googleplus_access_token" id="googleplus-access_token" class="comment-meta-googleplus" value="" />
+				<p class="comment-form-posting-as pa-googleplus"><strong></strong> You are commenting using your Google+ account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'googleplus' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+	
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function(){
+	var input = document.createElement( 'input' ),
+	    comment = jQuery( '#comment' );
+
+	if ( 'placeholder' in input ) {
+		comment.attr( 'placeholder', jQuery( '.comment-textarea label' ).remove().text() );
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	jQuery( '#comment-form-identity' ).hide();
+	jQuery( '#comment-form-subscribe' ).hide();
+	jQuery( '#commentform .form-submit' ).hide();
+
+	comment.css( { 'height':'10px' } ).one( 'focus', function() {
+		var timer = setInterval( HighlanderComments.resizeCallback, 10 )
+		jQuery( this ).animate( { 'height': HighlanderComments.initialHeight } ).delay( 100 ).queue( function(n) { clearInterval( timer ); HighlanderComments.resizeCallback(); n(); } );
+		jQuery( '#comment-form-identity' ).slideDown();
+		jQuery( '#comment-form-subscribe' ).slideDown();
+		jQuery( '#commentform .form-submit' ).slideDown();
+	});
+}
+jQuery(document).ready( highlander_expando_javascript );
+</script>
+
+<div id="comment-form-subscribe">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;" tabindex="6"/> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p></div>
+
+												<p class="form-submit">
+							<input name="submit" type="submit" id="comment-submit" class="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='278' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="a8fd9a56c6" /></p>
+<input type="hidden" name="genseq" value="1419625012" />
+<p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="84"/></p>					</form>
+							</div><!-- #respond -->
+			<div style="clear: both"></div>
+		
+		
+
+		</div><!-- end of #content -->
+
+
+		<div id="widgets" class="grid col-300 fit">
+		
+			<div id="search-2" class="widget-wrapper widget_search">
+	<form method="get" id="searchform" action="http://proseand.co.nz/">
+		<input type="text" class="field" name="s" id="s" placeholder="search here &hellip;" />
+		<input type="submit" class="submit" name="submit" id="searchsubmit" value="Go"  />
+	</form></div><div id="twitter_timeline-2" class="widget-wrapper widget_twitter_timeline"><div class="widget-title">Follow me on Twitter</div><a class="twitter-timeline" data-widget-id="332226033178787840" data-theme="light" data-link-color="#f96e5b" data-border-color="#e8e8e8" height="400" lang="EN">My Tweets</a></div><div id="text-5" class="widget-wrapper widget_text"><div class="widget-title">Upcoming Talks</div>			<div class="textwidget"><a href="http://nofluffjuststuff.com"> 
+<img src="http://nofluffjuststuff.com/images/nfjs_logo200.gif" alt="No Fluff Just Stuff" style="width:100%;" /> </a>
+<iframe src="https://www.google.com/calendar/embed?title=My%20NFJS%20Sessions&amp;showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;mode=AGENDA&amp;height=300&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=8rq648too8qi9f744ean859hmso1gfgk%40import.calendar.google.com&amp;color=%23333333&amp;ctz=America%2FChicago" frameborder="0" width="100%" height="300"  marginheight="0" marginwidth="0"></iframe>
+</div>
+		</div><div id="text-3" class="widget-wrapper widget_text"><div class="widget-title">Stackoverflow</div>			<div class="textwidget"><a href="http://stackoverflow.com/users/2033637/joescii">
+<img src="http://stackoverflow.com/users/flair/2033637.png" width="100%" height="58" alt="profile for joescii at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for joescii at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+</a></div>
+		</div>		<div id="recent-posts-2" class="widget-wrapper widget_recent_entries">		<div class="widget-title">Recent Posts</div>		<ul>
+					<li>
+				<a href="http://proseand.co.nz/2014/12/15/scala-the-language-of-agility/">Scala: The language of&nbsp;agility?</a>
+						</li>
+					<li>
+				<a href="http://proseand.co.nz/2014/12/09/the-jvm-bytes-pilot-post/">The JVM Bytes: Pilot&nbsp;Post</a>
+						</li>
+					<li>
+				<a href="http://proseand.co.nz/2014/11/24/favoring-expressions-over-statements/">Favoring expressions over&nbsp;statements</a>
+						</li>
+					<li>
+				<a href="http://proseand.co.nz/2014/09/24/video-15-minute-chat-with-lift-ng/">Video: 15-Minute Chat with&nbsp;lift-ng</a>
+						</li>
+					<li>
+				<a href="http://proseand.co.nz/2014/09/17/why-a-jvm-on-a-vm/">Why a JVM on a&nbsp;VM?</a>
+						</li>
+				</ul>
+		</div><div id="wp_tag_cloud-2" class="widget-wrapper wp_widget_tag_cloud"><div class="widget-title">Tags</div><div style="overflow:hidden"><a href='http://proseand.co.nz/tag/agility/' class='tag-link-3562' title='7 topics' style='font-size: 14.461538461538pt;'>agility</a>
+<a href='http://proseand.co.nz/tag/akka/' class='tag-link-702939' title='2 topics' style='font-size: 9.9384615384615pt;'>akka</a>
+<a href='http://proseand.co.nz/tag/blogging/' class='tag-link-91' title='1 topic' style='font-size: 8pt;'>Blogging</a>
+<a href='http://proseand.co.nz/tag/bytecode/' class='tag-link-49566' title='1 topic' style='font-size: 8pt;'>bytecode</a>
+<a href='http://proseand.co.nz/tag/c/' class='tag-link-2426' title='1 topic' style='font-size: 8pt;'>C</a>
+<a href='http://proseand.co.nz/tag/clojure/' class='tag-link-5738990' title='5 topics' style='font-size: 13.169230769231pt;'>clojure</a>
+<a href='http://proseand.co.nz/tag/cloud/' class='tag-link-69816' title='2 topics' style='font-size: 9.9384615384615pt;'>cloud</a>
+<a href='http://proseand.co.nz/tag/cloudbees/' class='tag-link-44060292' title='1 topic' style='font-size: 8pt;'>Cloudbees</a>
+<a href='http://proseand.co.nz/tag/coffeescript/' class='tag-link-29450027' title='3 topics' style='font-size: 11.230769230769pt;'>CoffeeScript</a>
+<a href='http://proseand.co.nz/tag/concurrency/' class='tag-link-214618' title='1 topic' style='font-size: 8pt;'>concurrency</a>
+<a href='http://proseand.co.nz/tag/conferences/' class='tag-link-9204' title='5 topics' style='font-size: 13.169230769231pt;'>conferences</a>
+<a href='http://proseand.co.nz/tag/databases/' class='tag-link-10286' title='1 topic' style='font-size: 8pt;'>databases</a>
+<a href='http://proseand.co.nz/tag/dependency-injection/' class='tag-link-1372119' title='2 topics' style='font-size: 9.9384615384615pt;'>dependency injection</a>
+<a href='http://proseand.co.nz/tag/dropbox/' class='tag-link-2123095' title='2 topics' style='font-size: 9.9384615384615pt;'>dropbox</a>
+<a href='http://proseand.co.nz/tag/dsl/' class='tag-link-58204' title='1 topic' style='font-size: 8pt;'>DSL</a>
+<a href='http://proseand.co.nz/tag/first-blog/' class='tag-link-26537' title='1 topic' style='font-size: 8pt;'>first blog</a>
+<a href='http://proseand.co.nz/tag/functional-programming/' class='tag-link-116486' title='24 topics' style='font-size: 19.846153846154pt;'>Functional Programming</a>
+<a href='http://proseand.co.nz/tag/giter8/' class='tag-link-126876765' title='1 topic' style='font-size: 8pt;'>giter8</a>
+<a href='http://proseand.co.nz/tag/google-docs/' class='tag-link-560559' title='1 topic' style='font-size: 8pt;'>Google Docs</a>
+<a href='http://proseand.co.nz/tag/grails/' class='tag-link-215429' title='2 topics' style='font-size: 9.9384615384615pt;'>grails</a>
+<a href='http://proseand.co.nz/tag/groovy/' class='tag-link-883' title='2 topics' style='font-size: 9.9384615384615pt;'>Groovy</a>
+<a href='http://proseand.co.nz/tag/gwt/' class='tag-link-173823' title='1 topic' style='font-size: 8pt;'>GWT</a>
+<a href='http://proseand.co.nz/tag/haskell/' class='tag-link-37144' title='3 topics' style='font-size: 11.230769230769pt;'>Haskell</a>
+<a href='http://proseand.co.nz/tag/huntfunc/' class='tag-link-169428504' title='2 topics' style='font-size: 9.9384615384615pt;'>HuntFunc</a>
+<a href='http://proseand.co.nz/tag/j2ee/' class='tag-link-8689' title='1 topic' style='font-size: 8pt;'>J2EE</a>
+<a href='http://proseand.co.nz/tag/java/' class='tag-link-1017' title='22 topics' style='font-size: 19.415384615385pt;'>Java</a>
+<a href='http://proseand.co.nz/tag/javascript/' class='tag-link-457' title='6 topics' style='font-size: 13.923076923077pt;'>JavaScript</a>
+<a href='http://proseand.co.nz/tag/liftweb/' class='tag-link-11569488' title='7 topics' style='font-size: 14.461538461538pt;'>Liftweb</a>
+<a href='http://proseand.co.nz/tag/mathematics/' class='tag-link-3582' title='3 topics' style='font-size: 11.230769230769pt;'>mathematics</a>
+<a href='http://proseand.co.nz/tag/mvp/' class='tag-link-224713' title='1 topic' style='font-size: 8pt;'>MVP</a>
+<a href='http://proseand.co.nz/tag/nfjs/' class='tag-link-1384898' title='1 topic' style='font-size: 8pt;'>nfjs</a>
+<a href='http://proseand.co.nz/tag/open-source/' class='tag-link-25' title='1 topic' style='font-size: 8pt;'>open source</a>
+<a href='http://proseand.co.nz/tag/osgi/' class='tag-link-5165' title='1 topic' style='font-size: 8pt;'>OSGi</a>
+<a href='http://proseand.co.nz/tag/pakyow/' class='tag-link-168025004' title='1 topic' style='font-size: 8pt;'>Pakyow</a>
+<a href='http://proseand.co.nz/tag/podcast/' class='tag-link-1142' title='1 topic' style='font-size: 8pt;'>podcast</a>
+<a href='http://proseand.co.nz/tag/polyglot/' class='tag-link-253358' title='7 topics' style='font-size: 14.461538461538pt;'>polyglot</a>
+<a href='http://proseand.co.nz/tag/purescript/' class='tag-link-244746554' title='1 topic' style='font-size: 8pt;'>purescript</a>
+<a href='http://proseand.co.nz/tag/qr-codes/' class='tag-link-418432' title='1 topic' style='font-size: 8pt;'>QR Codes</a>
+<a href='http://proseand.co.nz/tag/reactive/' class='tag-link-847825' title='2 topics' style='font-size: 9.9384615384615pt;'>reactive</a>
+<a href='http://proseand.co.nz/tag/resume/' class='tag-link-27013' title='2 topics' style='font-size: 9.9384615384615pt;'>resume</a>
+<a href='http://proseand.co.nz/tag/ruby/' class='tag-link-4872' title='1 topic' style='font-size: 8pt;'>Ruby</a>
+<a href='http://proseand.co.nz/tag/sbt/' class='tag-link-130460' title='1 topic' style='font-size: 8pt;'>sbt</a>
+<a href='http://proseand.co.nz/tag/scala/' class='tag-link-312256' title='39 topics' style='font-size: 22pt;'>Scala</a>
+<a href='http://proseand.co.nz/tag/scalatra/' class='tag-link-47340318' title='1 topic' style='font-size: 8pt;'>scalatra</a>
+<a href='http://proseand.co.nz/tag/snmp4s/' class='tag-link-173700025' title='3 topics' style='font-size: 11.230769230769pt;'>SNMP4S</a>
+<a href='http://proseand.co.nz/tag/soa/' class='tag-link-11271' title='1 topic' style='font-size: 8pt;'>SOA</a>
+<a href='http://proseand.co.nz/tag/software-development/' class='tag-link-2301' title='4 topics' style='font-size: 12.307692307692pt;'>Software Development</a>
+<a href='http://proseand.co.nz/tag/spring/' class='tag-link-9486' title='1 topic' style='font-size: 8pt;'>Spring</a>
+<a href='http://proseand.co.nz/tag/static-typing/' class='tag-link-2440866' title='16 topics' style='font-size: 18.015384615385pt;'>Static typing</a>
+<a href='http://proseand.co.nz/tag/tdd/' class='tag-link-76604' title='1 topic' style='font-size: 8pt;'>TDD</a>
+<a href='http://proseand.co.nz/tag/technology-2/' class='tag-link-6543205' title='2 topics' style='font-size: 9.9384615384615pt;'>technology</a>
+<a href='http://proseand.co.nz/tag/test-driven-development/' class='tag-link-78073' title='2 topics' style='font-size: 9.9384615384615pt;'>test-driven development</a>
+<a href='http://proseand.co.nz/tag/tutorial/' class='tag-link-2932' title='5 topics' style='font-size: 13.169230769231pt;'>tutorial</a>
+<a href='http://proseand.co.nz/tag/type-programming/' class='tag-link-15047534' title='5 topics' style='font-size: 13.169230769231pt;'>type programming</a>
+<a href='http://proseand.co.nz/tag/uberconf/' class='tag-link-37645083' title='4 topics' style='font-size: 12.307692307692pt;'>uberconf</a>
+<a href='http://proseand.co.nz/tag/unit-testing/' class='tag-link-3882' title='3 topics' style='font-size: 11.230769230769pt;'>unit testing</a>
+<a href='http://proseand.co.nz/tag/video/' class='tag-link-412' title='3 topics' style='font-size: 11.230769230769pt;'>video</a>
+<a href='http://proseand.co.nz/tag/web-development/' class='tag-link-2260' title='12 topics' style='font-size: 16.723076923077pt;'>web development</a>
+<a href='http://proseand.co.nz/tag/web-security/' class='tag-link-225051' title='1 topic' style='font-size: 8pt;'>web security</a></div></div><div id="rss_links-3" class="widget-wrapper widget_rss_links"><div class="widget-title">RSS</div><p class="size-small"><a class="feed-image-link" href="http://proseand.co.nz/feed/" title="Subscribe to Posts"><img src="http://proseand.co.nz/i/rss/red-small.png" alt="RSS Feed" /></a>&nbsp;<a href="http://proseand.co.nz/feed/" title="Subscribe to Posts">RSS - Posts</a></p><p class="size-small"><a class="feed-image-link" href="http://proseand.co.nz/comments/feed/" title="Subscribe to Comments"><img src="http://proseand.co.nz/i/rss/red-small.png" alt="RSS Feed" /></a>&nbsp;<a href="http://proseand.co.nz/comments/feed/" title="Subscribe to Comments">RSS - Comments</a></p>
+</div><div id="archives-2" class="widget-wrapper widget_archive"><div class="widget-title">Archives</div>		<ul>
+	<li><a href='http://proseand.co.nz/2014/12/'>December 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/11/'>November 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/09/'>September 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/08/'>August 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/07/'>July 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/06/'>June 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/03/'>March 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/02/'>February 2014</a></li>
+	<li><a href='http://proseand.co.nz/2014/01/'>January 2014</a></li>
+	<li><a href='http://proseand.co.nz/2013/12/'>December 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/11/'>November 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/10/'>October 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/09/'>September 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/08/'>August 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/06/'>June 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/05/'>May 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/04/'>April 2013</a></li>
+	<li><a href='http://proseand.co.nz/2013/01/'>January 2013</a></li>
+	<li><a href='http://proseand.co.nz/2012/08/'>August 2012</a></li>
+	<li><a href='http://proseand.co.nz/2012/07/'>July 2012</a></li>
+	<li><a href='http://proseand.co.nz/2012/01/'>January 2012</a></li>
+		</ul>
+</div><div id="meta-2" class="widget-wrapper widget_meta"><div class="widget-title">Meta</div>			<ul>
+			<li><a href="https://barnesjd.wordpress.com/wp-admin/">Site Admin</a></li>			<li><a href="https://barnesjd.wordpress.com/wp-login.php?action=logout&#038;_wpnonce=e450f79537">Log out</a></li>
+			<li><a href="http://proseand.co.nz/feed/">Entries <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="http://proseand.co.nz/comments/feed/">Comments <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+<li><a href="http://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>			</ul>
+</div>
+		</div><!-- end of #widgets -->
+	</div><!-- end of #wrapper -->
+
+</div><!-- end of #container -->
+
+<div id="footer" class="clearfix">
+
+	<div id="footer-wrapper">
+
+		<div class="grid col-940">
+
+		<div class="grid col-540">
+				</div><!-- end of col-540 -->
+
+		
+		<div class="grid col-380 fit">
+			<ul class="social-icons">
+
+				<li class="twitter-icon"><a href="http://twitter.com/josefusbarnabas"><img src="https://s0.wp.com/wp-content/themes/pub/responsive/icons/twitter-icon.png" width="24" height="24" alt="Twitter"></a></li>
+			</ul><!-- end of .social-icons -->
+		</div><!-- end of col-380 fit -->
+		
+		</div><!-- end of col-940 -->
+		
+	
+		<div class="grid col-300 copyright">
+			&copy; 2014 <a href="http://proseand.co.nz/" title="prose :: and :: conz by joescii">prose :: and :: conz by joescii</a>
+		</div><!-- end of .copyright -->
+
+		<div class="grid col-300 scroll-top"><a href="#scroll-top" title="scroll to top">&uarr;</a></div>
+
+		<div class="grid col-300 fit powered">
+						<a href="https://wordpress.com/?ref=footer_blog">Blog at WordPress.com</a>.
+			<span class="sep"> | </span>
+			<a href="https://wordpress.com/themes/responsive/" title="Learn more about this theme">The Responsive Theme</a>.		</div><!-- end .powered -->
+
+	</div><!-- end #footer-wrapper -->
+
+</div><!-- end #footer -->
+
+<!-- wpcom_wp_footer -->
+	<script type="text/javascript">
+	/* <![CDATA[ */
+		jQuery(document).ready( function($) {
+			function doFollowingHover() {
+				$('#wp-admin-bar-follow > a').unbind( '.unfollow' );
+
+				$('#wp-admin-bar-follow > a').bind( 'mouseover.unfollow', function() {
+
+					$(this).html( "Unfollow" ).parent( 'li' ).addClass( 'unfollow' );
+				});
+				$('#wp-admin-bar-follow > a').bind( 'mouseout.unfollow', function() {
+					$(this).html( "Following" ).parent( 'li' ).removeClass( 'unfollow' );
+				});
+			}
+			
+			$('#wp-admin-bar-follow > a').click( function( e ) {
+				$('#wp-admin-bar-follow > a').unbind( '.unfollow' );
+
+				e.preventDefault();
+
+				var link = $( this ), li = $( '#wp-admin-bar-follow' ), timeout = 0;
+
+				if ( li.hasClass( 'subscribed' ) ) {
+					li.removeClass( 'subscribed' ).removeClass( 'unfollow' );
+					link.html( "Follow" );
+
+					$('body').append( $( 'div.wpcom-bubble' ).removeClass( 'fadein' ) ).off( 'click.bubble' );
+
+					var action = 'ab_unsubscribe_from_blog';
+				} else {
+					li.addClass( 'subscribed' ).removeClass( 'unfollow' );
+					link.html( "Following" );
+
+						var left = 131 - link.width();
+						li.append( $( 'div.wpcom-bubble' ).css( { left: '-' + left + 'px' } ) );
+						$( 'div.bubble-txt', 'div.wpcom-bubble' ).html( "New posts from this blog will now appear in <a target=\"_blank\" href=\"http:\/\/wordpress.com\/\">your reader<\/a>." );
+
+						$( 'div.wpcom-bubble.action-bubble' ).addClass( 'fadein' );
+
+						setTimeout( function() {
+							$('body').on( 'click.bubble touchstart.bubble', function(e) {
+								if ( !$(e.target).hasClass('wpcom-bubble') && !$(e.target).parents( 'div.wpcom-bubble' ).length )
+									hideBubble();
+							});
+							setTimeout( hideBubble, 10000 );
+						}, 500 );
+
+					var action = 'ab_subscribe_to_blog';
+					$('#wp-admin-bar-follow > a').bind( 'mouseout.shift', function() {
+						doFollowingHover();
+						$(this).unbind( '.shift' );
+					});
+				}
+
+				var nonce = link.attr( 'href' ).split( '_wpnonce=' );
+				nonce = nonce[1];
+
+				$.post( "http:\/\/proseand.co.nz\/wp-admin\/admin-ajax.php", {
+					'action': action,
+					'_wpnonce': nonce,
+					'source': 'admin_bar',
+					'blog_id': 24630160				});
+			});
+		});
+	/* ]]> */
+	</script>
+		<script type="text/javascript">
+			!function(d,s,id){
+				var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+				if(!d.getElementById(id)){
+					js=d.createElement(s);
+					js.id=id;js.src=p+"://platform.twitter.com/widgets.js";
+					fjs.parentNode.insertBefore(js,fjs);
+				}
+			}(document,"script","twitter-wjs");
+		</script>
+		<script type='text/javascript' src='//0.gravatar.com/js/gprofiles.js?ver=201452x'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":"6d84ae4b05cf9052aa3b0240d237e0f9"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781g'></script>
+
+	<script>
+		//initialize and attach hovercards to all gravatars
+		jQuery( document ).ready( function( $ ) {
+
+			if (typeof Gravatar === "undefined"){
+				return;
+			}
+
+			if ( typeof Gravatar.init !== "function" ) {
+				return;
+			}			
+
+			Gravatar.profile_cb = function( hash, id ) {
+				WPGroHo.syncProfileData( hash, id );
+			};
+			Gravatar.my_hash = WPGroHo.my_hash;
+			Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+		});
+	</script>
+
+		<div style="display:none">
+	</div>
+
+	<div id="ab-reblog-box">
+		<form action="" name="reblog">
+			<textarea id="reblog-content" name="reblog-content" placeholder="Add your thoughts here... (optional)"></textarea>
+			<label for="blogid" id="lblogid">Post to</label>
+
+			<select name="to_blog_id" id="reblog-to-blog-id">
+														<option value="24630160">prose :: and :: conz by joescii</option>
+														<option value="6237841">CrossFit Madtown</option>
+							</select>
+
+			<div class="submit">
+				<span class="canceltext"><a href="" class="cancel">Cancel</a></span>
+				<input type="submit" name="reblog-submit" class="button-primary" id="reblog-submit" value="Reblog Post" />
+				<input type="hidden" id="original-blog-id" value="24630160" />
+				<input type="hidden" id="original-post-id" value="278" />
+			</div>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="1101bbf9be" /><input type="hidden" name="_wp_http_referer" value="/2013/05/12/static-typing-doesnt-have-to-suck-implicit-conversions/" />		</form>
+
+		<div class="arrow"></div>
+	</div>
+
+	<script type="text/javascript">
+	var wpcom_reblog = {
+		request: false,
+		source: 'toolbar',
+
+		init: function() {
+			// Click reblog button on post
+			jQuery(document).on( 'click', '#wpadminbar .reblog', function(e) {
+				e.preventDefault();
+				wpcom_reblog.source = 'toolbar';
+
+				if ( jQuery( '#wpadminbar #ab-reblog-box' ).is( ':visible' ) ) {
+					wpcom_reblog.cancel_reblog();
+				}
+				else {
+					wpcom_reblog.show_reblog_box();
+				}
+			} );
+
+			// Clicked reblog button on already reblogged post.
+			jQuery(document).on( 'click', '#wpadminbar .reblogged', function(e) {
+				e.preventDefault();
+			});
+
+			// Click cancel reblog button
+			jQuery(document).on( 'click', '#ab-reblog-box a.cancel', function(e) {
+				e.preventDefault();
+				wpcom_reblog.cancel_reblog();
+			});
+
+			// Submit reblog box
+			jQuery(document).on( 'click', '#ab-reblog-box input[type=submit]', function(e) {
+				e.preventDefault();
+				wpcom_reblog.submit_reblog( jQuery(this) );
+			});
+		},
+
+		show_reblog_box: function() {
+			return this.show_reblog_box_here(
+				'#wp-admin-bar-wpr-reblog',
+				'#wpadminbar'
+			);
+		},
+
+		toggle_reblog_box_flair: function( obj_id ) {
+			if ( jQuery( '#jp-post-flair #ab-reblog-box' ).is( ':visible' ) ) {
+				wpcom_reblog.cancel_reblog();
+			}
+			else {
+				wpcom_reblog.show_reblog_box_flair( obj_id );
+			}
+		},
+
+		show_reblog_box_flair: function( obj_id ) {
+			this.source = 'post_flair';
+			this.obj_id = obj_id;
+			return this.show_reblog_box_here(
+				'.post-likes-widget',
+				'body'
+			);
+		},
+
+		show_reblog_box_here: function(anchorId, parentId) {
+			var jq = jQuery,
+			    $anchor = jq( anchorId ),
+			    $parent = jq( parentId ),
+			    $window = jq( window ),
+			    $scroll = jq('html, body'),
+			    $reblog_box = jq( '#ab-reblog-box' ),
+			    offset = $anchor.offset(),
+			    left = offset.left + 'px',
+			    width = '500px',
+			    position,
+			    top;
+
+			if ( $parent.css( 'position' ) === 'fixed' ) {
+				position = 'fixed';
+				top = $parent.position().top + $parent.outerHeight();
+			}
+			else {
+				position = 'absolute';
+				top = offset.top + $anchor.outerHeight() + 'px';
+			}
+			$reblog_box.remove();
+			$parent.append( $reblog_box );
+			$anchor.addClass( 'selected' );
+
+			if ( jq( window ).innerWidth() < offset.left + 500 ) {
+				// Most likely mobile or tablet
+				left = '0px';
+				width = ( jq( window ).innerWidth() - 24 ) + 'px';
+			}
+
+			$reblog_box
+				.find('p.response').remove().end()
+				.find('div.submit, div.submit span.canceltext').show().end()
+				.find('div.submit input[type=submit]').prop('disabled',false).end()
+				.show()
+				.css({
+					top : top,
+					left : left,
+					width : width,
+					position: position,
+					'z-index': 2 // slide under twentyfourteen's fixed-positioned masthead
+				});
+
+			// Ensure we can see the whole reblog box
+			var docViewTop = $window.scrollTop(),
+			    windowHeight = $window.height(),
+			    docViewBottom = docViewTop + windowHeight,
+			    elemTop = $reblog_box.offset().top,
+			    elemHeight = $reblog_box.outerHeight() + 10,
+			    elemBottom = elemTop + elemHeight;
+			if ( docViewTop > elemTop ) {
+				// Need to scroll up
+				// leave 75px for toolbar + Reblog button + margin
+				$scroll.animate({scrollTop: elemTop - 75});
+			}
+			else if ( docViewBottom < elemBottom ) {
+				// Need to scroll down
+				$scroll.animate({scrollTop: elemBottom - windowHeight}, 100);
+			}
+		},
+
+		submit_reblog: function( input ) {
+			var jq = jQuery;
+			var self = this;
+			if ( typeof this.request == 'object' )
+				this.request.abort();
+
+			input.attr( 'value', 'Reblogging...' );
+			input.prop( 'disabled', true );
+
+			jq( '#ab-reblog-box div.submit span.canceltext' ).fadeOut( 150, function() {
+				input.before( '<span class="spinner"></span>' );
+			});
+
+			var note = jq('#ab-reblog-box textarea').val();
+
+			if ( jq('#default-reblog-note').val() == note )
+				note = "";
+
+			this.request = jq.get( '/wp-admin/admin-ajax.php', {
+				'action': 'post_reblog',
+				'original_blog_id': jq('#original-blog-id').val(),
+				'original_post_id': jq('#original-post-id').val(),
+				'blog_id': jq('#ab-reblog-box select').val(),
+				'note': note,
+				'_wpnonce': jq('#ab-reblog-box #_wpnonce').val(),
+				'reblog_source': this.source
+			},
+			function(result, status, jqxhr) {
+				if ( ! ( "type" in result ) ) {
+					alert( "Error: " + jqxhr.responseText );
+				}
+				else if ( "error" == result.type ) {
+					alert( result.message );
+				}
+				else {
+					if ( typeof pm === 'function' ) {
+						console.log(self);
+						pm({
+							target : window.frames['likes-master'],
+							type : 'likesMessage',
+							data : { event: 'didReblog', obj_id: self.obj_id },
+							origin : '*'
+						});
+					}
+
+					jq( '#ab-reblog-box' ).hide();
+					jq( '#wp-admin-bar-wpr-reblog' ).addClass( 'reblogged' ).removeClass( 'reblog' ).find( 'a:first' ).text( 'Reblogged' );
+				}
+			}, 'json' );
+		},
+
+		cancel_reblog: function() {
+			jQuery( '#ab-reblog-box' ).hide();
+			jQuery( '#wp-admin-bar-wpr-reblog' ).removeClass( 'selected' );
+		}
+	};
+
+	wpcom_reblog.init();
+	</script>
+<div id="report-form-window" style="display:none;"></div><script type='text/javascript'>
+/* <![CDATA[ */
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/barnesjd.wordpress.com\/public.api\/connect\/?action=request","logoutURL":"https:\/\/barnesjd.wordpress.com\/wp-login.php?action=logout&_wpnonce=e450f79537","homeURL":"http:\/\/proseand.co.nz\/","postID":"278","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"0","userIsLoggedIn":"1","isJetpack":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s0.wp.com/_static/??/wp-content/js/jquery/jquery.autoresize.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1414003384j'></script>
+
+	<script type="text/javascript">
+		WPCOM_sharing_counts = {"http:\/\/proseand.co.nz\/2013\/05\/12\/static-typing-doesnt-have-to-suck-implicit-conversions\/":278}	</script>
+		<script type="text/javascript">
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-twitter' ).on( 'click', function() {
+				window.open( jQuery(this).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-facebook' ).on( 'click', function() {
+				window.open( jQuery(this).attr( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-google-plus-1' ).on( 'click', function() {
+				window.open( jQuery(this).attr( 'href' ), 'wpcomgoogle-plus-1', 'menubar=1,resizable=1,width=480,height=550' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-linkedin' ).on( 'click', function() {
+				window.open( jQuery(this).attr( 'href' ), 'wpcomlinkedin', 'menubar=1,resizable=1,width=580,height=450' );
+				return false;
+			});
+		});
+		</script>
+				<iframe src='http://widgets.wp.com/likes/master.html?ver=20141028#ver=20141028&amp;mp6=1' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+		<div id='likes-other-gravatars'><div class="likes-text"><span>%d</span> bloggers like this:</div><ul class="wpl-avatars sd-like-gravatars"></ul></div>
+		<script type="text/javascript">
+		//<![CDATA[
+			var jetpackLikesWidgetQueue = [];
+			var jetpackLikesWidgetBatch = [];
+			var jetpackLikesMasterReady = false;
+
+			function JetpackLikespostMessage( message, target ) {
+				if ( "string" === typeof message ){
+					try{
+						message = JSON.parse( message );
+					}
+					catch(e) {
+						return;
+					}
+				}
+
+				pm( {
+					target: target,
+					type: 'likesMessage',
+					data: message,
+					origin: '*'
+				} );
+			}
+
+			function JetpackLikesBatchHandler() {
+				var requests = [];
+				jQuery( 'div.jetpack-likes-widget-unloaded' ).each( function( i ) {
+					if ( jetpackLikesWidgetBatch.indexOf( this.id ) > -1 )
+						return;
+					jetpackLikesWidgetBatch.push( this.id );
+					var regex = /like-(post|comment)-wrapper-(\d+)-(\d+)-(\w+)/;
+					var match = regex.exec( this.id );
+					if ( ! match || match.length != 5 )
+						return;
+
+					var info = {
+						blog_id: match[2],
+						width:   this.width
+					};
+
+					if ( 'post' == match[1] ) {
+						info.post_id = match[3];
+					} else if ( 'comment' == match[1] ) {
+						info.comment_id = match[3];
+					}
+
+					info.obj_id = match[4];
+
+					requests.push( info );
+				});
+
+				if ( requests.length > 0 ) {
+					JetpackLikespostMessage( { event: 'initialBatch', requests: requests }, window.frames['likes-master'] );
+				}
+			}
+
+			function JetpackLikesMessageListener( event ) {
+				if ( "undefined" == typeof event.event )
+					return;
+
+				if ( 'masterReady' == event.event ) {
+					jQuery( document ).ready( function() {
+						jetpackLikesMasterReady = true;
+
+						var stylesData = {
+								event: 'injectStyles'
+						};
+
+						if ( jQuery( 'iframe.admin-bar-likes-widget' ).length > 0 ) {
+							JetpackLikespostMessage( { event: 'adminBarEnabled' }, window.frames[ 'likes-master' ] );
+
+							stylesData.adminBarStyles = {
+								background: jQuery( '#wpadminbar .quicklinks li#wp-admin-bar-wpl-like > a' ).css( 'background' ),
+								isRtl: ( 'rtl' == jQuery( '#wpadminbar' ).css( 'direction' ) )
+							};
+						}
+
+						if ( !window.addEventListener )
+							jQuery( '#wp-admin-bar-admin-bar-likes-widget' ).hide();
+
+						stylesData.textStyles = {
+							color: jQuery( '.sd-text-color').css( 'color' ),
+							fontFamily: jQuery( '.sd-text-color' ).css( 'font-family' ),
+							fontSize: jQuery( '.sd-text-color' ).css( 'font-size' ),
+							direction: jQuery( '.sd-text-color' ).css( 'direction' ),
+							fontWeight: jQuery( '.sd-text-color' ).css( 'font-weight' ),
+							fontStyle: jQuery( '.sd-text-color' ).css( 'font-style' ),
+							textDecoration: jQuery( '.sd-text-color' ).css('text-decoration')
+						};
+
+						stylesData.linkStyles = {
+							color: jQuery( '.sd-link-color' ).css('color'),
+							fontFamily: jQuery( '.sd-link-color' ).css('font-family'),
+							fontSize: jQuery( '.sd-link-color' ).css('font-size'),
+							textDecoration: jQuery( '.sd-link-color' ).css('text-decoration'),
+							fontWeight: jQuery( '.sd-link-color' ).css( 'font-weight' ),
+							fontStyle: jQuery( '.sd-link-color' ).css( 'font-style' )
+						};
+
+						JetpackLikespostMessage( stylesData, window.frames[ 'likes-master' ] );
+
+						JetpackLikesBatchHandler();
+
+						jQuery( document ).on( 'inview', 'div.jetpack-likes-widget-unloaded', function() {
+							jetpackLikesWidgetQueue.push( this.id );
+						});
+					});
+				}
+
+				if ( 'showLikeWidget' == event.event ) {
+					jQuery( '#' + event.id + ' .post-likes-widget-placeholder'  ).fadeOut( 'fast', function() {
+						jQuery( '#' + event.id + ' .post-likes-widget' ).fadeIn( 'fast', function() {
+							JetpackLikespostMessage( { event: 'likeWidgetDisplayed', blog_id: event.blog_id, post_id: event.post_id, obj_id: event.obj_id }, window.frames['likes-master'] );
+						});
+					});
+				}
+
+				if ( 'clickReblogFlair' == event.event ) {
+					wpcom_reblog.toggle_reblog_box_flair( event.obj_id );
+				}
+
+				if ( 'showOtherGravatars' == event.event ) {
+					var $container = jQuery( '#likes-other-gravatars' );
+					var $list = $container.find( 'ul' );
+
+					$container.hide();
+					$list.html( '' );
+
+					$container.find( '.likes-text span' ).text( event.total );
+
+					jQuery.each( event.likers, function( i, liker ) {
+						$list.append( '<li class="' + liker.css_class + '"><a href="' + liker.profile_URL + '" class="wpl-liker" rel="nofollow" target="_parent"><img src="' + liker.avatar_URL + '" alt="' + liker.name + '" width="30" height="30" style="padding-right: 3px;" /></a></li>');
+					} );
+
+					var offset = jQuery( "[name='" + event.parent + "']" ).offset();
+
+					$container.css( 'left', offset.left + event.position.left - 10 + 'px' );
+					$container.css( 'top', offset.top + event.position.top - 33 + 'px' );
+
+					var rowLength = Math.floor( event.width / 37 );
+					var height = ( Math.ceil( event.likers.length / rowLength ) * 37 ) + 13;
+					if ( height > 204 ) {
+						height = 204;
+					}
+
+					$container.css( 'height', height + 'px' );
+					$container.css( 'width', rowLength * 37 - 7 + 'px' );
+
+					$list.css( 'width', rowLength * 37 + 'px' );
+
+					$container.fadeIn( 'slow' );
+
+					var scrollbarWidth = $list[0].offsetWidth - $list[0].clientWidth;
+					if ( scrollbarWidth > 0 ) {
+						$container.width( $container.width() + scrollbarWidth );
+						$list.width( $list.width() + scrollbarWidth );
+					}
+				}
+			}
+
+			pm.bind( 'likesMessage', function(e) { JetpackLikesMessageListener(e); } );
+
+			jQuery( document ).click( function( e ) {
+				var $container = jQuery( '#likes-other-gravatars' );
+
+				if ( $container.has( e.target ).length === 0 ) {
+					$container.fadeOut( 'slow' );
+				}
+			});
+
+			function JetpackLikesWidgetQueueHandler() {
+				var wrapperID;
+				if ( ! jetpackLikesMasterReady ) {
+					setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+					return;
+				}
+
+				if ( jetpackLikesWidgetQueue.length > 0 ) {
+					// We may have a widget that needs creating now
+					var found = false;
+					while( jetpackLikesWidgetQueue.length > 0 ) {
+						// Grab the first member of the queue that isn't already loading.
+						wrapperID = jetpackLikesWidgetQueue.splice( 0, 1 )[0];
+						if ( jQuery( '#' + wrapperID ).hasClass( 'jetpack-likes-widget-unloaded' ) ) {
+							found = true;
+							break;
+						}
+					}
+					if ( ! found ) {
+						setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+						return;
+					}
+				} else if ( jQuery( 'div.jetpack-likes-widget-unloaded' ).length > 0 ) {
+					// Grab any unloaded widgets for a batch request
+					JetpackLikesBatchHandler();
+
+					// Get the next unloaded widget
+					wrapperID = jQuery( 'div.jetpack-likes-widget-unloaded' ).first()[0].id;
+					if ( ! wrapperID ) {
+						// Everything is currently loaded
+						setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+						return;
+					}
+				}
+
+				if ( 'undefined' === typeof wrapperID ) {
+					setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+					return;
+				}
+
+				var $wrapper = jQuery( '#' + wrapperID );
+				$wrapper.find( 'iframe' ).remove();
+
+				if ( $wrapper.hasClass( 'slim-likes-widget' ) ) {
+					$wrapper.find( '.post-likes-widget-placeholder' ).after( "<iframe class='post-likes-widget jetpack-likes-widget' name='" + $wrapper.data( 'name' ) + "' height='22px' width='68px' frameBorder='0' scrolling='no' src='" + $wrapper.data( 'src' ) + "'></iframe>" );
+				} else {
+					$wrapper.find( '.post-likes-widget-placeholder' ).after( "<iframe class='post-likes-widget jetpack-likes-widget' name='" + $wrapper.data( 'name' ) + "' height='55px' width='100%' frameBorder='0' src='" + $wrapper.data( 'src' ) + "'></iframe>" );
+				}
+
+				$wrapper.removeClass( 'jetpack-likes-widget-unloaded' ).addClass( 'jetpack-likes-widget-loading' );
+
+				$wrapper.find( 'iframe' ).load( function( e ) {
+					var $iframe = jQuery( e.target );
+					$wrapper.removeClass( 'jetpack-likes-widget-loading' ).addClass( 'jetpack-likes-widget-loaded' );
+
+					JetpackLikespostMessage( { event: 'loadLikeWidget', name: $iframe.attr( 'name' ), width: $iframe.width() }, window.frames[ 'likes-master' ] );
+
+					if ( $wrapper.hasClass( 'slim-likes-widget' ) ) {
+						$wrapper.find( 'iframe' ).Jetpack( 'resizeable' );
+					}
+				});
+				setTimeout( JetpackLikesWidgetQueueHandler, 250 );
+			}
+			JetpackLikesWidgetQueueHandler();
+		//]]>
+		</script>
+<script type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/akismet-3.0/_inc/form.js?m=1404442431g'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var thickboxL10n = {"next":"Next >","prev":"< Prev","image":"Image","of":"of","close":"Close","noiframes":"This feature requires inline frames. You have iframes disabled or your browser does not support them.","loadingAnimation":"https:\/\/s1.wp.com\/wp-includes\/js\/thickbox\/loadingAnimation.gif"};
+var thickboxL10n = {"next":"Next >","prev":"< Prev","image":"Image","of":"of","close":"Close","noiframes":"This feature requires inline frames. You have iframes disabled or your browser does not support them.","loadingAnimation":"https:\/\/s1.wp.com\/wp-includes\/js\/thickbox\/loadingAnimation.gif"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/_static/??-eJxdjUsOgCAQQy8kEtQYN8az6EB0UAYioB5fXPiJqzZ5fSnfHUOCJUrlufa8lwaJDf2ap8y1z3gagKWgKFxcqg1BueNGXzdMCPNgj6f8fROZW+KI9PlJHKxh76/2nWlFJRpRl0Up9AkEbTpG'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var kissmetrics_api = {"api_key":"39e3e583aca28fab00c85ad9019b51d9f073fc6d","username":"barnesjd","user_id":"6496878"};
+var kissmetrics_queries = {"events":[],"properties":[{"Browser_Type":"desktop"}]};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://s0.wp.com/wp-content/mu-plugins/kissmetrics/kissmetrics.js?m=1417525689g&#038;ver=20141202'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var JetpackEmojiSettings = {"base_url":"http:\/\/s0.wp.com\/wp-content\/mu-plugins\/emoji\/twemoji\/"};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpNotesArgs = {"cacheBuster":"20141212","iframeUrl":"https:\/\/widgets.wp.com\/notes\/","iframeAppend":"","iframeScroll":"no"};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcom_tos_report_form = {"ajaxurl":"\/wp-admin\/admin-ajax.php","isLoggedoutUser":"","post_ID":"278","current_url":"http:\/\/proseand.co.nz\/2013\/05\/12\/static-typing-doesnt-have-to-suck-implicit-conversions","report_this_content":"Report this content"};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wordads_preview = {"ajaxurl":"http:\/\/proseand.co.nz\/wp-admin\/admin-ajax.php","blog_id":"24630160","user":"barnesjd","nonce":"1f5d2dd64c"};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var recaptcha_options = {"lang":"en"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJyNkdFuwyAMRX9oFKWaqu5h2rcQ8BIY2MiGRPv7Ea3t0mhK+4Jl+1xdY+s5K482Vgeig2hLKQEWxZDj9yF5PAR50Q2yhKU1dBkhNTTXXjNIJhQ/waL8y5RY9rnI01JJJkbVfOtWkqrKsQ4eRUOi4HWZ7+JDPkDJxn6p5+g7ar2Wig5YLDGsd7Im+ubSE8J/O2vtVKUYO8LOCEgFLq9azkCopuND3rhmqHrD+3AhWW5KXNQncdrmW2UfabhpZ2JnXBsqGpHf315LmWHyMO8YZ5JmEY1nLaNhj8M1NtFHeu9eu/Pb8XQ+deEHCCT0KQ=='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script src="//stats.wp.com/w.js?33" type="text/javascript"></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_tkq.push(['identifyUser', 6496878, 'barnesjd']);
+_tkq.push(['storeContext', {'blog_id':'24630160','blog_tz':'-5','user_lang':'en','blog_lang':'en'}]);
+st_go({'blog':'24630160','v':'wpcom','tz':'-5','user':'1','user_id':'6496878','post':'278','subd':'barnesjd'});
+ex_go({'crypt':'UE40eW5QN0p8M2Y/RE1zNDZ8S252Wis9XUQyb3YrcUVIU2R0VH5TdWI5d350TFdaeXR4OFRqPytqcHcxeT1JUVVCclRNUmxkUWhYX21NQTlVfnUxcWV4eSt5cFZdMG8yWzBERCVBWHwvV3ptV3BjdCtiUlBaYXwmTX5BdXcmc00uWUl1VzNLVzBFfl0yMnlmdzNCa08rRnZ5dEhpeW5DNmQ3N29rWUFsUnpoW3JkbkczUUZpQnErY0o5THBaMzhsWms4a1pfWUpCYXUwN1VbbDAsNnBNP0haWDZxZyxbTS5WRHJMUit8MTNKMG1kY1l3aV16JW9CQWgxLXBEWEddW0haNThKSEZfRH5OaGtiZkpvUWYmSkkuTFl0OVtDNVNdblY0WksmaVVCWCVtJjB0OVt1YSZCc1JLNXdyX1c='});
+	</script>
+<noscript><img src="http://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+	<script type="text/javascript">
+		(function() {
+			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+			request = (function(){ var xhr = new XMLHttpRequest(); return ('withCredentials' in xhr); })();
+
+			b[c] = b[c].replace( rcs, ' ' );
+			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+		}());
+	</script>
+			<div id="wpadminbar" class="nojq nojs ltr" role="navigation">
+			<a class="screen-reader-shortcut" href="#wp-toolbar" tabindex="1">Skip to toolbar</a>
+			<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Top navigation toolbar." tabindex="0">
+				<ul id="wp-admin-bar-root-default" class="ab-top-menu">
+		<li id="wp-admin-bar-blog" class="menupop"><a class="ab-item"  aria-haspopup="true" href="http://proseand.co.nz/"><img class="avatar" src="http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=32" alt="Current blog avatar" width="16" height="16" /> prose :: and :: conz&hellip;</a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-blog-default" class="ab-submenu">
+		<li id="wp-admin-bar-dashboard-top" class="mb-icon"><a class="ab-item"  href="http://barnesjd.wordpress.com/wp-admin/">WP Admin</a>		</li>
+		<li id="wp-admin-bar-blog-stats" class="mb-icon"><a class="ab-item"  href="http://wordpress.com/my-stats/">Stats</a>		</li>
+		<li id="wp-admin-bar-comments" class="mb-icon"><a class="ab-item"  href="http://barnesjd.wordpress.com/wp-admin/edit-comments.php">Comments</a>		</li>
+		<li id="wp-admin-bar-edit" class="mb-icon"><a class="ab-item"  href="https://wordpress.com/post/24630160/278">Edit</a>		</li>
+		<li id="wp-admin-bar-privacy" class="menupop noticon-show"><a class="ab-item"  aria-haspopup="true" href="/wp-admin/options-reading.php">Visibility</a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-privacy-default" class="ab-submenu">
+		<li id="wp-admin-bar-priv-exp"><a class="ab-item"  href="/wp-admin/options-reading.php">This blog is public</a>		</li></ul></div>		</li></ul><ul id="wp-admin-bar-publish" class="ab-submenu">
+		<li id="wp-admin-bar-publish-header" class="ab-submenu-header"><div class="ab-item ab-empty-item" >Publish</div>		</li>
+		<li id="wp-admin-bar-new-post" class="inline-action"><div class="ab-item ab-empty-item" ><a href="https://barnesjd.wordpress.com/wp-admin/edit.php?post_type=post" class="ab-item primary mb-icon" id="wp-admin-bar-edit-post">Posts</a><a href="https://wordpress.com/post/24630160/new" class="secondary" id="wp-admin-bar-new-post">Add</a></div>		</li>
+		<li id="wp-admin-bar-new-page" class="inline-action"><div class="ab-item ab-empty-item" ><a href="https://barnesjd.wordpress.com/wp-admin/edit.php?post_type=page" class="ab-item primary mb-icon" id="wp-admin-bar-edit-page">Pages</a><a href="https://barnesjd.wordpress.com/wp-admin/post-new.php?post_type=page" class="secondary" id="wp-admin-bar-new-page">Add</a></div>		</li>
+		<li id="wp-admin-bar-new-attachment" class="inline-action"><div class="ab-item ab-empty-item" ><a href="https://barnesjd.wordpress.com/wp-admin/upload.php" class="ab-item primary mb-icon" id="wp-admin-bar-edit-attachment">Media</a><a href="https://barnesjd.wordpress.com/wp-admin/media-new.php" class="secondary" id="wp-admin-bar-new-attachment">Add</a></div>		</li></ul><ul id="wp-admin-bar-look-and-feel" class="ab-submenu">
+		<li id="wp-admin-bar-look-and-feel-header" class="ab-submenu-header"><div class="ab-item ab-empty-item" >Look and Feel</div>		</li>
+		<li id="wp-admin-bar-customize" class="hide-if-no-customize mb-icon"><a class="ab-item"  href="https://barnesjd.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fbarnesjd.wordpress.com%2F2013%2F05%2F12%2Fstatic-typing-doesnt-have-to-suck-implicit-conversions%2F">Customize</a>		</li>
+		<li id="wp-admin-bar-widgets" class="mb-icon"><a class="ab-item"  href="https://barnesjd.wordpress.com/wp-admin/widgets.php">Widgets</a>		</li></ul><ul id="wp-admin-bar-blog-secondary" class="ab-sub-secondary ab-submenu">
+		<li id="wp-admin-bar-shortlink"><a class="ab-item"  href="http://wp.me/p1FlqE-4u">Shortlink http://wp.me/p1FlqE-4u</a>Shortlink: <input id="adminbar-shortlink-input" value="http://wp.me/p1FlqE-4u" readonly="readonly" />		</li>
+		<li id="wp-admin-bar-theme-responsive"><a class="ab-item"  href="http://theme.wordpress.com/themes/responsive/">Theme: Responsive</a>		</li>
+		<li id="wp-admin-bar-wpcom_report_url"><a class="ab-item"  href="http://en.wordpress.com/complaints/">Report this content</a>		</li></ul></div>		</li>
+		<li id="wp-admin-bar-jumptotop-button-menu"><a class="ab-item"  href="#"><div id="jumptotop"><span class="noticon noticon-top"></span></div></a>		</li>
+		<li id="wp-admin-bar-newdash" class="menupop"><a class="ab-item"  aria-haspopup="true" href="http://wordpress.com/">Reader</a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-newdash-default" class="ab-submenu">
+		<li id="wp-admin-bar-following"><a class="ab-item"  href="http://wordpress.com/">Blogs I Follow</a>		</li></ul><ul id="wp-admin-bar-discover" class="ab-submenu">
+		<li id="wp-admin-bar-discover-header" class="ab-submenu-header"><div class="ab-item ab-empty-item" >Discover</div>		</li>
+		<li id="wp-admin-bar-discover-freshly-pressed"><a class="ab-item"  href="http://wordpress.com/fresh/">Freshly Pressed</a>		</li>
+		<li id="wp-admin-bar-discover-recommended-blogs"><a class="ab-item"  href="http://wordpress.com/recommendations/">Recommended Blogs</a>		</li>
+		<li id="wp-admin-bar-discover-find-friends"><a class="ab-item"  href="http://wordpress.com/find-friends/">Find Friends</a>		</li></ul><ul id="wp-admin-bar-my-activity" class="ab-submenu">
+		<li id="wp-admin-bar-my-activity-header" class="ab-submenu-header"><div class="ab-item ab-empty-item" >My Activity</div>		</li>
+		<li id="wp-admin-bar-my-activity-my-comments"><a class="ab-item"  href="http://wordpress.com/activities/comments/">My Comments</a>		</li>
+		<li id="wp-admin-bar-my-activity-my-likes"><a class="ab-item"  href="http://wordpress.com/activities/likes/">My Likes</a>		</li></ul></div>		</li>
+		<li id="wp-admin-bar-follow"><a class="ab-item"  href="http://wordpress.com/read?b=24630160&#038;_wpnonce=5afd9b4c91"><span id="admin-bar-follow-link">Follow</span></a>		</li>
+		<li id="wp-admin-bar-admin-bar-likes-widget"><div class="ab-item ab-empty-item" ></div><iframe class='admin-bar-likes-widget jetpack-likes-widget' scrolling='no' frameBorder='0' name='admin-bar-likes-widget' src='http://widgets.wp.com/likes/#blog_id=24630160&amp;post_id=278&amp;origin=http://barnesjd.wordpress.com'></iframe>		</li>
+		<li id="wp-admin-bar-wpr-reblog" class="reblog"><a class="ab-item"  href="#reblog">Reblog</a>		</li>
+		<li id="wp-admin-bar-stats"><a class="ab-item"  href="http://wordpress.com/stats/24630160"><div><script type='text/javascript'>var src;if(typeof(window.devicePixelRatio)=='undefined'||window.devicePixelRatio<2){src='/wp-includes/charts/admin-bar-hours-scale.php';}else{src='/wp-includes/charts/admin-bar-hours-scale-2x.php';}document.write('<img style=\'vertical-align: baseline\' src=\''+src+'\' alt=\'Stats\' title=\'Showing site views per hour for the last 48 hours. Click for full Site Stats.\' />');</script></div></a>		</li></ul><ul id="wp-admin-bar-top-secondary" class="ab-top-secondary ab-top-menu">
+		<li id="wp-admin-bar-notes" class="menupop"><div class="ab-item ab-empty-item" ><span id="wpnt-notes-unread-count" class="wpnt-loading wpn-read">
+						<span class="noticon noticon-notification"></span>
+						</span></div><div id="wpnt-notes-panel" style="display:none" lang="en" dir="ltr"><div class="wpnt-notes-panel-header"><span class="wpnt-notes-header"></span><span class="wpnt-notes-panel-link"></span></div></div>		</li>
+		<li id="wp-admin-bar-my-account" class="menupop with-avatar"><a class="ab-item"  aria-haspopup="true" href="http://wordpress.com/settings/account/"><img alt='' src='http://0.gravatar.com/avatar/6d84ae4b05cf9052aa3b0240d237e0f9?s=32&#038;d=mm&#038;r=G' class='avatar avatar-32' height='32' width='32' /></a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-user-actions" class="ab-submenu">
+		<li id="wp-admin-bar-user-info" class="user-info user-info-item"><a class="ab-item" tabindex="-1" href="#"><a href="http://wordpress.com/settings/account/"><img alt='' src='http://0.gravatar.com/avatar/6d84ae4b05cf9052aa3b0240d237e0f9?s=128&#038;d=mm&#038;r=G' class='avatar avatar-128' height='128' width='128' /><span class="display-name">barnesjd</span><span class="username">barnesjd</span></a></a>		</li>
+		<li id="wp-admin-bar-find-friends" class="user-info-item"><a class="ab-item"  href="http://wordpress.com/find-friends/">Find Friends</a>		</li>
+		<li id="wp-admin-bar-manage-blogs" class="user-info-item"><a class="ab-item"  href="http://wordpress.com/my-blogs/">Manage My Blogs</a>		</li>
+		<li id="wp-admin-bar-help" class="user-info-item"><a class="ab-item"  href="http://en.support.wordpress.com/">Help</a>		</li>
+		<li id="wp-admin-bar-logout" class="user-info-item"><a class="ab-item"  href="https://barnesjd.wordpress.com/wp-login.php?action=logout&#038;redirect_to=http%3A%2F%2Fproseand.co.nz%2F&#038;_wpnonce=e450f79537">Sign Out</a>		</li></ul><ul id="wp-admin-bar-my-sites" class="ab-sub-secondary ab-submenu">
+		<li id="wp-admin-bar-blog-24630160" class="menupop"><a class="ab-item"  aria-haspopup="true" href="http://barnesjd.wordpress.com/"><img src="http://0.gravatar.com/blavatar/cc621e27cd4e092529b6c81f8e87ea5a?s=32&#038;d=http%3A%2F%2Fs2.wp.com%2Fi%2Fwpmini-blue.png" alt="Blavatar" width="16" height="16" />prose :: and :: conz by joescii</a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-blog-24630160-default" class="ab-submenu">
+		<li id="wp-admin-bar-blog-24630160-d"><a class="ab-item"  href="http://barnesjd.wordpress.com/wp-admin/">WP Admin</a>		</li>
+		<li id="wp-admin-bar-blog-24630160-n"><a class="ab-item"  href="https://wordpress.com/post/24630160/new">New Post</a>		</li>
+		<li id="wp-admin-bar-blog-24630160-s"><a class="ab-item"  href="http://wordpress.com/my-stats/?blog=24630160">Site Stats</a>		</li>
+		<li id="wp-admin-bar-blog-24630160-c"><a class="ab-item"  href="http://barnesjd.wordpress.com/wp-admin/edit-comments.php">Manage Comments</a>		</li>
+		<li id="wp-admin-bar-blog-24630160-v"><a class="ab-item"  href="http://barnesjd.wordpress.com">Read Blog</a>		</li></ul></div>		</li>
+		<li id="wp-admin-bar-blog-6237841" class="menupop"><a class="ab-item"  aria-haspopup="true" href="http://cfmadtown.wordpress.com/"><img src="http://s2.wp.com/i/wpmini-blue.png?m=1311732102g" alt="Blavatar" width="16" height="16" />CrossFit Madtown</a><div class="ab-sub-wrapper"><ul id="wp-admin-bar-blog-6237841-default" class="ab-submenu">
+		<li id="wp-admin-bar-blog-6237841-d"><a class="ab-item"  href="http://cfmadtown.wordpress.com/wp-admin/">WP Admin</a>		</li>
+		<li id="wp-admin-bar-blog-6237841-n"><a class="ab-item"  href="https://wordpress.com/post/6237841/new">New Post</a>		</li>
+		<li id="wp-admin-bar-blog-6237841-s"><a class="ab-item"  href="http://wordpress.com/my-stats/?blog=6237841">Site Stats</a>		</li>
+		<li id="wp-admin-bar-blog-6237841-c"><a class="ab-item"  href="http://cfmadtown.wordpress.com/wp-admin/edit-comments.php">Manage Comments</a>		</li>
+		<li id="wp-admin-bar-blog-6237841-v"><a class="ab-item"  href="http://cfmadtown.wordpress.com">Read Blog</a>		</li></ul></div>		</li></ul></div>		</li>
+		<li id="wp-admin-bar-ab-new-post"><a class="ab-item"  href="http://wordpress.com/post/24630160/new/"></a>		</li></ul>			</div>
+						<a class="screen-reader-shortcut" href="https://barnesjd.wordpress.com/wp-login.php?action=logout&#038;_wpnonce=e450f79537">Log Out</a>
+					</div>
+
+		
+<script type="text/javascript">
+/* <![CDATA[ */
+var clickDebugLink;
+
+jQuery(document).ready( function($) {
+	var single = true, w = 1000,
+		supe = false;
+
+	$(document.body).load(function(){ $('#wpadminbar img.grav-hashed').removeClass('grav-hashed'); }); // hack to hide the gravatar hovercard
+
+	if ( single && supe )
+		w = 1385;
+	else if ( supe )
+		w = 1200;
+
+	// debug bar extra
+	clickDebugLink = function( parent_id, obj ) {
+
+		$('#'+parent_id).children('div').hide();
+
+		document.getElementById( obj.href.substr( obj.href.indexOf( '#' ) + 1 ) ).style.display = 'block';
+		$( obj.href.substr( obj.href.indexOf( '#' ) ) ).show()
+
+		$(obj).parent().addClass('current').siblings('li').removeClass('current');
+
+		return false;
+	};
+
+	$( '#wpadminbar #wp-admin-bar-shortlink' ).click( function() {
+		$( '#adminbar-shortlink-input' ).select();
+	});
+
+});
+/* ]]> */
+</script>
+	<div class="wpcom-bubble action-bubble">
+		<div class="bubble-txt"></div>
+	</div>
+	<script type="text/javascript">function hideBubble() { jQuery('body').append( jQuery( 'div.wpcom-bubble' ).removeClass( 'fadein' ) ).off( 'click.bubble touchstart.bubble' ); jQuery(document).off( 'scroll.bubble' ); };</script>
+		<script type="text/javascript">
+	jQuery( '#wp-admin-bar-jumptotop-button-menu a' ).click( function( e ) {
+		e.preventDefault();
+		jQuery( 'html, body' ).animate( { scrollTop: 0 }, 'fast' );
+	} );
+	function hideShowTbJumpToTop() {
+		var total_width = 0;
+		// Calculate total width taken by li's minus our button to see if we it'll
+		// overlap with other toolbar menus.
+		jQuery( '#wp-admin-bar-root-default > li' ).each( function() {
+			var self = jQuery( this );
+			if ( 'wp-admin-bar-jumptotop-button-menu' != self.attr( 'id' ) )
+				total_width += self.width();
+		});
+		if ( jQuery( '#wp-admin-bar-jumptotop-button-menu' ).position()['left'] - total_width < 10 ) {
+			jQuery( '#jumptotop' ).animate( { 'top': '-50px' }, 'fast' );
+		} else if (  jQuery( window ).scrollTop() >= 350 && parseInt( jQuery( '#jumptotop' ).css( 'top' ) ) < 0 ) {
+			if ( jQuery( '#wp-admin-bar-jumptotop-button-menu' ).position()['left'] - total_width < 10 )
+			   return;
+			jQuery( '#jumptotop' ).animate( { 'top': 0 }, 'fast' );
+		} else if (  jQuery( window ).scrollTop() < 1 && parseInt( jQuery( '#jumptotop' ).css( 'top' ) ) >= 0 ) {
+			jQuery( '#jumptotop' ).animate( { 'top': '-50px' }, 'fast' );
+		}
+	}
+	// handle on page load if auto scrolling to a position
+	hideShowTbJumpToTop();
+	// bind to scrolll event
+	var jumpToTopTimer = null;
+	jQuery( window ).scroll( function() {
+		clearTimeout( jumpToTopTimer );
+		jumpToTopTimer = setTimeout( jumpToTopRefresh, 150 );
+	} );
+	var jumpToTopRefresh = function() {
+		hideShowTbJumpToTop();
+	};
+	</script>
+	<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script></body>
+</html>
