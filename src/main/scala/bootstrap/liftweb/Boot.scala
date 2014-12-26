@@ -33,6 +33,7 @@ class Boot {
     val entries = List(
       Menu.i("Home") / "index", // the simple way to declare a menu
       Menu.i("Template") / "template",
+      Menu.i("Test") / "test",
       Menu(Loc("blog", Link(List("blog"), true, "/blog"), "Blog"))
     )
 
@@ -62,30 +63,39 @@ class Boot {
 
     LiftRules.contentParsers :+= ContentParser.basic("adoc", parseAdoc)
 
-    LiftRules.externalTemplateResolver.default.set(() => (() => {
-      case (locale, "blog" :: rest) =>
-        Templates.findRawTemplate("vintage" :: rest, locale).map(com.joescii.pac.snippet.WordPress.render).or(
-          Templates.findRawTemplate("modern" :: rest, locale).map(template => <lift:surround with="foundation" at="content">{template}</lift:surround>)
-        )
-    }))
-
-    LiftRules.statelessRewrite.prepend(NamedPF("BlogRewrite") {
-      case RewriteRequest(
-        ParsePath(year :: month :: day :: title :: Nil, _, _,_), _, _) =>
-          RewriteResponse(
-            "blog" :: s"$year-$month-$day-$title" :: Nil
-          )
-      case RewriteRequest(
-        ParsePath(year :: month :: day :: title :: "index" :: Nil, _, _,_), _, _) =>
-          RewriteResponse(
-            "blog" :: s"$year-$month-$day-$title" :: Nil
-          )
-    })
+    blogResolver()
+    requestRewrites()
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
   val parseAdoc:String => Box[NodeSeq] = { in =>
     val html = adoc.convert(in, new java.util.HashMap[String, Object])
     Full(scala.xml.Unparsed(html))
+  }
+
+  def blogResolver() = {
+    import com.joescii.pac.snippet._
+
+    LiftRules.externalTemplateResolver.default.set(() => (() => {
+      case (locale, "blog" :: rest) =>
+        Templates.findRawTemplate("vintage" :: rest, locale).map(WordPress.render).or(
+          Templates.findRawTemplate("modern" :: rest, locale).map(AsciiDoctor.render)
+        )
+    }))
+  }
+
+  def requestRewrites() = {
+    LiftRules.statelessRewrite.prepend(NamedPF("BlogRewrite") {
+      case RewriteRequest(
+      ParsePath(year :: month :: day :: title :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "blog" :: s"$year-$month-$day-$title" :: Nil
+        )
+      case RewriteRequest(
+      ParsePath(year :: month :: day :: title :: "index" :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "blog" :: s"$year-$month-$day-$title" :: Nil
+        )
+    })
   }
 }
