@@ -57,7 +57,6 @@ object AsciiDoctor {
   def render(page:NodeSeq):NodeSeq = {
     val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="foundation" at="content">{ns}</lift:surround> }
     val highlightScala = ".listingblock *" #> { "pre [class+]" #> "brush: scala; title: ; notranslate" }
-//    val highlightScala = "#preamble *" #> ""
 
     (surround andThen
       highlightScala).apply(page)

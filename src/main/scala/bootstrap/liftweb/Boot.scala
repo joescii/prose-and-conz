@@ -70,7 +70,7 @@ class Boot {
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
   val parseAdoc:String => Box[NodeSeq] = { in =>
     val html = adoc.convert(in, new java.util.HashMap[String, Object])
-    Full(scala.xml.Unparsed(html))
+    Html5.parse("""<html><body><div data-lift="AsciiDoctor">"""+html+"</div></body></html>")
   }
 
   def blogResolver() = {
