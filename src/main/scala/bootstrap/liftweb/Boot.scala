@@ -79,7 +79,7 @@ class Boot {
     LiftRules.externalTemplateResolver.default.set(() => (() => {
       case (locale, "blog" :: rest) =>
         Templates.findRawTemplate("vintage" :: rest, locale).map(WordPress.render).or(
-          Templates.findRawTemplate("modern" :: rest, locale).map(AsciiDoctor.render)
+          Templates.findRawTemplate("modern" :: rest, locale)
         )
     }))
   }
