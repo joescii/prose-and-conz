@@ -60,12 +60,17 @@ object AsciiDoctor {
       val code = (".language-scala ^*" #> "noop").apply(ns)
       ("pre *" #> code).apply(ns)
     }
+    val convertReferences = ".conum" #> { ns:NodeSeq =>
+      val ref = ns.text
+      s"// See $ref below"
+    }
     val highlightScala = ".listingblock *" #> {
-      liftCode andThen 
+      liftCode andThen
       "pre [class+]" #> "brush: scala; title: ; notranslate"
     }
 
     (surround andThen
+      convertReferences andThen
       highlightScala).apply(page)
   }
 
