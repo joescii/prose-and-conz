@@ -70,17 +70,14 @@ class Boot {
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
   val parseAdoc:String => Box[NodeSeq] = { in =>
     val html = adoc.convert(in, new java.util.HashMap[String, Object])
-    Html5.parse("""<html><body><div data-lift="AsciiDoctor">"""+html+"</div></body></html>")
+    Html5.parse("""<div data-lift="AsciiDoctor">"""+html+"</div>")
   }
 
   def blogResolver() = {
-    import com.joescii.pac.snippet._
+    import com.joescii.pac.lib.Posts._
 
     LiftRules.externalTemplateResolver.default.set(() => (() => {
-      case (locale, "blog" :: rest) =>
-        Templates.findRawTemplate("vintage" :: rest, locale).map(WordPress.render).or(
-          Templates.findRawTemplate("modern" :: rest, locale)
-        )
+      case (locale, "blog" :: rest) => forPath(rest, locale).map(surround)
     }))
   }
 

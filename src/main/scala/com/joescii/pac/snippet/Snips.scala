@@ -1,6 +1,7 @@
 package com.joescii.pac
 package snippet
 
+import net.liftweb.http.S
 import net.liftweb.util.Helpers._
 import scala.xml.NodeSeq
 
@@ -21,7 +22,6 @@ object WordPress {
     val stripPostData = ".post-data" #> ClearNodes
     val stripPostEdit = ".post-edit" #> ClearNodes
     val stripNavigation = ".navigation" #> ClearNodes
-    val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="foundation" at="content">{ns}</lift:surround> }
 
     val post = (extractPost &
       cleanPostMeta &
@@ -41,7 +41,7 @@ object WordPress {
       stripReplies &
       stripEdits).apply(page)
 
-    surround(post ++ commentHeader ++ comments)
+    post ++ commentHeader ++ comments
   }
 }
 
@@ -55,7 +55,6 @@ object Copyright {
 
 object AsciiDoctor {
   def render(page:NodeSeq):NodeSeq = {
-    val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="foundation" at="content">{ns}</lift:surround> }
     val liftCode:NodeSeq => NodeSeq = { ns =>
       val code = (".language-scala ^*" #> "noop").apply(ns)
       ("pre *" #> code).apply(ns)
@@ -69,9 +68,16 @@ object AsciiDoctor {
       "pre [class+]" #> "brush: scala; title: ; notranslate"
     }
 
-    (surround andThen
-      convertReferences andThen
+    (convertReferences andThen
       highlightScala).apply(page)
   }
 
+}
+
+object Posts {
+  def render(in:NodeSeq):NodeSeq = {
+    import lib.Posts._
+    val count = S.attr("count", _.toInt).openOr(5)
+    model.posts.take(count).flatMap(forPost).reduceRight(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+  }
 }
