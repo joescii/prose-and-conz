@@ -56,7 +56,14 @@ object Copyright {
 object AsciiDoctor {
   def render(page:NodeSeq):NodeSeq = {
     val surround:NodeSeq => NodeSeq = { ns => <lift:surround with="foundation" at="content">{ns}</lift:surround> }
-    val highlightScala = ".listingblock *" #> { "pre [class+]" #> "brush: scala; title: ; notranslate" }
+    val liftCode:NodeSeq => NodeSeq = { ns =>
+      val code = (".language-scala ^*" #> "noop").apply(ns)
+      ("pre *" #> code).apply(ns)
+    }
+    val highlightScala = ".listingblock *" #> {
+      liftCode andThen 
+      "pre [class+]" #> "brush: scala; title: ; notranslate"
+    }
 
     (surround andThen
       highlightScala).apply(page)
