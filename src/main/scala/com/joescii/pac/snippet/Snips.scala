@@ -41,7 +41,7 @@ object WordPress {
       stripReplies &
       stripEdits).apply(page)
 
-    post ++ commentHeader ++ comments
+    if(comments.isEmpty) post else post ++ commentHeader ++ comments
   }
 }
 
