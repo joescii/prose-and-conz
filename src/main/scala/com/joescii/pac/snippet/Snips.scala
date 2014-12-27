@@ -1,6 +1,8 @@
 package com.joescii.pac
 package snippet
 
+import java.text.SimpleDateFormat
+
 import net.liftweb.http.S
 import net.liftweb.util.Helpers._
 import scala.xml.NodeSeq
@@ -79,5 +81,23 @@ object Posts {
     import lib.Posts._
     val count = S.attr("count", _.toInt).openOr(5)
     model.posts.take(count).flatMap(forPost).reduceRight(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+  }
+}
+
+object Archive {
+  import model.year2month2post
+  import java.text.DateFormatSymbols
+
+  def render(in:NodeSeq):NodeSeq = {
+    val months = new DateFormatSymbols(S.locale).getMonths
+    year2month2post.keySet.toList.sorted.reverse.map { y =>
+      <h2>{y}</h2> ++
+        year2month2post(y).keySet.toList.sorted.reverse.map{m => <h3>{months(m-1)}</h3> ++ <ul>{
+          year2month2post(y)(m).map { p =>
+            <li><a href={p.url}>{p.fullTitle}</a></li>
+          }
+          }</ul>
+        }.reduceRight(_ ++ _)
+    }.reduceRight(_ ++ <hr></hr> ++ _)
   }
 }

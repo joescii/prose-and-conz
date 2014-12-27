@@ -1,7 +1,33 @@
 package com.joescii.pac
 
+import java.text.DecimalFormat
+import java.util.{Calendar, GregorianCalendar}
+
 package object model {
-  case class Post(year:Int, month:Int, day:Int, title:String)
+  case class Post(year:Int, month:Int, day:Int, title:String) {
+    val twoDigits = new DecimalFormat("00")
+    val date = {
+      val cal = new GregorianCalendar()
+      cal.set(Calendar.YEAR, year)
+      cal.set(Calendar.MONTH, month - 1)
+      cal.set(Calendar.DAY_OF_MONTH, day)
+      cal.getTime
+    }
+    val yearStr = year.toString
+    val monthStr = twoDigits.format(month)
+    val dayStr = twoDigits.format(day)
+    val url = s"/$yearStr/$monthStr/$dayStr/$title/"
+    val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
+    val fullTitle = {
+      import net.liftweb.util.Helpers._
+      val html = lib.Posts.forPost(this)
+      val h2s = html.map("h2 ^*" #> "noop")
+      val firstH2 = h2s.flatMap(_.headOption)
+      val firstH2Text = firstH2.map(_.text)
+      firstH2Text openOr title
+    }
+  }
+
   object Post{
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     def apply(filename:String):Post = {
@@ -9,6 +35,7 @@ package object model {
       Post(year.toInt, month.toInt, day.toInt, title)
     }
   }
+
   val posts = Seq(
     Post("2014-12-26-article"),
     Post("2014-12-24-first-post"),
@@ -75,4 +102,15 @@ package object model {
     Post("2012-01-22-technology-to-make-your-resume-lead-with-the-awesome"),
     Post("2012-01-15-so-i-finally-created-a-blog")
   )
+
+  val year2month2post:Map[Int, Map[Int, Seq[Post]]] = {
+    val years = posts.map(_.year).distinct
+    val monthByYear = years.map(y =>
+      y -> posts.filter(_.year == y).map(_.month).distinct).toMap
+    monthByYear.keySet.map { y =>
+      y -> monthByYear(y).map { m =>
+        m -> posts.filter(p => p.year == y && p.month == m)
+      }.toMap
+    }.toMap
+  }
 }

@@ -13,14 +13,7 @@ import net.liftweb.http.Templates
 import scala.xml.NodeSeq
 
 object Posts {
-  val twoDigits = new DecimalFormat("00")
-  def forPost(post:Post) = {
-    import post._
-    val m = twoDigits.format(month)
-    val d = twoDigits.format(day)
-
-    forPath(List(s"$year-$m-$d-$title"), Locale.getDefault)
-  }
+  def forPost(post:Post) = forPath(List(post.shortPath), Locale.getDefault)
 
   def forPath(path:List[String], locale:Locale) = {
     Templates.findRawTemplate("vintage" :: path, locale).map(WordPress.render).or(
