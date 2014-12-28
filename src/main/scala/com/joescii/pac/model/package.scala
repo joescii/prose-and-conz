@@ -4,7 +4,7 @@ import java.text.DecimalFormat
 import java.util.{Calendar, GregorianCalendar}
 
 package object model {
-  case class Post(year:Int, month:Int, day:Int, title:String) {
+  case class Post(year:Int, month:Int, day:Int, title:String, tags:List[String]) {
     val twoDigits = new DecimalFormat("00")
     val date = {
       val cal = new GregorianCalendar()
@@ -32,20 +32,23 @@ package object model {
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     def apply(filename:String, tags:List[String]):Post = {
       val regex(year, month, day, title) = filename
-      Post(year.toInt, month.toInt, day.toInt, title)
+      Post(year.toInt, month.toInt, day.toInt, title, tags)
     }
   }
 
   val posts = Seq(
+    // Modern
     Post("2014-12-26-article", List()),
     Post("2014-12-24-first-post", List()),
+
+    // Vintage
     Post("2014-12-15-scala-the-language-of-agility", List("agility", "grails", "groovy", "liftweb", "scala")),
     Post("2014-12-09-the-jvm-bytes-pilot-post", List("bytecode", "java", "tutorial")),
     Post("2014-11-24-favoring-expressions-over-statements", List("coffeescript", "conferences", "functional-programming", "java", "javascript", "nfjs", "scala")),
     Post("2014-09-24-video-15-minute-chat-with-lift-ng", List("functional-programming", "liftweb", "video", "web-development")),
     Post("2014-09-17-why-a-jvm-on-a-vm", List("java", "polyglot", "scala", "web-development")),
     Post("2014-08-11-javascript-is-not-a-functional-language", List("coffeescript", "functional-programming", "haskell", "java", "javascript", "scala")),
-    Post("2014-08-04-if-i-were-writing-a-language", List("clojure", "functional-programming", "haskell", "javascript", "liftweb", "polyglot", "purescript", "sala", "static-typing", "web-development")),
+    Post("2014-08-04-if-i-were-writing-a-language", List("clojure", "functional-programming", "haskell", "javascript", "liftweb", "polyglot", "purescript", "scala", "static-typing", "web-development")),
     Post("2014-07-28-on-naming", List("functional-programming", "java", "mathematics", "scala", "software-development")),
     Post("2014-06-29-uberconf-days-3-4-hits-and-misses", List("agility", "clojure", "cloud", "conferences", "functional-programming", "haskell", "java", "uberconf")),
     Post("2014-06-26-uberconf-day-2-second-expojure-to-clojure", List("clojure", "conferences", "functional-programming", "polyglot", "uberconf")),
@@ -113,5 +116,10 @@ package object model {
         m -> posts.filter(p => p.year == y && p.month == m)
       }.toMap
     }.toMap
+  }
+
+  val tags:Map[String, Seq[Post]] = {
+    val ts = posts.flatMap(_.tags).distinct
+    ts.map(tag => tag -> posts.filter(_.tags contains tag)).toMap
   }
 }

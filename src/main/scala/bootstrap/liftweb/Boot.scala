@@ -34,6 +34,7 @@ class Boot {
       Menu.i("Home") / "index", // the simple way to declare a menu
       Menu.i("Template") / "template",
       Menu.i("Archive") / "archive",
+      Menu.i("Tags") / "tags",
       Menu(Loc("blog", Link(List("blog"), true, "/blog"), "Blog"))
     )
 

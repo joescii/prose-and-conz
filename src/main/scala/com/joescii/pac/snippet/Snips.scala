@@ -101,3 +101,16 @@ object Archive {
     }.reduceRight(_ ++ <hr></hr> ++ _)
   }
 }
+
+object Tags {
+  import model.tags
+
+  def render(in:NodeSeq):NodeSeq = {
+    tags.keySet.toList
+      .sortWith { case (l, r) => tags(l).length > tags(r).length }
+      .map { tag =>
+        val count = tags(tag).length
+        <h2>{s"$tag ($count)"}</h2>
+      }.foldRight(NodeSeq.Empty)(_ ++ _)
+  }
+}
