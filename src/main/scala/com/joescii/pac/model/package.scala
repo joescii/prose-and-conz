@@ -73,7 +73,7 @@ package object model {
     Post("2013-12-02-find-a-bandwagon-and-jump-on", List("grails", "groovy", "java", "scala")),
     Post("2013-11-11-deploying-lift-to-cloudbees", List("cloud", "cloudbees", "liftweb", "scala", "tutorial", "web-development")),
     Post("2013-10-24-or-java-if-youre-not-into-the-whole-brevity-thing", List("functional-programming", "java", "mathematics", "scala")),
-    Post("2013-10-12-video-intro-to-functional-programming-in-scala", List("functional-programming", "java", "scala", "software-development", "technology-2", "video")),
+    Post("2013-10-12-video-intro-to-functional-programming-in-scala", List("functional-programming", "java", "scala", "software-development", "technology", "video")),
     Post("2013-09-23-use-a-computer-to-do-your-testing-too", List("test-driven-development", "unit-testing")),
     Post("2013-09-15-scala-imports", List("java", "scala")),
     Post("2013-09-09-map-reduce-and-fold-for-the-programmatically-imperative", List("java", "scala")),
