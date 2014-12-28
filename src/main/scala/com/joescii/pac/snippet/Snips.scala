@@ -112,10 +112,20 @@ object Tags {
       .sortWith { case (l, r) => tags(l).length > tags(r).length }
       .map { tag =>
         val count = tags(tag).length
-        <a href="#">{s"$tag ($count)"}</a>
+        val href = s"/tag/$tag"
+        <a href={href}>{s"$tag ($count)"}</a>
       }
     val trimmed = count.map(anchors.take).openOr(anchors)
 
     ".tag *" #> trimmed & ClearClearable
+  }
+}
+
+object Tag {
+  def render(in:NodeSeq):NodeSeq = {
+    import lib.Posts._
+    S.param("tag").map { tag =>
+      model.tags(tag).flatMap(forPost).reduceRight(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+    }.openOr(NodeSeq.Empty)
   }
 }

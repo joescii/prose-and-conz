@@ -35,6 +35,7 @@ class Boot {
       Menu.i("Template") / "template",
       Menu.i("Archive") / "archive",
       Menu.i("Tags") / "tags",
+      Menu.i("Tag") / "tag",
       Menu(Loc("blog", Link(List("blog"), true, "/blog"), "Blog"))
     )
 
@@ -94,6 +95,19 @@ class Boot {
         RewriteResponse(
           "blog" :: s"$year-$month-$day-$title" :: Nil
         )
+      case RewriteRequest(
+      ParsePath("tags" :: "index" :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "tags" :: Nil
+        )
+      case RewriteRequest(
+      ParsePath("tag" :: tag :: "index" :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "tag" :: tag :: Nil
+        )
+      case RewriteRequest(
+      ParsePath("tag" :: tag :: Nil, _, _,_), _, _) =>
+        RewriteResponse(ParsePath("tag" :: Nil, "", true, false), Map("tag" -> tag), true)
     })
   }
 }
