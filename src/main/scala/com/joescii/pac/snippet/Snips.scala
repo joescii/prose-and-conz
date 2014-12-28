@@ -4,6 +4,7 @@ package snippet
 import java.text.SimpleDateFormat
 
 import net.liftweb.http.S
+import net.liftweb.util.ClearClearable
 import net.liftweb.util.Helpers._
 import scala.xml.NodeSeq
 
@@ -105,12 +106,16 @@ object Archive {
 object Tags {
   import model.tags
 
-  def render(in:NodeSeq):NodeSeq = {
-    tags.keySet.toList
+  def render = {
+    val count = S.attr("count", _.toInt)
+    val anchors = tags.keySet.toList
       .sortWith { case (l, r) => tags(l).length > tags(r).length }
       .map { tag =>
         val count = tags(tag).length
-        <h2>{s"$tag ($count)"}</h2>
-      }.foldRight(NodeSeq.Empty)(_ ++ _)
+        <a href="#">{s"$tag ($count)"}</a>
+      }
+    val trimmed = count.map(anchors.take).openOr(anchors)
+
+    ".tag *" #> trimmed & ClearClearable
   }
 }
