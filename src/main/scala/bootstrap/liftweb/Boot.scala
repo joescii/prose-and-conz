@@ -72,9 +72,10 @@ class Boot {
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
+  val adocOpts = org.asciidoctor.OptionsBuilder.options().headerFooter(true)
   val parseAdoc:String => Box[NodeSeq] = { in =>
-    val html = adoc.convert(in, new java.util.HashMap[String, Object])
-    Html5.parse("""<div data-lift="AsciiDoctor">"""+html+"</div>")
+    val html = adoc.convert(in, adocOpts)
+    Html5 parse html
   }
 
   def blogResolver() = {

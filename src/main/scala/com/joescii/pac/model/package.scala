@@ -2,17 +2,19 @@ package com.joescii.pac
 
 import java.util.{Locale, Calendar, GregorianCalendar}
 
+import com.joescii.pac.snippet.AsciiDoctor
+
 import scala.xml.NodeSeq
 
+import net.liftweb.http.Templates
 
 package object model {
   object Post {
     import com.joescii.pac.snippet.WordPress
-    import net.liftweb.http.Templates
 
     def forPath(path:List[String], locale:Locale) = {
       Templates.findRawTemplate("vintage" :: path, locale).map(WordPress.render).or(
-        Templates.findRawTemplate("modern" :: path, locale)
+        Templates.findRawTemplate("modern" :: path, locale).map(AsciiDoctor.render)
       )
     }
 
@@ -29,6 +31,7 @@ package object model {
     def title:String
     def tags:List[String]
     def description:String
+    def root:String
 
     lazy val date = {
       val cal = new GregorianCalendar()
@@ -51,11 +54,13 @@ package object model {
       firstH2Text getOrElse title
     }
     lazy val html:NodeSeq = Post.forPath(List(shortPath), Locale.getDefault).openOr(<div>Post not found! {this}</div>)
+    lazy val rawHtml = Templates.findRawTemplate(root :: shortPath :: Nil, Locale.getDefault)
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {
     import net.liftweb.util.Helpers._
-    import net.liftweb.http.Templates
+
+    val root = "vintage"
 
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
@@ -67,7 +72,6 @@ package object model {
     val month = monthStr.toInt
     val day = dayStr.toInt
 
-    val rawHtml = Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault)
     val description:String = {
       val descrNode = rawHtml.map("property=og:description ^^" #> "noop")
       descrNode.map(_ \ "@content").map(_.toString).openOr("Description/Summary unavailable")
@@ -75,6 +79,8 @@ package object model {
   }
 
   case class ModernPost(uid:String, filename:String, tags:List[String]) extends Post {
+    val root = "modern"
+
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
       yearStr,

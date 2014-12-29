@@ -58,6 +58,7 @@ object Copyright {
 
 object AsciiDoctor {
   def render(page:NodeSeq):NodeSeq = {
+    val extractPost = "#content ^^" #> "noop"
     val liftCode:NodeSeq => NodeSeq = { ns =>
       val code = (".language-scala ^*" #> "noop").apply(ns)
       ("pre *" #> code).apply(ns)
@@ -71,7 +72,8 @@ object AsciiDoctor {
       "pre [class+]" #> "brush: scala; title: ; notranslate"
     }
 
-    (convertReferences andThen
+    (extractPost andThen
+      convertReferences andThen
       highlightScala).apply(page)
   }
 
