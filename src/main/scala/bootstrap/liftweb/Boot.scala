@@ -87,7 +87,7 @@ class Boot {
     def surround(ns:NodeSeq) = <lift:surround with="foundation" at="content">{ns}</lift:surround>
 
     LiftRules.externalTemplateResolver.default.set(() => (() => {
-      case (locale, "blog" :: rest) => forPath(rest, locale).map(surround)
+      case (locale, "blog" :: rest) => forPath(rest).map(_.html).map(surround)
     }))
   }
 

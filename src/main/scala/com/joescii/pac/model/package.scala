@@ -3,7 +3,7 @@ package com.joescii.pac
 import java.text.{DecimalFormat, SimpleDateFormat}
 import java.util.{Date, Locale, Calendar, GregorianCalendar}
 
-import com.joescii.pac.snippet.AsciiDoctor
+import com.joescii.pac.snippet.{WordPress, AsciiDoctor}
 import net.liftweb.common.Box
 
 import scala.xml.NodeSeq
@@ -15,12 +15,13 @@ package object model {
   object Post {
     import com.joescii.pac.snippet.WordPress
 
-    def forPath(path:List[String], locale:Locale) = {
-      Templates.findRawTemplate("vintage" :: path, locale).map(WordPress.render).or(
-        Templates.findRawTemplate("modern" ::
-          path.map(_.replaceFirst("""(\d{4})-(\d{2})-(\d{2})-""", "")),
-          locale).map(AsciiDoctor.render)
-      )
+    val pathPrefixPattern = """(\d{4})-(\d{2})-(\d{2})-"""
+    val vintageFilenamePattern = pathPrefixPattern+"(.*)"
+    val vintageFilenameRegex = vintageFilenamePattern.r
+
+    def forPath(path:List[String]) = path.headOption.flatMap { filename =>
+      val title = vintageFilenameRegex.findFirstMatchIn(filename).map(_.group(4)).getOrElse(filename)
+      posts.find(_.title == title)
     }
 
   }
@@ -67,7 +68,13 @@ package object model {
       val firstH2Text = firstH2.map(_.text)
       firstH2Text getOrElse title
     }
-    lazy val html:NodeSeq = Post.forPath(List(shortPath), Locale.getDefault).openOr(<div>Post not found! {this}</div>)
+    lazy val html:NodeSeq = {
+      Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault).map(WordPress.render).or(
+        Templates.findRawTemplate("modern" ::
+          shortPath.replaceFirst(Post.pathPrefixPattern, "") :: Nil,
+          Locale.getDefault).map(AsciiDoctor.render)
+      ).openOr(<div>Post not found! {this}</div>)
+    }
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {
@@ -76,7 +83,7 @@ package object model {
     val descriptionProp = "property=og:description"
     val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
-    val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
+    val regex = Post.vintageFilenameRegex
     val regex(
       yearStr,
       monthStr,
