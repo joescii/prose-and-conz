@@ -4,6 +4,7 @@ package snippet
 import net.liftweb.http.S
 import net.liftweb.util.ClearClearable
 import net.liftweb.util.Helpers._
+import scala.util.Random
 import scala.xml.NodeSeq
 
 object WordPress {
@@ -82,6 +83,17 @@ object Posts {
     val count = S.attr("count", _.toInt).openOr(5)
     model.posts.take(count).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
   }
+}
+
+object Preview {
+  import model.{ Post, posts }
+  private def snip(post:Post) =
+    ".description *" #> post.description &
+    ".title *" #> post.fullTitle &
+    "href=# [href]" #> post.url
+
+  def latest = snip(posts.head)
+  def random = snip(posts(Random.nextInt(posts.length)))
 }
 
 object Archive {

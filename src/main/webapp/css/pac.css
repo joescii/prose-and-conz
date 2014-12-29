@@ -1,3 +1,7 @@
 .header-img {
   max-width: 50px;
 }
+
+.panel h6 {
+  font-style: italic;
+}
