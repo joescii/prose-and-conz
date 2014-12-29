@@ -12,7 +12,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object RssFeed extends RestHelper {
   private def feed(items:NodeSeq):Elem =
-    <rss version="2.0">
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
         <title>prose :: and :: conz by joescii</title>
         <link>http://proseand.co.nz</link>
@@ -23,12 +23,13 @@ object RssFeed extends RestHelper {
           <link>http://proseand.co.nz</link>
           <url>http://proseand.co.nz/images/pacyang.png</url>
         </image>
+        <atom:link href="http://proseand.co.nz/feed" rel="self" type="application/rss+xml" />
         {items}
       </channel>
     </rss>
 
   private def items(posts:Seq[Post]):NodeSeq = {
-    val format = new SimpleDateFormat("dd mm yy hh:mm:ss zzz")
+    val format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
 
     posts.map { post =>
       <item>
@@ -36,6 +37,7 @@ object RssFeed extends RestHelper {
         <link>http://proseand.co.nz{post.url}</link>
         <description>{post.description}</description>
         <pubDate>{format.format(post.published)}</pubDate>
+        <guid isPermaLink="false">tag:proseand.co.nz,2014-12-29:{post.uid}</guid>
       </item>
     }
   }
