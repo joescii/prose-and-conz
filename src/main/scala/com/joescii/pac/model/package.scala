@@ -84,13 +84,14 @@ package object model {
     val day = dayStr.toInt
 
     val published = meta("property=article:published_time").map(timestamp.parse).openOr(date)
-    val updated   = meta("property=article:modified_time").map(timestamp.parse).openOr(date)
+    val updated   = meta("property=article:modified_time").map(timestamp.parse).openOr(published)
   }
 
   case class ModernPost(uid:String, filename:String) extends Post {
     // Meta stuff
     val root = "modern"
     val descriptionProp = "name=description"
+    val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
@@ -105,9 +106,8 @@ package object model {
     val tags:List[String] = meta("name=keywords").map { keywords =>
       keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
     }.openOr(List())
-
-    val published = date
-    val updated = date
+    val published = meta("name=published").map(timestamp.parse).openOr(date)
+    val updated   = meta("name=updated").map(timestamp.parse).openOr(published)
   }
 
   val posts:Seq[Post] = Seq(
