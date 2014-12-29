@@ -5,3 +5,11 @@
 .panel h6 {
   font-style: italic;
 }
+
+.previous-next {
+  margin-top: 15px;
+}
+
+.tagged-with {
+  font-style: italic;
+}

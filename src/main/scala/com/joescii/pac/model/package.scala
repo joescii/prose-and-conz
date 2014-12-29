@@ -19,6 +19,7 @@ package object model {
     val vintageFilenamePattern = pathPrefixPattern+"(.*)"
     val vintageFilenameRegex = vintageFilenamePattern.r
 
+    def forTitle(title:String) = forPath(List(title))
     def forPath(path:List[String]) = path.headOption.flatMap { filename =>
       val title = vintageFilenameRegex.findFirstMatchIn(filename).map(_.group(4)).getOrElse(filename)
       posts.find(_.title == title)
@@ -68,12 +69,13 @@ package object model {
       val firstH2Text = firstH2.map(_.text)
       firstH2Text getOrElse title
     }
+    lazy val taggedWith = <lift:TaggedWith post={title}><span class="tagged-with">Tagged with:</span> <span class="tags"></span></lift:TaggedWith>
     lazy val html:NodeSeq = {
       Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault).map(WordPress.render).or(
         Templates.findRawTemplate("modern" ::
           shortPath.replaceFirst(Post.pathPrefixPattern, "") :: Nil,
           Locale.getDefault).map(AsciiDoctor.render)
-      ).openOr(<div>Post not found! {this}</div>)
+      ).map(_ ++ taggedWith).openOr(<div>Post not found! {this}</div>)
     }
   }
 
@@ -108,7 +110,7 @@ package object model {
 
     val rawHtml = Templates.findRawTemplate(root :: title :: Nil, Locale.getDefault)
     val tags:List[String] = meta("name=keywords").map { keywords =>
-      keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
+      keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).filter(_.length > 0).toList
     }.openOr(List())
     val published = meta("name=published").map(timestamp.parse).openOr(date)
     val updated   = meta("name=updated").map(timestamp.parse).openOr(published)

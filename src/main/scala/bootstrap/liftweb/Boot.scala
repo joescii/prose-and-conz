@@ -85,7 +85,6 @@ class Boot {
   def blogResolver() = {
     import com.joescii.pac.model.Post._
     import com.joescii.pac.snippet.CurrentPost
-
     def surround(ns:NodeSeq) = <lift:surround with="foundation" at="content">{ns}</lift:surround>
 
     LiftRules.externalTemplateResolver.default.set(() => (() => {

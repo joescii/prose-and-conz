@@ -148,6 +148,23 @@ object Tags {
   }
 }
 
+object TaggedWith {
+  import model.tags
+
+  def render = {
+    val anchors = S.attr("post", _.toString).flatMap(model.Post.forTitle).flatMap(_.tags
+      .sortWith { case (l, r) => tags(l).length > tags(r).length }
+      .map { tag =>
+        val count = tags(tag).length
+        val href = s"/tag/$tag"
+        <a href={href}>{s"$tag ($count)"}</a>:NodeSeq
+      }
+      .reduceRightOption(_ ++ <span>, </span> ++ _)
+    )
+    anchors.map(".tags *" #> _).openOr(ClearNodes)
+  }
+}
+
 object Tag {
   def render(in:NodeSeq):NodeSeq = {
     S.param("tag").map { tag =>
