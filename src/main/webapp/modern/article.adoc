@@ -190,4 +190,3 @@ Much thanks for the inspiration for the content of the article is owed to the fo
 
 == About the Author
 
-include::joescii-bio.adoc[]

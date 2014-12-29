@@ -8,7 +8,7 @@ import net.liftweb.common.Box
 
 import scala.xml.NodeSeq
 
-import net.liftweb.http.Templates
+import net.liftweb.http.{LiftRules, Templates}
 import net.liftweb.util.Helpers._
 
 package object model {
@@ -103,7 +103,6 @@ package object model {
     val tags:List[String] = meta("name=keywords").map { keywords =>
       keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
     }.openOr(List())
-    println(tags)
     val published = meta("name=published").map(timestamp.parse).openOr(date)
     val updated   = meta("name=updated").map(timestamp.parse).openOr(published)
 
@@ -121,12 +120,15 @@ package object model {
     val shortPath = title
   }
 
-  val posts:Seq[Post] = Seq(
-    // Modern
-    ModernPost("828c47e3-a44b-4492-ac36-5c62fa626181", "article"),
-    ModernPost("ddde80a0-c0fa-479b-bdaa-ef545c6303c6", "first-post"),
+  val modernPosts = {
+    val lines = LiftRules.loadResourceAsString("/posts.csv").toList.flatMap(_.split("""(?s)\s*\n\s*"""))
+    lines.map { line =>
+      val split = line.split("""\s*,\s*""")
+      ModernPost(split(0), split(1))
+    }.reverse
+  }
 
-    // Vintage
+  val vintagePosts = Seq(
     VintagePost("acf0ff8d-1838-48cc-8bf2-cbd70110c012", "2014-12-15-scala-the-language-of-agility", List("agility", "grails", "groovy", "liftweb", "scala")),
     VintagePost("41e10994-99cf-4d64-a6fa-35352be8db36", "2014-12-09-the-jvm-bytes-pilot-post", List("bytecode", "java", "tutorial")),
     VintagePost("66c271a7-29d9-4f35-8442-13a101f4ae5e", "2014-11-24-favoring-expressions-over-statements", List("coffeescript", "conferences", "functional-programming", "java", "javascript", "nfjs", "scala")),
@@ -191,6 +193,8 @@ package object model {
     VintagePost("c805afb7-086f-43ca-9491-ffaf756a04e4", "2012-01-22-technology-to-make-your-resume-lead-with-the-awesome", List("dropbox", "google-docs", "qr-codes", "resume", "technology", "tutorial")),
     VintagePost("498689fd-1b03-4a4a-afea-c6463290af14", "2012-01-15-so-i-finally-created-a-blog", List("first-blog"))
   )
+
+  val posts:Seq[Post] = modernPosts ++ vintagePosts
 
   val year2month2post:Map[Int, Map[Int, Seq[Post]]] = {
     val years = posts.map(_.year).distinct
