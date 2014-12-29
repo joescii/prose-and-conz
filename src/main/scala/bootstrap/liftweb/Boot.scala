@@ -1,6 +1,6 @@
 package bootstrap.liftweb
 
-import com.joescii.pac.lib.RssFeed
+import com.joescii.pac.lib.{ RssFeed, AtomFeed }
 import net.liftweb._
 import net.liftweb.common.Box
 import net.liftweb.common.Full
@@ -69,6 +69,7 @@ class Boot {
     blogResolver()
     requestRewrites()
     LiftRules.statelessDispatch.append(RssFeed)
+    LiftRules.statelessDispatch.append(AtomFeed)
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
@@ -111,6 +112,11 @@ class Boot {
       ParsePath("feed" :: "index" :: Nil, _, _,_), _, _) =>
         RewriteResponse(
           "feed" :: Nil
+        )
+      case RewriteRequest(
+      ParsePath("atom" :: "index" :: Nil, _, _,_), _, _) =>
+        RewriteResponse(
+          "atom" :: Nil
         )
       case RewriteRequest(
       ParsePath("tag" :: tag :: Nil, _, _,_), _, _) =>
