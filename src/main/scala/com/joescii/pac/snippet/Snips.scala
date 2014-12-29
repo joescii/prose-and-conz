@@ -1,11 +1,14 @@
 package com.joescii.pac
 package snippet
 
-import net.liftweb.http.S
-import net.liftweb.util.ClearClearable
+import net.liftweb.common.{Full, Empty, Box}
+import net.liftweb.http.{RequestVar, S}
+import net.liftweb.util.{ClearNodes, ClearClearable}
 import net.liftweb.util.Helpers._
 import scala.util.Random
 import scala.xml.NodeSeq
+
+object CurrentPost extends RequestVar[Box[model.Post]](Empty)
 
 object WordPress {
   import net.liftweb.util.ClearNodes
@@ -82,6 +85,19 @@ object Posts {
   def render(in:NodeSeq):NodeSeq = {
     val count = S.attr("count", _.toInt).openOr(5)
     model.posts.take(count).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+  }
+}
+
+object PreviousNext {
+  import model.posts
+
+  def render = {
+    val index = CurrentPost.map(posts.indexOf)
+    val prev = index flatMap (i => if(i+1 < posts.length) Full(posts(i+1)) else Empty)
+    val next = index flatMap (i => if(i-1 >= 0) Full(posts(i-1)) else Empty)
+
+    prev.map(post => ".prev [href]" #> post.url & ".prev-title" #> post.fullTitle).openOr(".prev" #> ClearNodes) &
+    next.map(post => ".next [href]" #> post.url & ".next-title" #> post.fullTitle).openOr(".next" #> ClearNodes)
   }
 }
 

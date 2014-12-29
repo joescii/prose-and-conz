@@ -84,10 +84,16 @@ class Boot {
 
   def blogResolver() = {
     import com.joescii.pac.model.Post._
+    import com.joescii.pac.snippet.CurrentPost
+
     def surround(ns:NodeSeq) = <lift:surround with="foundation" at="content">{ns}</lift:surround>
 
     LiftRules.externalTemplateResolver.default.set(() => (() => {
-      case (locale, "blog" :: rest) => forPath(rest).map(_.html).map(surround)
+      case (locale, "blog" :: rest) => {
+        val post = forPath(rest)
+        CurrentPost(post)
+        post.map(_.html).map(surround)
+      }
     }))
   }
 
