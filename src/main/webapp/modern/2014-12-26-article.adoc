@@ -4,6 +4,8 @@ Joe Barnes <barnesjd@gmail.com>
 :hashtag: Scala
 :keywords: Scala, static typing
 :description: This article invites the reader to play with the static type system in Scala without the theory that typically entangles a beginner.
+:published: 2014-12-26T05:00:00-0600
+:updated: 2014-12-26T05:00:00-0600
 ifndef::codedir[:codedir: code]
 ifndef::imagesdir[:imagesdir: images]
 

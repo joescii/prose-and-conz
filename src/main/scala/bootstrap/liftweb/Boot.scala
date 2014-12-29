@@ -1,6 +1,6 @@
 package bootstrap.liftweb
 
-import com.joescii.pac.lib.{ RssFeed, AtomFeed }
+import com.joescii.pac.lib.{MetaDocinfoProcessor, RssFeed, AtomFeed}
 import com.joescii.pac.model.{ posts }
 import net.liftweb._
 import net.liftweb.common.Box
@@ -71,8 +71,12 @@ class Boot {
     posts.foreach(_.html)
   }
 
-  val adoc = org.asciidoctor.Asciidoctor.Factory.create()
-  val adocOpts = org.asciidoctor.OptionsBuilder.options().headerFooter(true)
+  val adoc = {
+    val ref = org.asciidoctor.Asciidoctor.Factory.create()
+    ref.javaExtensionRegistry().docinfoProcessor(classOf[MetaDocinfoProcessor])
+    ref
+  }
+  val adocOpts = org.asciidoctor.OptionsBuilder.options().headerFooter(true).safe(org.asciidoctor.SafeMode.SERVER).get()
   val parseAdoc:String => Box[NodeSeq] = { in =>
     val html = adoc.convert(in, adocOpts)
     Html5 parse html

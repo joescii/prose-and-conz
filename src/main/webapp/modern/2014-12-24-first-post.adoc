@@ -1,3 +1,8 @@
+:keywords:
+:description: This is the first blog post written with asciidoctor as a test.
+:published: 2014-12-24T05:00:00-0600
+:updated: 2014-12-24T05:00:00-0600
+
 == First new post
 
 This is the first new post
