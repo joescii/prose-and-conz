@@ -7,6 +7,7 @@ import com.joescii.pac.snippet.AsciiDoctor
 import scala.xml.NodeSeq
 
 import net.liftweb.http.Templates
+import net.liftweb.util.Helpers._
 
 package object model {
   object Post {
@@ -30,8 +31,13 @@ package object model {
     def dayStr:String
     def title:String
     def tags:List[String]
-    def description:String
     def root:String
+    def descriptionProp:String
+
+    lazy val description:String = {
+      val descrNode = rawHtml.map(s"$descriptionProp ^^" #> "noop")
+      descrNode.map(_ \ "@content").map(_.toString).openOr("Description/Summary unavailable")
+    }
 
     lazy val date = {
       val cal = new GregorianCalendar()
@@ -47,7 +53,6 @@ package object model {
     lazy val url = s"/$yearStr/$monthStr/$dayStr/$title/"
     lazy val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
     lazy val fullTitle = {
-      import net.liftweb.util.Helpers._
       val h2s = html.map("h2 ^*" #> "noop")
       val firstH2 = h2s.headOption
       val firstH2Text = firstH2.map(_.text)
@@ -58,9 +63,9 @@ package object model {
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {
-    import net.liftweb.util.Helpers._
-
+    // Meta stuff
     val root = "vintage"
+    val descriptionProp = "property=og:description"
 
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
@@ -72,14 +77,12 @@ package object model {
     val month = monthStr.toInt
     val day = dayStr.toInt
 
-    val description:String = {
-      val descrNode = rawHtml.map("property=og:description ^^" #> "noop")
-      descrNode.map(_ \ "@content").map(_.toString).openOr("Description/Summary unavailable")
-    }
   }
 
-  case class ModernPost(uid:String, filename:String, tags:List[String]) extends Post {
+  case class ModernPost(uid:String, filename:String) extends Post {
+    // Meta stuff
     val root = "modern"
+    val descriptionProp = "name=description"
 
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
@@ -90,13 +93,14 @@ package object model {
     val year = yearStr.toInt
     val month = monthStr.toInt
     val day = dayStr.toInt
-    val description = "Modern post"
+
+    val tags:List[String] = List()
   }
 
   val posts:Seq[Post] = Seq(
     // Modern
-    ModernPost("828c47e3-a44b-4492-ac36-5c62fa626181", "2014-12-26-article", List()),
-    ModernPost("ddde80a0-c0fa-479b-bdaa-ef545c6303c6", "2014-12-24-first-post", List()),
+    ModernPost("828c47e3-a44b-4492-ac36-5c62fa626181", "2014-12-26-article"),
+    ModernPost("ddde80a0-c0fa-479b-bdaa-ef545c6303c6", "2014-12-24-first-post"),
 
     // Vintage
     VintagePost("acf0ff8d-1838-48cc-8bf2-cbd70110c012", "2014-12-15-scala-the-language-of-agility", List("agility", "grails", "groovy", "liftweb", "scala")),
