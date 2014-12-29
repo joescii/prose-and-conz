@@ -48,7 +48,7 @@ object RssFeed extends RestHelper {
 }
 
 object AtomFeed extends RestHelper {
-  private val time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+  private val time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
 
   private def feed(posts:Seq[Post]):Elem = {
     val latest = posts.map(_.published).sorted.last
@@ -56,6 +56,8 @@ object AtomFeed extends RestHelper {
         <title>prose :: and :: conz by joescii</title>
         <subtitle>Code, the Universe and Everything</subtitle>
         <link href="http://proseand.co.nz"/>
+        <id>http://proseand.co.nz/</id>
+        <link href="http://proseand.co.nz/atom" rel="self" type="application/rss+xml" />
         <updated>{time.format(latest)}</updated>
         <author>
           <name>Joe Barnes</name>
@@ -73,7 +75,7 @@ object AtomFeed extends RestHelper {
       <entry>
         <title>{post.fullTitle}</title>
         <link href={url}/>
-        <id>{post.uid}</id>
+        <id>tag:proseand.co.nz,2014-12-29:{post.uid}</id>
         <updated>{time.format(post.updated)}</updated>
         <summary>{post.description}</summary>
       </entry>
