@@ -1,9 +1,10 @@
 package com.joescii.pac
 
-import java.text.SimpleDateFormat
+import java.text.{DecimalFormat, SimpleDateFormat}
 import java.util.{Date, Locale, Calendar, GregorianCalendar}
 
 import com.joescii.pac.snippet.AsciiDoctor
+import net.liftweb.common.Box
 
 import scala.xml.NodeSeq
 
@@ -16,7 +17,9 @@ package object model {
 
     def forPath(path:List[String], locale:Locale) = {
       Templates.findRawTemplate("vintage" :: path, locale).map(WordPress.render).or(
-        Templates.findRawTemplate("modern" :: path, locale).map(AsciiDoctor.render)
+        Templates.findRawTemplate("modern" ::
+          path.map(_.replaceFirst("""(\d{4})-(\d{2})-(\d{2})-""", "")),
+          locale).map(AsciiDoctor.render)
       )
     }
 
@@ -36,6 +39,8 @@ package object model {
     def descriptionProp:String
     def published:Date
     def updated:Date
+    def shortPath:String
+    def rawHtml:Box[NodeSeq]
 
     def meta(prop:String) = {
       val node = rawHtml.map(s"$prop ^^" #> "noop")
@@ -44,7 +49,7 @@ package object model {
 
     lazy val description:String = meta(descriptionProp).openOr("Description/Summary unavailable")
 
-    lazy val date = {
+    protected lazy val date = {
       val cal = new GregorianCalendar()
       cal.set(Calendar.YEAR, year)
       cal.set(Calendar.MONTH, month - 1)
@@ -56,7 +61,6 @@ package object model {
       cal.getTime
     }
     lazy val url = s"/$yearStr/$monthStr/$dayStr/$title/"
-    lazy val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
     lazy val fullTitle = {
       val h2s = html.map("h2 ^*" #> "noop")
       val firstH2 = h2s.headOption
@@ -64,7 +68,6 @@ package object model {
       firstH2Text getOrElse title
     }
     lazy val html:NodeSeq = Post.forPath(List(shortPath), Locale.getDefault).openOr(<div>Post not found! {this}</div>)
-    lazy val rawHtml = Templates.findRawTemplate(root :: shortPath :: Nil, Locale.getDefault)
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {
@@ -82,38 +85,46 @@ package object model {
     val year = yearStr.toInt
     val month = monthStr.toInt
     val day = dayStr.toInt
+    val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
+    val rawHtml = Templates.findRawTemplate(root :: shortPath :: Nil, Locale.getDefault)
 
     val published = meta("property=article:published_time").map(timestamp.parse).openOr(date)
     val updated   = meta("property=article:modified_time").map(timestamp.parse).openOr(published)
   }
 
-  case class ModernPost(uid:String, filename:String) extends Post {
+  case class ModernPost(uid:String, title:String) extends Post {
     // Meta stuff
     val root = "modern"
     val descriptionProp = "name=description"
     val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+    val twoDigits = new DecimalFormat("00")
 
-    val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
-    val regex(
-      yearStr,
-      monthStr,
-      dayStr,
-      title) = filename
-    val year = yearStr.toInt
-    val month = monthStr.toInt
-    val day = dayStr.toInt
-
+    val rawHtml = Templates.findRawTemplate(root :: title :: Nil, Locale.getDefault)
     val tags:List[String] = meta("name=keywords").map { keywords =>
       keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
     }.openOr(List())
+    println(tags)
     val published = meta("name=published").map(timestamp.parse).openOr(date)
     val updated   = meta("name=updated").map(timestamp.parse).openOr(published)
+
+    val cal = {
+      val c = new GregorianCalendar()
+      c.setTime(published)
+      c
+    }
+    val year = cal.get(Calendar.YEAR)
+    val month = cal.get(Calendar.MONTH)
+    val day = cal.get(Calendar.DAY_OF_MONTH)
+    val yearStr = year.toString
+    val monthStr = twoDigits format month
+    val dayStr = twoDigits format day
+    val shortPath = title
   }
 
   val posts:Seq[Post] = Seq(
     // Modern
-    ModernPost("828c47e3-a44b-4492-ac36-5c62fa626181", "2014-12-26-article"),
-    ModernPost("ddde80a0-c0fa-479b-bdaa-ef545c6303c6", "2014-12-24-first-post"),
+    ModernPost("828c47e3-a44b-4492-ac36-5c62fa626181", "article"),
+    ModernPost("ddde80a0-c0fa-479b-bdaa-ef545c6303c6", "first-post"),
 
     // Vintage
     VintagePost("acf0ff8d-1838-48cc-8bf2-cbd70110c012", "2014-12-15-scala-the-language-of-agility", List("agility", "grails", "groovy", "liftweb", "scala")),

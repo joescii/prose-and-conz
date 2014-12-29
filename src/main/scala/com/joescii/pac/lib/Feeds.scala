@@ -49,7 +49,7 @@ object AtomFeed extends RestHelper {
   private val time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
   private def feed(posts:Seq[Post]):Elem = {
-    val latest = posts.map(_.date).sorted.last
+    val latest = posts.map(_.published).sorted.last
       <feed xmlns="http://www.w3.org/2005/Atom">
         <title>prose :: and :: conz by joescii</title>
         <subtitle>Code, the Universe and Everything</subtitle>
