@@ -1,8 +1,7 @@
 package com.joescii.pac
 package lib
 
-import java.text.{SimpleDateFormat, DateFormat}
-import java.util.Date
+import java.text.SimpleDateFormat
 
 import model.Post
 
@@ -35,7 +34,7 @@ object RssFeed extends RestHelper {
       <item>
         <title>{post.fullTitle}</title>
         <link>http://proseand.co.nz{post.url}</link>
-        <description>blah</description>
+        <description>{post.description}</description>
         <pubDate>{format.format(post.date)}</pubDate>
       </item>
     }
@@ -74,7 +73,7 @@ object AtomFeed extends RestHelper {
         <link href={url}/>
         <id>{post.uid}</id>
         <updated>{time.format(post.date)}</updated>
-        <summary>Short Summary</summary>
+        <summary>{post.description}</summary>
       </entry>
     }
 
