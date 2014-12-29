@@ -1,6 +1,8 @@
 package bootstrap.liftweb
 
 import com.joescii.pac.lib.{ RssFeed, AtomFeed }
+import com.joescii.pac.lib.Posts.forPost
+import com.joescii.pac.model.{ posts }
 import net.liftweb._
 import net.liftweb.common.Box
 import net.liftweb.common.Full
@@ -8,17 +10,12 @@ import net.liftweb.http.ContentParser
 import net.liftweb.http.LiftRules
 import scala.xml.NodeSeq
 import util._
-import Helpers._
 
-import common._
 import http._
 import sitemap._
 import Loc._
 import net.liftmodules.JQueryModule
 import net.liftweb.http.js.jquery._
-import java.util.ResourceBundle
-import java.util
-import net.liftweb.util
 
 
 /**
@@ -70,6 +67,9 @@ class Boot {
     requestRewrites()
     LiftRules.statelessDispatch.append(RssFeed)
     LiftRules.statelessDispatch.append(AtomFeed)
+
+    // Force reading of all posts
+    posts foreach forPost
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
