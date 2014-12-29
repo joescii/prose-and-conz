@@ -1,6 +1,7 @@
 package com.joescii.pac
 
-import java.util.{Locale, Calendar, GregorianCalendar}
+import java.text.SimpleDateFormat
+import java.util.{Date, Locale, Calendar, GregorianCalendar}
 
 import com.joescii.pac.snippet.AsciiDoctor
 
@@ -33,6 +34,8 @@ package object model {
     def tags:List[String]
     def root:String
     def descriptionProp:String
+    def published:Date
+    def updated:Date
 
     def meta(prop:String) = {
       val node = rawHtml.map(s"$prop ^^" #> "noop")
@@ -68,6 +71,7 @@ package object model {
     // Meta stuff
     val root = "vintage"
     val descriptionProp = "property=og:description"
+    val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
@@ -79,6 +83,8 @@ package object model {
     val month = monthStr.toInt
     val day = dayStr.toInt
 
+    val published = meta("property=article:published_time").map(timestamp.parse).openOr(date)
+    val updated   = meta("property=article:modified_time").map(timestamp.parse).openOr(date)
   }
 
   case class ModernPost(uid:String, filename:String) extends Post {
@@ -99,6 +105,9 @@ package object model {
     val tags:List[String] = meta("name=keywords").map { keywords =>
       keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
     }.openOr(List())
+
+    val published = date
+    val updated = date
   }
 
   val posts:Seq[Post] = Seq(

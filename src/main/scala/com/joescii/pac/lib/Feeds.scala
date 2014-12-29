@@ -35,7 +35,7 @@ object RssFeed extends RestHelper {
         <title>{post.fullTitle}</title>
         <link>http://proseand.co.nz{post.url}</link>
         <description>{post.description}</description>
-        <pubDate>{format.format(post.date)}</pubDate>
+        <pubDate>{format.format(post.published)}</pubDate>
       </item>
     }
   }
@@ -72,7 +72,7 @@ object AtomFeed extends RestHelper {
         <title>{post.fullTitle}</title>
         <link href={url}/>
         <id>{post.uid}</id>
-        <updated>{time.format(post.date)}</updated>
+        <updated>{time.format(post.updated)}</updated>
         <summary>{post.description}</summary>
       </entry>
     }

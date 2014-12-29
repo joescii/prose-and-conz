@@ -1,8 +1,6 @@
 package com.joescii.pac
 package snippet
 
-import java.text.SimpleDateFormat
-
 import net.liftweb.http.S
 import net.liftweb.util.ClearClearable
 import net.liftweb.util.Helpers._
