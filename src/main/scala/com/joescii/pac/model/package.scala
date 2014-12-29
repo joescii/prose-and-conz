@@ -34,10 +34,12 @@ package object model {
     def root:String
     def descriptionProp:String
 
-    lazy val description:String = {
-      val descrNode = rawHtml.map(s"$descriptionProp ^^" #> "noop")
-      descrNode.map(_ \ "@content").map(_.toString).openOr("Description/Summary unavailable")
+    def meta(prop:String) = {
+      val node = rawHtml.map(s"$prop ^^" #> "noop")
+      node.map(_ \ "@content").map(_.toString)
     }
+
+    lazy val description:String = meta(descriptionProp).openOr("Description/Summary unavailable")
 
     lazy val date = {
       val cal = new GregorianCalendar()
@@ -94,7 +96,9 @@ package object model {
     val month = monthStr.toInt
     val day = dayStr.toInt
 
-    val tags:List[String] = List()
+    val tags:List[String] = meta("name=keywords").map { keywords =>
+      keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).toList
+    }.openOr(List())
   }
 
   val posts:Seq[Post] = Seq(
