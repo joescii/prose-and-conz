@@ -1,7 +1,6 @@
 package bootstrap.liftweb
 
 import com.joescii.pac.lib.{ RssFeed, AtomFeed }
-import com.joescii.pac.lib.Posts.forPost
 import com.joescii.pac.model.{ posts }
 import net.liftweb._
 import net.liftweb.common.Box
@@ -69,7 +68,7 @@ class Boot {
     LiftRules.statelessDispatch.append(AtomFeed)
 
     // Force reading of all posts
-    posts foreach forPost
+    posts.foreach(_.html)
   }
 
   val adoc = org.asciidoctor.Asciidoctor.Factory.create()
@@ -79,7 +78,8 @@ class Boot {
   }
 
   def blogResolver() = {
-    import com.joescii.pac.lib.Posts._
+    import com.joescii.pac.model.Post._
+    def surround(ns:NodeSeq) = <lift:surround with="foundation" at="content">{ns}</lift:surround>
 
     LiftRules.externalTemplateResolver.default.set(() => (() => {
       case (locale, "blog" :: rest) => forPath(rest, locale).map(surround)

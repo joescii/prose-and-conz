@@ -2,8 +2,22 @@ package com.joescii.pac
 
 import java.util.{Locale, Calendar, GregorianCalendar}
 
+import scala.xml.NodeSeq
+
 
 package object model {
+  object Post {
+    import com.joescii.pac.snippet.WordPress
+    import net.liftweb.http.Templates
+
+    def forPath(path:List[String], locale:Locale) = {
+      Templates.findRawTemplate("vintage" :: path, locale).map(WordPress.render).or(
+        Templates.findRawTemplate("modern" :: path, locale)
+      )
+    }
+
+  }
+
   trait Post {
     def uid:String
     def year:Int
@@ -31,12 +45,12 @@ package object model {
     lazy val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
     lazy val fullTitle = {
       import net.liftweb.util.Helpers._
-      val html = lib.Posts.forPost(this)
       val h2s = html.map("h2 ^*" #> "noop")
-      val firstH2 = h2s.flatMap(_.headOption)
+      val firstH2 = h2s.headOption
       val firstH2Text = firstH2.map(_.text)
-      firstH2Text openOr title
+      firstH2Text getOrElse title
     }
+    lazy val html:NodeSeq = Post.forPath(List(shortPath), Locale.getDefault).openOr(<div>Post not found! {this}</div>)
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {

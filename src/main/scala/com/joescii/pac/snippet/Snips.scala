@@ -79,9 +79,8 @@ object AsciiDoctor {
 
 object Posts {
   def render(in:NodeSeq):NodeSeq = {
-    import lib.Posts._
     val count = S.attr("count", _.toInt).openOr(5)
-    model.posts.take(count).flatMap(forPost).reduceRight(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+    model.posts.take(count).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
   }
 }
 
@@ -123,9 +122,8 @@ object Tags {
 
 object Tag {
   def render(in:NodeSeq):NodeSeq = {
-    import lib.Posts._
     S.param("tag").map { tag =>
-      model.tags(tag).flatMap(forPost).reduceRight(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+      model.tags(tag).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
     }.openOr(NodeSeq.Empty)
   }
 }
