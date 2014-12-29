@@ -1,7 +1,7 @@
 package com.joescii.pac
 
-import java.text.DecimalFormat
-import java.util.{Calendar, GregorianCalendar}
+import java.util.{Locale, Calendar, GregorianCalendar}
+
 
 package object model {
   trait Post {
@@ -40,6 +40,9 @@ package object model {
   }
 
   case class VintagePost(uid:String, filename:String, tags:List[String]) extends Post {
+    import net.liftweb.util.Helpers._
+    import net.liftweb.http.Templates
+
     val regex = """(\d{4})-(\d{2})-(\d{2})-(.*)""".r
     val regex(
       yearStr,
@@ -49,7 +52,12 @@ package object model {
     val year = yearStr.toInt
     val month = monthStr.toInt
     val day = dayStr.toInt
-    val description = "Vintage post"
+
+    val rawHtml = Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault)
+    val description:String = {
+      val descrNode = rawHtml.map("property=og:description ^^" #> "noop")
+      descrNode.map(_ \ "@content").map(_.toString).openOr("Description/Summary unavailable")
+    }
   }
 
   case class ModernPost(uid:String, filename:String, tags:List[String]) extends Post {
