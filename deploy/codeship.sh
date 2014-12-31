@@ -1,7 +1,7 @@
 #!/bin/sh
 
 sbt package
-mv ./target/scala-2.11/prose-and-conz*.war ./deploy
+mv ./target/scala-2.11/prose-and-conz*.war ./deploy/proseandconz.war
 
 cd ./deploy
 
