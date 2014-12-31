@@ -25,7 +25,7 @@ sudo chown --recursive jetty /opt/jetty/temp
 # Change port to 80?
 
 # Set up service
-cp /opt/jetty/jetty-distribution-${version}/bin/jetty.sh /etc/init.d/jetty
-echo "JETTY_HOME=/opt/jetty/jetty-distribution-${version}" > /etc/default/jetty
-echo "JETTY_BASE=/opt/web/mybase" >> /etc/default/jetty
-echo "TMPDIR=/opt/jetty/temp" >> /etc/default/jetty
+sudo cp /opt/jetty/jetty-distribution-${version}/bin/jetty.sh /etc/init.d/jetty
+sudo echo "JETTY_HOME=/opt/jetty/jetty-distribution-${version}" > /etc/default/jetty
+sudo echo "JETTY_BASE=/opt/web/mybase" >> /etc/default/jetty
+sudo echo "TMPDIR=/opt/jetty/temp" >> /etc/default/jetty
