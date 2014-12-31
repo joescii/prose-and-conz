@@ -12,7 +12,30 @@
   "provisioners": [
     {
       "type": "shell",
+      "execute_command": "echo 'wget' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "/usr/bin/apt-get -y install wget"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'unzip' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "/usr/bin/apt-get -y install unzip"
+      ]
+    },
+    {
+      "type": "shell",
       "script": "java.sh"
+    },
+    {
+      "type": "shell",
+      "script": "jetty.sh"
+    },
+    {
+      "type": "file",
+      "source": "proseandconz.war",
+      "destination": "/usr/lib/jetty/webapps"
     }
   ]
 }
