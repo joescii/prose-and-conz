@@ -26,11 +26,11 @@
     },
     {
       "type": "shell",
-      "script": "jetty.sh"
+      "script": "java.sh"
     },
     {
       "type": "shell",
-      "script": "java.sh"
+      "script": "jetty.sh"
     },
     {
       "type": "file",
