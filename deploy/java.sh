@@ -6,6 +6,7 @@
 # . ~/.bash_profile
 
 # Install Java 8
+sleep 10
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
