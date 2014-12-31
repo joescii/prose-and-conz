@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-set version=9.2.6.v20141205
+version=9.2.6.v20141205
 
 sudo mkdir -p /opt/jetty
 sudo mkdir -p /opt/web/mybase
