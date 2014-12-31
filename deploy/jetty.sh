@@ -1,15 +1,17 @@
 #!/bin/bash -eux
 
+set version=9.2.6.v20141205
+
 sudo mkdir -p /opt/jetty
 sudo mkdir -p /opt/web/mybase
 sudo mkdir -p /opt/jetty/temp
 
 cd /opt/jetty
-sudo wget http://download.eclipse.org/jetty/8.1.16.v20140903/dist/jetty-distribution-8.1.16.v20140903.zip
-sudo unzip jetty-distribution-8.1.16.v20140903.zip
-sudo rm jetty-distribution-8.1.16.v20140903.zip
+sudo wget http://download.eclipse.org/jetty/${version}/dist/jetty-distribution-${version}.zip
+sudo unzip jetty-distribution-${version}.zip
+sudo rm jetty-distribution-${version}.zip
 
-sudo java -jar /opt/jetty/jetty-distribution-8.1.16.v20140903/start.jar --add-to-start=deploy,http,logging
+sudo java -jar /opt/jetty/jetty-distribution-${version}/start.jar --add-to-start=deploy,http,logging
 
 sudo mv /tmp/proseandconz.war /opt/web/mybase/webapps
 
@@ -23,7 +25,7 @@ sudo chown --recursive jetty /opt/jetty/temp
 # Change port to 80?
 
 # Set up service
-cp /opt/jetty/jetty-distribution-8.1.16.v20140903/bin/jetty.sh /etc/init.d/jetty
-echo "JETTY_HOME=/opt/jetty/jetty-distribution-8.1.16.v20140903" > /etc/default/jetty
+cp /opt/jetty/jetty-distribution-${version}/bin/jetty.sh /etc/init.d/jetty
+echo "JETTY_HOME=/opt/jetty/jetty-distribution-${version}" > /etc/default/jetty
 echo "JETTY_BASE=/opt/web/mybase" >> /etc/default/jetty
 echo "TMPDIR=/opt/jetty/temp" >> /etc/default/jetty
