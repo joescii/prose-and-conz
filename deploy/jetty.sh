@@ -11,6 +11,7 @@ sudo wget http://download.eclipse.org/jetty/${version}/dist/jetty-distribution-$
 sudo unzip jetty-distribution-${version}.zip
 sudo rm jetty-distribution-${version}.zip
 
+cd /opt/web/mybase
 sudo java -jar /opt/jetty/jetty-distribution-${version}/start.jar --add-to-start=deploy,http,logging
 
 sudo mv /tmp/proseandconz.war /opt/web/mybase/webapps
