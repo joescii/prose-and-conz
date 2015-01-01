@@ -32,3 +32,5 @@ JETTY_HOME=/opt/jetty/jetty-distribution-${version}
 JETTY_BASE=/opt/web/mybase
 TMPDIR=/opt/jetty/temp
 EOF
+
+sudo update-rc.d jetty defaults
