@@ -26,7 +26,7 @@ sudo chown --recursive jetty /opt/jetty/temp
 
 # Set up service
 sudo cp /opt/jetty/jetty-distribution-${version}/bin/jetty.sh /etc/init.d/jetty
-sudo tee /etc/default/jetty > /dev/null <<'EOF'
+sudo sh -c "cat > /etc/default/jetty" <<EOF
 JETTY_HOME=/opt/jetty/jetty-distribution-${version}
 JETTY_BASE=/opt/web/mybase
 TMPDIR=/opt/jetty/temp
