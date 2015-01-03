@@ -69,7 +69,7 @@ resource "aws_instance" "pac2" {
 }
 
 resource "aws_elb" "pac-elb" {
-  name = "pac-elb"
+  name = "${var.pac_elb_name}"
   subnets = ["${var.subnet_b}", "${var.subnet_c}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
