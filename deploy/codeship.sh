@@ -4,7 +4,7 @@
 set -e
 
 # Create a timestamp for uniquefying stuff
-timestamp=`date +"%Y%m%d%H%M%S"`
+timestamp=20150103202211
 
 # Package our application war and place it in our deploy directory 
 sbt package
@@ -35,7 +35,7 @@ chmod 700 ./jq
 
 
 # Build the AMI for our server
-./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
+# ./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
 
 # Query for the AMI ID just created by packer, based on the timestamp tag
 aws ec2 describe-images --filters Name=tag:Timestamp,Values=${timestamp} > ami.json
