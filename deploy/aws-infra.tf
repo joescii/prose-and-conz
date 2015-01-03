@@ -41,7 +41,7 @@ resource "aws_security_group" "pac_elb_sg" {
 resource "aws_instance" "pac1" {
     ami = "${var.pac_ami_id}"
     instance_type = "t1.micro"
-    subnet_id = "subnet-80e32cab"
+    subnet_id = "${var.subnet_b}"
     security_groups = ["${aws_security_group.pac_instance_sg.id}"]
     key_name = "joe-pac"
     tags {
@@ -51,7 +51,7 @@ resource "aws_instance" "pac1" {
 
 resource "aws_elb" "pac-elb" {
   name = "pac-elb"
-  subnets = ["subnet-48432a72", "subnet-80e32cab"]
+  subnets = ["${var.subnet_b}", "${var.subnet_e}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
   listener {
