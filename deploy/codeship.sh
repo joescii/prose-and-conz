@@ -1,5 +1,7 @@
 #!/bin/sh
 
+timestamp=`date +"%Y%m%d%H%M%S"`
+
 # Package our application war and place it in our deploy directory 
 sbt package
 mv ./target/scala-2.11/prose-and-conz*.war ./deploy/proseandconz.war
@@ -24,10 +26,6 @@ cd ..
 pip install awscli
 
 
-# Create a UUID for uniquefying stuff
-UUID=$(uuid -v4)
-
-
 # Build the AMI for our server
 # ./packer/packer build ./web-srv-packer.json
 
@@ -39,12 +37,12 @@ aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=ami-48bcd620" \
-  -var "pac_elb_name=pac-elb-${UUID}"
+  -var "pac_elb_name=pac-elb-${timestamp}"
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=ami-48bcd620" \
-  -var "pac_elb_name=pac-elb-${UUID}"
+  -var "pac_elb_name=pac-elb-${timestamp}"
 
 # Save the terraform state 
 cat ./terraform.tfstate
