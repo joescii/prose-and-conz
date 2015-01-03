@@ -72,6 +72,8 @@ resource "aws_elb" "pac-elb" {
   name = "pac-elb"
   subnets = ["${var.subnet_b}", "${var.subnet_c}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
+  
+  # Must manually set the session stickiness for now.  See https://github.com/hashicorp/terraform/issues/656
  
   listener {
     instance_port = 8080
