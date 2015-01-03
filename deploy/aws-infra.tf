@@ -52,7 +52,7 @@ resource "aws_instance" "pac1" {
 resource "aws_instance" "pac2" {
     ami = "${var.pac_ami_id}"
     instance_type = "t1.micro"
-    subnet_id = "${var.subnet_e}"
+    subnet_id = "${var.subnet_c}"
     security_groups = ["${aws_security_group.pac_instance_sg.id}"]
     key_name = "joe-pac"
     tags {
@@ -62,7 +62,7 @@ resource "aws_instance" "pac2" {
 
 resource "aws_elb" "pac-elb" {
   name = "pac-elb"
-  subnets = ["${var.subnet_b}", "${var.subnet_e}"]
+  subnets = ["${var.subnet_b}", "${var.subnet_c}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
   listener {
