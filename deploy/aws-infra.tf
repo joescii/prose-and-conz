@@ -4,9 +4,9 @@ provider "aws" {
     region = "${var.region}"
 }
 
-resource "aws_security_group" "default" {
-    name = "terraform_example"
-    description = "Used in the terraform"
+resource "aws_security_group" "pac_instance_sg" {
+    name = "pac-instance-sg"
+    description = "SG applied to each proseandconz app server instance"
 
     # SSH access from anywhere
     ingress {
@@ -24,3 +24,27 @@ resource "aws_security_group" "default" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 }
+
+resource "aws_elb" "pac-elb" {
+  name = "pac-elb"
+  # subnets = ["subnet-0be8c24d"]
+  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
+ 
+  listener {
+    instance_port = 8080
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http" 
+  }
+ 
+  health_check {
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    timeout = 3
+    target = "HTTP:8080/"
+    interval = 30
+  }
+ 
+  # instances = ["${aws_instance.api1.id}", "${aws_instance.api2.id}"]
+}
+ 
