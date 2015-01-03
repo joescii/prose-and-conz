@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Exit if anything fails
+set -e
+
+# Create a timestamp for uniquefying stuff
 timestamp=`date +"%Y%m%d%H%M%S"`
 
 # Package our application war and place it in our deploy directory 
