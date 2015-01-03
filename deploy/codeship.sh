@@ -24,9 +24,10 @@ cd ..
 
 # Get the terraform state
 pip install awscli
+aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
 
 # Update the AWS infrastructure
-./terraform/terraform plan -var "access_key=${AWS_ACCESS_KEY_ID}" -var "secret_key=${AWS_SECRET_ACCESS_KEY}"
+./terraform/terraform plan  s-var "access_key=${AWS_ACCESS_KEY_ID}" -var "secret_key=${AWS_SECRET_ACCESS_KEY}"
 ./terraform/terraform apply -var "access_key=${AWS_ACCESS_KEY_ID}" -var "secret_key=${AWS_SECRET_ACCESS_KEY}"
 
 # Save the terraform state for next time
