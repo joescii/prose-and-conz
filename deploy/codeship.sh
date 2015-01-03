@@ -34,11 +34,11 @@ aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate
 ./terraform/terraform plan  \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
-  -var "pac_ami_id=${ami-48bcd620}"
+  -var "pac_ami_id=ami-48bcd620"
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
-  -var "pac_ami_id=${ami-48bcd620}"
+  -var "pac_ami_id=ami-48bcd620"
 
 # Save the terraform state 
 cat ./terraform.tfstate
