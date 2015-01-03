@@ -12,7 +12,8 @@
       "ami_name": "codeshipped {{user `timestamp`}}",
       "tags": {
         "Timestamp": "{{user `timestamp`}}"
-      }    
+      },
+      "associate_public_ip_address": true
     }
   ],
   "provisioners": [
