@@ -49,6 +49,17 @@ resource "aws_instance" "pac1" {
     }
 }
 
+resource "aws_instance" "pac2" {
+    ami = "${var.pac_ami_id}"
+    instance_type = "t1.micro"
+    subnet_id = "${var.subnet_e}"
+    security_groups = ["${aws_security_group.pac_instance_sg.id}"]
+    key_name = "joe-pac"
+    tags {
+      Name = "pac-srv"
+    }
+}
+
 resource "aws_elb" "pac-elb" {
   name = "pac-elb"
   subnets = ["${var.subnet_b}", "${var.subnet_e}"]
@@ -69,6 +80,9 @@ resource "aws_elb" "pac-elb" {
     interval = 30
   }
  
-  instances = ["${aws_instance.pac1.id}"]
+  instances = [
+    "${aws_instance.pac1.id}",
+    "${aws_instance.pac2.id}"
+  ]
 }
 
