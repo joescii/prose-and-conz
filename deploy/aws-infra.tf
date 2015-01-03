@@ -48,9 +48,9 @@ resource "aws_instance" "pac1" {
     Name = "pac-srv"
   }
   
-  lifecycle {
-    create_before_destroy = true
-  }
+#  lifecycle {
+#    create_before_destroy = true
+#  }
 }
 
 resource "aws_instance" "pac2" {
@@ -63,9 +63,9 @@ resource "aws_instance" "pac2" {
     Name = "pac-srv"
   }
   
-  lifecycle {
-    create_before_destroy = true
-  }
+#  lifecycle {
+#    create_before_destroy = true
+#  }
 }
 
 resource "aws_elb" "pac-elb" {
