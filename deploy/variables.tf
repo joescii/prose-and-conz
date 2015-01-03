@@ -17,3 +17,4 @@ variable "subnet_e" {
 }
 
 variable "pac_ami_id" {}
+variable "pac_elb_name" {}
