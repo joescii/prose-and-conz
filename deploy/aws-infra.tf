@@ -18,8 +18,8 @@ resource "aws_security_group" "pac_instance_sg" {
 
     # HTTP access from anywhere
     ingress {
-        from_port = 80
-        to_port = 80
+        from_port = 8080
+        to_port = 8080
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
@@ -65,7 +65,7 @@ resource "aws_elb" "pac-elb" {
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 3
-    target = "HTTP:8080/"
+    target = "HTTP:8080/proseandconz"
     interval = 30
   }
  
