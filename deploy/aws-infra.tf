@@ -25,10 +25,23 @@ resource "aws_security_group" "pac_instance_sg" {
     }
 }
 
+resource "aws_security_group" "pac_elb_sg" {
+    name = "pac-elb-sg"
+    description = "SG applied to the proseandconz elastic load balancer"
+
+    # HTTP access from anywhere
+    ingress {
+        from_port = 80
+        to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
 resource "aws_elb" "pac-elb" {
   name = "pac-elb"
   subnets = ["subnet-48432a72"]
-  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
+  security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
   listener {
     instance_port = 8080
