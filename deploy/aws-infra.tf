@@ -69,7 +69,7 @@ resource "aws_instance" "pac2" {
 }
 
 resource "aws_elb" "pac-elb" {
-  name = "${var.pac_elb_name}"
+  name = "pac-elb"
   subnets = ["${var.subnet_b}", "${var.subnet_c}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
@@ -81,7 +81,7 @@ resource "aws_elb" "pac-elb" {
   }
  
   health_check {
-    healthy_threshold = 1
+    healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 3
     target = "HTTP:8080/proseandconz/"
@@ -92,9 +92,5 @@ resource "aws_elb" "pac-elb" {
     "${aws_instance.pac1.id}",
     "${aws_instance.pac2.id}"
   ]
-  
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
