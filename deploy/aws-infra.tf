@@ -94,5 +94,9 @@ resource "aws_elb" "pac-elb" {
     "${aws_instance.pac1.id}",
     "${aws_instance.pac2.id}"
   ]
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
