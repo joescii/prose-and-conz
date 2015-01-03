@@ -1,63 +1,71 @@
 provider "aws" {
-    access_key = "${var.access_key}"
-    secret_key = "${var.secret_key}"
-    region = "${var.region}"
+  access_key = "${var.access_key}"
+  secret_key = "${var.secret_key}"
+  region = "${var.region}"
 }
 
 resource "aws_security_group" "pac_instance_sg" {
-    name = "pac-instance-sg"
-    description = "SG applied to each proseandconz app server instance"
+  name = "pac-instance-sg"
+  description = "SG applied to each proseandconz app server instance"
 
-    # SSH access from anywhere
-    ingress {
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  # SSH access from anywhere
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-    # HTTP access from anywhere
-    ingress {
-        from_port = 8080
-        to_port = 8080
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  # HTTP access from anywhere
+  ingress {
+    from_port = 8080
+    to_port = 8080
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_security_group" "pac_elb_sg" {
-    name = "pac-elb-sg"
-    description = "SG applied to the proseandconz elastic load balancer"
+  name = "pac-elb-sg"
+  description = "SG applied to the proseandconz elastic load balancer"
 
-    # HTTP access from anywhere
-    ingress {
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  # HTTP access from anywhere
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_instance" "pac1" {
-    ami = "${var.pac_ami_id}"
-    instance_type = "t1.micro"
-    subnet_id = "${var.subnet_b}"
-    security_groups = ["${aws_security_group.pac_instance_sg.id}"]
-    key_name = "joe-pac"
-    tags {
-      Name = "pac-srv"
-    }
+  ami = "${var.pac_ami_id}"
+  instance_type = "t1.micro"
+  subnet_id = "${var.subnet_b}"
+  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
+  key_name = "joe-pac"
+  tags {
+    Name = "pac-srv"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_instance" "pac2" {
-    ami = "${var.pac_ami_id}"
-    instance_type = "t1.micro"
-    subnet_id = "${var.subnet_c}"
-    security_groups = ["${aws_security_group.pac_instance_sg.id}"]
-    key_name = "joe-pac"
-    tags {
-      Name = "pac-srv"
-    }
+  ami = "${var.pac_ami_id}"
+  instance_type = "t1.micro"
+  subnet_id = "${var.subnet_c}"
+  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
+  key_name = "joe-pac"
+  tags {
+    Name = "pac-srv"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_elb" "pac-elb" {
@@ -84,5 +92,9 @@ resource "aws_elb" "pac-elb" {
     "${aws_instance.pac1.id}",
     "${aws_instance.pac2.id}"
   ]
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
