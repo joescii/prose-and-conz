@@ -51,7 +51,7 @@ resource "aws_instance" "pac1" {
 
 resource "aws_elb" "pac-elb" {
   name = "pac-elb"
-  subnets = ["subnet-48432a72"]
+  subnets = ["subnet-48432a72", "subnet-80e32cab"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
  
   listener {
