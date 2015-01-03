@@ -39,7 +39,7 @@ chmod 700 ./jq
 
 # Query for the AMI ID just created by packer, based on the timestamp tag
 aws ec2 describe-images --filters Name=tag:Timestamp,Values=${timestamp} > ami.json
-PAC_AMI_ID=`./jq '.Images[0].ImageId' ami.json`
+PAC_AMI_ID=`./jq --raw-output '.Images[0].ImageId' ami.json`
 
 # Get the current terraform state
 aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
