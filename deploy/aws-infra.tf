@@ -8,14 +8,6 @@ resource "aws_security_group" "pac_instance_sg" {
   name = "pac-instance-sg"
   description = "SG applied to each proseandconz app server instance"
 
-  # SSH access from anywhere
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   # HTTP access from anywhere
   ingress {
     from_port = 8080
