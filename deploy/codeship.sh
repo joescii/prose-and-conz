@@ -50,12 +50,12 @@ PAC_ELB_NAME=pac-elb-${timestamp}
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "PAC_ELB_NAME=${PAC_ELB_NAME}" 
+  -var "pac_elb_name=${PAC_ELB_NAME}" 
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "PAC_ELB_NAME=${PAC_ELB_NAME}" 
+  -var "pac_elb_name=${PAC_ELB_NAME}" 
 
 # Save the terraform state 
 cat ./terraform.tfstate
