@@ -36,7 +36,6 @@ resource "aws_instance" "pac1" {
   subnet_id = "${var.subnet_d}"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
   key_name = "joe-pac"
-  associate_public_ip_address = false
   tags {
     Name = "pac-srv"
   }
@@ -52,7 +51,6 @@ resource "aws_instance" "pac2" {
   subnet_id = "${var.subnet_c}"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
   key_name = "joe-pac"
-  associate_public_ip_address = false
   tags {
     Name = "pac-srv"
   }
