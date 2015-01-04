@@ -66,8 +66,7 @@ aws elb describe-load-balancers \
   --load-balancer-name ${PAC_ELB_NAME}   
 aws elb create-lb-cookie-stickiness-policy \
   --load-balancer-name ${PAC_ELB_NAME} \
-  --policy-name LiftStickySessionPolicy \
-  --cookie-expiration-period 0
+  --policy-name LiftStickySessionPolicy 
 aws elb set-load-balancer-policies-of-listener \
   --load-balancer-name ${PAC_ELB_NAME} \
   --load-balancer-port 80 \
