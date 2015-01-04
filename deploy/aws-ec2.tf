@@ -1,12 +1,7 @@
-provider "aws" {
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
-  region = "${var.region}"
-}
-
 resource "aws_security_group" "pac_instance_sg" {
   name = "pac-instance-sg"
   description = "SG applied to each proseandconz app server instance"
+	vpc_id = "${aws_vpc.default.id}"
 
   # HTTP access from anywhere
   ingress {
@@ -20,6 +15,7 @@ resource "aws_security_group" "pac_instance_sg" {
 resource "aws_security_group" "pac_elb_sg" {
   name = "pac-elb-sg"
   description = "SG applied to the proseandconz elastic load balancer"
+	vpc_id = "${aws_vpc.default.id}"
 
   # HTTP access from anywhere
   ingress {
@@ -33,7 +29,7 @@ resource "aws_security_group" "pac_elb_sg" {
 resource "aws_instance" "pac1" {
   ami = "${var.pac_ami_id}"
   instance_type = "t1.micro"
-  subnet_id = "${var.subnet_d}"
+  subnet_id = "${aws_subnet.us-east-1b-private.id}"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
   key_name = "joe-pac"
   tags {
@@ -48,7 +44,7 @@ resource "aws_instance" "pac1" {
 resource "aws_instance" "pac2" {
   ami = "${var.pac_ami_id}"
   instance_type = "t1.micro"
-  subnet_id = "${var.subnet_c}"
+  subnet_id = "${aws_subnet.us-east-1d-private.id}"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
   key_name = "joe-pac"
   tags {
@@ -62,7 +58,8 @@ resource "aws_instance" "pac2" {
 
 resource "aws_elb" "pac-elb" {
   name = "${var.pac_elb_name}"
-  subnets = ["${var.subnet_d}", "${var.subnet_c}"]
+	vpc_id = "${aws_vpc.default.id}"
+  subnets = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   
   # Must manually set the session stickiness for now.  See https://github.com/hashicorp/terraform/issues/656
