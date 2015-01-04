@@ -79,7 +79,7 @@ resource "aws_elb" "pac-elb" {
     unhealthy_threshold = 2
     timeout = 3
     target = "HTTP:8080/"
-    interval = 30
+    interval = 5
   }
  
   instances = [
