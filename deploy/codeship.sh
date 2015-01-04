@@ -35,14 +35,15 @@ chmod 700 ./jq
 
 
 # Build the AMI for our server
-./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
+#./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
 
 # Query for the AMI ID just created by packer, based on the timestamp tag
-aws ec2 describe-images --filters Name=tag:Timestamp,Values=${timestamp} > ami.json
-PAC_AMI_ID=`./jq --raw-output '.Images[0].ImageId' ami.json`
+#aws ec2 describe-images --filters Name=tag:Timestamp,Values=${timestamp} > ami.json
+#PAC_AMI_ID=`./jq --raw-output '.Images[0].ImageId' ami.json`
+PAC_AMI_ID=ami-58a3d730
 
 # Get the current terraform state
-aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
+#aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
 
 # Update the AWS infrastructure
 PAC_ELB_NAME=pac-elb-${timestamp}
