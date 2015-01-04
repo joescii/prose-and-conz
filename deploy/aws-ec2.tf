@@ -58,9 +58,9 @@ resource "aws_instance" "pac2" {
 
 resource "aws_elb" "pac-elb" {
   name = "${var.pac_elb_name}"
-	vpc_id = "${aws_vpc.default.id}"
   subnets = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
+  internal = false
   
   # Must manually set the session stickiness for now.  See https://github.com/hashicorp/terraform/issues/656
  
