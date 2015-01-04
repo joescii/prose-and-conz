@@ -41,7 +41,7 @@ resource "aws_security_group" "pac_elb_sg" {
 resource "aws_instance" "pac1" {
   ami = "${var.pac_ami_id}"
   instance_type = "t1.micro"
-  subnet_id = "${var.subnet_b}"
+  subnet_id = "${var.subnet_d}"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
   key_name = "joe-pac"
   tags {
@@ -70,7 +70,7 @@ resource "aws_instance" "pac2" {
 
 resource "aws_elb" "pac-elb" {
   name = "${var.pac_elb_name}"
-  subnets = ["${var.subnet_b}", "${var.subnet_c}"]
+  subnets = ["${var.subnet_d}", "${var.subnet_c}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   
   # Must manually set the session stickiness for now.  See https://github.com/hashicorp/terraform/issues/656
