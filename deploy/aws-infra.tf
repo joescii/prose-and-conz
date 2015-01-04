@@ -86,7 +86,7 @@ resource "aws_elb" "pac-elb" {
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 3
-    target = "HTTP:8080/proseandconz/"
+    target = "HTTP:8080/"
     interval = 30
   }
  
