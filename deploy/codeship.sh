@@ -62,8 +62,6 @@ cat ./terraform.tfstate
 aws s3 cp ./terraform.tfstate s3://proseandconz/terraform/terraform.tfstate
 
 # Set ELB session stickiness
-aws elb describe-load-balancers \
-  --load-balancer-name ${PAC_ELB_NAME}   
 aws elb create-lb-cookie-stickiness-policy \
   --load-balancer-name ${PAC_ELB_NAME} \
   --policy-name LiftStickySessionPolicy 
@@ -71,6 +69,4 @@ aws elb set-load-balancer-policies-of-listener \
   --load-balancer-name ${PAC_ELB_NAME} \
   --load-balancer-port 80 \
   --policy-names LiftStickySessionPolicy
-aws elb describe-load-balancers \
-  --load-balancer-name ${PAC_ELB_NAME}   
 
