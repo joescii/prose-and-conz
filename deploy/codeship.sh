@@ -45,18 +45,33 @@ PAC_AMI_ID=`./jq --raw-output '.Images[0].ImageId' ami.json`
 aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
 
 # Update the AWS infrastructure
+PAC_ELB_NAME=pac-elb-${timestamp}
 ./terraform/terraform plan  \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_elb_name=pac-elb-${timestamp}" 
+  -var "PAC_ELB_NAME=${PAC_ELB_NAME}" 
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_elb_name=pac-elb-${timestamp}" 
+  -var "PAC_ELB_NAME=${PAC_ELB_NAME}" 
 
 # Save the terraform state 
 cat ./terraform.tfstate
 aws s3 cp ./terraform.tfstate s3://proseandconz/terraform/terraform.tfstate
+
+# Set ELB session stickiness
+aws elb describe-load-balancers \
+  --load-balancer-name ${PAC_ELB_NAME}   
+aws elb create-lb-cookie-stickiness-policy \
+  --load-balancer-name ${PAC_ELB_NAME} \
+  --policy-name LiftStickySessionPolicy \
+  --cookie-expiration-period 0
+aws elb set-load-balancer-policies-of-listener \
+  --load-balancer-name ${PAC_ELB_NAME} \
+  --load-balancer-port 80 \
+  --policy-names LiftStickySessionPolicy
+aws elb describe-load-balancers \
+  --load-balancer-name ${PAC_ELB_NAME}   
 
