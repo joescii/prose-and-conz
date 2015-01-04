@@ -14,7 +14,7 @@ sudo rm jetty-distribution-${version}.zip
 cd /opt/web/mybase
 sudo java -jar /opt/jetty/jetty-distribution-${version}/start.jar --add-to-start=deploy,http,logging
 
-sudo mv /tmp/proseandconz.war /opt/web/mybase/webapps
+sudo mv /tmp/root.war /opt/web/mybase/webapps
 
 # Set up user
 sudo useradd --user-group --shell /bin/false --home-dir /opt/jetty/temp jetty

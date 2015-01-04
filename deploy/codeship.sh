@@ -8,7 +8,7 @@ timestamp=`date +"%Y%m%d%H%M%S"`
 
 # Package our application war and place it in our deploy directory 
 sbt package
-mv ./target/scala-2.11/prose-and-conz*.war ./deploy/proseandconz.war
+mv ./target/scala-2.11/*.war ./deploy/root.war
 
 cd ./deploy
 

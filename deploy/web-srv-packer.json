@@ -38,8 +38,8 @@
     },
     {
       "type": "file",
-      "source": "proseandconz.war",
-      "destination": "/tmp/proseandconz.war"
+      "source": "root.war",
+      "destination": "/tmp/root.war"
     },
     {
       "type": "shell",
