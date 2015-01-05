@@ -58,7 +58,7 @@ resource "aws_instance" "pac2" {
 
 resource "aws_elb" "pac-elb" {
   name = "${var.pac_elb_name}"
-  subnets = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
+  subnets = ["${aws_subnet.us-east-1b-public.id}", "${aws_subnet.us-east-1d-public.id}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   internal = false
   
