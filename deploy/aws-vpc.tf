@@ -8,7 +8,9 @@ resource "aws_internet_gateway" "default" {
 
 # NAT instance
 resource "aws_security_group" "nat" {
-	name = "nat"
+  tags {
+	  Name = "nat"
+  }
 	description = "Allow services from the private subnet through NAT"
 
 	ingress {
@@ -130,7 +132,9 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_instance" "bastion" {
-  name = "bastion"
+  tags {
+     Name = "bastion"
+  }
 	ami = "${var.aws_ubuntu_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "t2.micro"
