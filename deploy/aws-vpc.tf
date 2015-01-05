@@ -28,6 +28,7 @@ resource "aws_security_group" "nat" {
 }
 
 resource "aws_instance" "nat" {
+  name = "nat"
 	ami = "${var.aws_nat_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "m1.small"
@@ -129,6 +130,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_instance" "bastion" {
+  name = "bastion"
 	ami = "${var.aws_ubuntu_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "t2.micro"
