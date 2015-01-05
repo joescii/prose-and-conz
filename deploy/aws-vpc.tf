@@ -8,9 +8,7 @@ resource "aws_internet_gateway" "default" {
 
 # NAT instance
 resource "aws_security_group" "nat" {
-  tags {
-	  Name = "nat"
-  }
+	name = "nat"
 	description = "Allow services from the private subnet through NAT"
 
 	ingress {
@@ -30,7 +28,9 @@ resource "aws_security_group" "nat" {
 }
 
 resource "aws_instance" "nat" {
-  name = "nat"
+  tags {
+	  Name = "nat"
+  }
 	ami = "${var.aws_nat_ami}"
 	availability_zone = "us-east-1b"
 	instance_type = "m1.small"
