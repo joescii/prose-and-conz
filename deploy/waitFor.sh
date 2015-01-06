@@ -5,13 +5,13 @@
 set -e
 
 if [ $# -lt 1 ]; then
-  echo "USAGE: waitFor <url>"
+  echo "USAGE: waitFor <url> <interval> <maxTries>"
   exit 1
 fi
 
 url=$1
-interval=5
-maxTries=36
+interval=$2
+maxTries=$3
 count=0
 while [ ${count} -lt ${maxTries} ]; do
   status=`curl -w %{http_code} ${url} | tail -1`
