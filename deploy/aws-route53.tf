@@ -7,7 +7,7 @@ resource "aws_route53_record" "www" {
    name = "joescii.com."
    type = "A"
    ttl = "300"
-   records = ["${aws_elb.pac-elb.dns_name}"]
+   records = ["ALIAS ${aws_elb.pac-elb.dns_name}"]
 }
 
 resource "aws_route53_record" "ns" {
