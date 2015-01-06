@@ -33,6 +33,8 @@ pip install awscli
 wget http://stedolan.github.io/jq/download/linux64/jq
 chmod 700 ./jq
 
+chmod 700 ./waitFor.sh
+
 
 # Build the AMI for our server
 ./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
