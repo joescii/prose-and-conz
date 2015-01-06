@@ -87,5 +87,9 @@ resource "aws_elb" "pac-elb" {
   lifecycle {
     create_before_destroy = true
   }
+  
+  provisioner "local-exec" {
+    command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name}"
+  }
 }
 
