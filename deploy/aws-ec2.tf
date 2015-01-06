@@ -89,7 +89,7 @@ resource "aws_elb" "pac-elb" {
   }
   
   provisioner "local-exec" {
-    command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name}"
+    command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
 }
 
