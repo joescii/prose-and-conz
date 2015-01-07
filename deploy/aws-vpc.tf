@@ -133,7 +133,7 @@ resource "aws_security_group" "bastion" {
 
 resource "aws_instance" "bastion" {
   tags {
-     Name = "bastion"
+    Name = "bastion"
   }
 	ami = "${var.aws_ubuntu_ami}"
 	availability_zone = "us-east-1b"
