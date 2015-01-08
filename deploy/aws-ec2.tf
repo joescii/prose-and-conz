@@ -52,6 +52,9 @@ resource "aws_autoscaling_group" "pac_as" {
   provisioner "local-exec" {
     command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
+  provisioner "local-exec" {
+    command = "./route53.sh ${aws_route53_zone.primary.zone_id} ${aws_elb.pac-elb.name}"
+  }
 }
 
 resource "aws_elb" "pac-elb" {
@@ -81,9 +84,6 @@ resource "aws_elb" "pac-elb" {
   
   provisioner "local-exec" {
     command = "./elb-stickiness.sh ${aws_elb.pac-elb.name}"
-  }
-  provisioner "local-exec" {
-    command = "./route53.sh ${aws_route53_zone.primary.zone_id} ${aws_elb.pac-elb.name}"
   }
 }
 
