@@ -27,35 +27,22 @@ resource "aws_security_group" "pac_elb_sg" {
 }
 
 resource "aws_launch_configuration" "pac_as_conf" {
-    name = "pac_auto_scale"
-    image_id = "${var.pac_ami_id}"
-    instance_type = "t1.micro"
+  name = "pac_auto_scale"
+  image_id = "${var.pac_ami_id}"
+  instance_type = "t1.micro"
 }
 
-resource "aws_instance" "pac1" {
-  ami = "${var.pac_ami_id}"
-  instance_type = "t1.micro"
-  subnet_id = "${aws_subnet.us-east-1b-private.id}"
-  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
-  key_name = "joe-pac"
-  tags {
-    Name = "pac-srv"
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_instance" "pac2" {
-  ami = "${var.pac_ami_id}"
-  instance_type = "t1.micro"
-  subnet_id = "${aws_subnet.us-east-1d-private.id}"
-  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
-  key_name = "joe-pac"
-  tags {
-    Name = "pac-srv"
-  }
+resource "aws_autoscaling_group" "pac_as" {
+  availability_zones = ["us-east-1b", "us-east-1d"]
+  vpc_zone_identifier = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
+  name = "pac-autoscaling-group"
+  max_size = 2
+  min_size = 2
+  health_check_grace_period = 300
+  health_check_type = "ELB"
+  desired_capacity = 2
+  force_delete = true
+  launch_configuration = "${aws_launch_configuration.pac_as_conf.id}"
   
   lifecycle {
     create_before_destroy = true
@@ -84,8 +71,7 @@ resource "aws_elb" "pac-elb" {
   }
  
   instances = [
-    "${aws_instance.pac1.id}",
-    "${aws_instance.pac2.id}"
+    "${aws_autoscaling_group.pac_as.id}"
   ]
   
   lifecycle {
