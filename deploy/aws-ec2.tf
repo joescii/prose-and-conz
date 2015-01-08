@@ -95,7 +95,7 @@ resource "aws_elb" "pac-elb" {
     command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
   provisioner "local-exec" {
-    command = "./route53.sh ${aws_vpc.default.zone_id} ${var.pac_elb_name}"
+    command = "./route53.sh ${aws_route53_zone.primary.zone_id} ${var.pac_elb_name}"
   }
 }
 
