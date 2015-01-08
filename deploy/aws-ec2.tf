@@ -43,7 +43,7 @@ resource "aws_autoscaling_group" "pac_as" {
   desired_capacity = 2
   force_delete = true
   launch_configuration = "${aws_launch_configuration.pac_as_conf.id}"
-  
+  load_balancers = ["${aws_elb.pac-elb.name}"]
   lifecycle {
     create_before_destroy = true
   }
@@ -70,10 +70,6 @@ resource "aws_elb" "pac-elb" {
     interval = 5
   }
  
-  instances = [
-    "${aws_autoscaling_group.pac_as.id}"
-  ]
-  
   lifecycle {
     create_before_destroy = true
   }
