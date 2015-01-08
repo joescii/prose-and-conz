@@ -91,8 +91,5 @@ resource "aws_elb" "pac-elb" {
   provisioner "local-exec" {
     command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
-  provisioner "local-exec" {
-    command = "aws elb elb-associate-route53-hosted-zone ${aws_elb.pac-elb.name} --rr-name joescii.com --hosted-zone-id ${aws_route53_zone.primary.zone_id} --weight 100"
-  }
 }
 
