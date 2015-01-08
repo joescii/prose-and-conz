@@ -33,7 +33,7 @@ pip install awscli
 wget http://stedolan.github.io/jq/download/linux64/jq
 chmod 700 ./jq
 
-chmod 700 ./waitFor.sh
+chmod 700 ./*.sh
 
 if [ -z "$PAC_AMI_ID" ]; then
   # Build the AMI for our server
@@ -63,13 +63,4 @@ PAC_ELB_NAME=pac-elb-${timestamp}
 # Save the terraform state 
 cat ./terraform.tfstate
 aws s3 cp ./terraform.tfstate s3://proseandconz/terraform/terraform.tfstate
-
-# Set ELB session stickiness
-aws elb create-lb-cookie-stickiness-policy \
-  --load-balancer-name ${PAC_ELB_NAME} \
-  --policy-name LiftStickySessionPolicy 
-aws elb set-load-balancer-policies-of-listener \
-  --load-balancer-name ${PAC_ELB_NAME} \
-  --load-balancer-port 80 \
-  --policy-names LiftStickySessionPolicy
 

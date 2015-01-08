@@ -89,6 +89,9 @@ resource "aws_elb" "pac-elb" {
   }
   
   provisioner "local-exec" {
+    command = "./elb-stickiness.sh ${var.pac_elb_name}"
+  }
+  provisioner "local-exec" {
     command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
 }
