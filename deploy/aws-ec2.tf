@@ -26,6 +26,12 @@ resource "aws_security_group" "pac_elb_sg" {
   }
 }
 
+resource "aws_launch_configuration" "pac_as_conf" {
+    name = "pac_auto_scale"
+    image_id = "${var.pac_ami_id}"
+    instance_type = "t1.micro"
+}
+
 resource "aws_instance" "pac1" {
   ami = "${var.pac_ami_id}"
   instance_type = "t1.micro"
@@ -62,8 +68,6 @@ resource "aws_elb" "pac-elb" {
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   internal = false
   
-  # Must manually set the session stickiness for now.  See https://github.com/hashicorp/terraform/issues/656
- 
   listener {
     instance_port = 8080
     instance_protocol = "http"
