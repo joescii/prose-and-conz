@@ -30,6 +30,8 @@ resource "aws_launch_configuration" "pac_as_conf" {
   name = "pac_auto_scale"
   image_id = "${var.pac_ami_id}"
   instance_type = "t1.micro"
+  key_name = "joe-pac"
+  security_groups = ["${aws_security_group.pac_instance_sg.id}"]
 }
 
 resource "aws_autoscaling_group" "pac_as" {
