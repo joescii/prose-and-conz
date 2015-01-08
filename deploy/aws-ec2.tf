@@ -44,8 +44,13 @@ resource "aws_autoscaling_group" "pac_as" {
   force_delete = true
   launch_configuration = "${aws_launch_configuration.pac_as_conf.id}"
   load_balancers = ["${aws_elb.pac-elb.name}"]
+
   lifecycle {
     create_before_destroy = true
+  }
+  
+  provisioner "local-exec" {
+    command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
 }
 
@@ -76,9 +81,6 @@ resource "aws_elb" "pac-elb" {
   
   provisioner "local-exec" {
     command = "./elb-stickiness.sh ${aws_elb.pac-elb.name}"
-  }
-  provisioner "local-exec" {
-    command = "./waitFor.sh http://${aws_elb.pac-elb.dns_name} 5 120"
   }
   provisioner "local-exec" {
     command = "./route53.sh ${aws_route53_zone.primary.zone_id} ${aws_elb.pac-elb.name}"
