@@ -85,8 +85,8 @@ resource "aws_elb" "pac-elb" {
     create_before_destroy = true
   }
   
-  provisioner "local-exec" {
-    command = "./elb-stickiness.sh ${aws_elb.pac-elb.name}"
-  }
+#  provisioner "local-exec" {
+#    command = "./elb-stickiness.sh ${aws_elb.pac-elb.name}"
+#  }
 }
 
