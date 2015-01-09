@@ -12,5 +12,6 @@ fi
 url=$1
 while [ "0" -eq "0" ]; do
   status=`curl -w %{http_code} ${url} | tail -1`
-  echo ${status}
+  timestamp=`date +"%H:%M:%S"`
+  echo "${status} ${timestamp}"
 done
