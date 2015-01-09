@@ -14,3 +14,4 @@ variable "region" {
 }
 
 variable "pac_ami_id" {}
+variable "pac_as_name" {}
