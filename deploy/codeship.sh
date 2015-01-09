@@ -45,7 +45,7 @@ if [ -z "$PAC_AMI_ID" ]; then
 fi
 
 # Get the current terraform state
-aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
+# aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
 
 # Update the AWS infrastructure
 ./terraform/terraform plan  \
