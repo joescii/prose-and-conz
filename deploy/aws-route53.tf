@@ -16,10 +16,11 @@ resource "aws_route53_record" "ns" {
   name = "joescii.com."
   type = "NS"
   ttl = "172800"
-  records = ["ns-763.awsdns-31.net.", 
-    "ns-1530.awsdns-63.org.",
-    "ns-1566.awsdns-03.co.uk.",
-    "ns-340.awsdns-42.com."
+  records = [
+    "ns-1778.awsdns-30.co.uk.",
+    "ns-1454.awsdns-53.org.",
+    "ns-770.awsdns-32.net.",
+    "ns-5.awsdns-00.com."
   ]
 }
 
