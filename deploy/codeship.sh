@@ -35,6 +35,9 @@ chmod 700 ./jq
 
 chmod 700 ./*.sh
 
+# Archive the war file
+aws s3 cp s3://proseandconz/deployments/pac-${timestamp}.war ./deploy/root.war
+
 if [ -z "$PAC_AMI_ID" ]; then
   # Build the AMI for our server
   ./packer/packer build -var timestamp=${timestamp} ./web-srv-packer.json
