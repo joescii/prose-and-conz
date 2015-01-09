@@ -47,18 +47,15 @@ fi
 # Get the current terraform state
 aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate 
 
-PAC_AS_NAME=pac-as-${timestamp}
 # Update the AWS infrastructure
 ./terraform/terraform plan  \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
-  -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_as_name=${PAC_AS_NAME}" 
+  -var "pac_ami_id=${PAC_AMI_ID}" 
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
-  -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_as_name=${PAC_AS_NAME}"
+  -var "pac_ami_id=${PAC_AMI_ID}" 
 
 # Save the terraform state 
 cat ./terraform.tfstate
