@@ -53,12 +53,12 @@ PAC_LAUNCH_CONFIG_NAME=pac-launch-config-${timestamp}
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_launch_config_name=${PAC_LAUNCH_CONFIG_NAME}" 
+  -var "timestamp=${timestamp}" 
 ./terraform/terraform apply \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
-  -var "pac_launch_config_name=${PAC_LAUNCH_CONFIG_NAME}" 
+  -var "timestamp=${timestamp}" 
 
 # Save the terraform state 
 cat ./terraform.tfstate

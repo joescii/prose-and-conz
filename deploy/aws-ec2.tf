@@ -27,7 +27,7 @@ resource "aws_security_group" "pac_elb_sg" {
 }
 
 resource "aws_launch_configuration" "pac_as_conf" {
-  name = "${var.pac_launch_config_name}"
+  name = "pac-as-launch-config-${var.timestamp}"
   image_id = "${var.pac_ami_id}"
   instance_type = "t1.micro"
   key_name = "joe-pac"
@@ -41,7 +41,7 @@ resource "aws_launch_configuration" "pac_as_conf" {
 resource "aws_autoscaling_group" "pac_as" {
   availability_zones = ["us-east-1b", "us-east-1d"]
   vpc_zone_identifier = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
-  name = "pac-autoscaling-group"
+  name = "pac-autoscaling-group-${var.timestamp}"
   max_size = 2
   min_size = 2
   health_check_grace_period = 300
@@ -64,7 +64,7 @@ resource "aws_autoscaling_group" "pac_as" {
 }
 
 resource "aws_elb" "pac-elb" {
-  name = "pac-elb"
+  name = "pac-elb-${var.timestamp}"
   subnets = ["${aws_subnet.us-east-1b-public.id}", "${aws_subnet.us-east-1d-public.id}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   internal = false

@@ -14,4 +14,4 @@ variable "region" {
 }
 
 variable "pac_ami_id" {}
-variable "pac_launch_config_name" {}
+variable "timestamp" {}
