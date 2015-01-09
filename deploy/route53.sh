@@ -40,4 +40,15 @@ EOF
 
 aws route53 change-resource-record-sets \
   --hosted-zone-id ${zone} \
-  --change-batch file://${abs_json}
+  --change-batch file://${abs_json} \
+  > ./route53-change.json
+
+changeId=`./jq --raw-output '.ChangeInfo.Id' ./route53-change.json`
+status=PENDING
+
+while [ "${status}" = "PENDING" ]; do
+  sleep 5
+  aws route53 get-change --id ${changeId} > ./route53-change.json
+  status=`./jq --raw-output '.ChangeInfo.Status' ./route53-change.json`
+  echo "Route53 ALIAS status: ${status}"
+done
