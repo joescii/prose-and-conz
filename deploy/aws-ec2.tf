@@ -64,6 +64,7 @@ resource "aws_elb" "pac-elb" {
   subnets = ["${aws_subnet.us-east-1b-public.id}", "${aws_subnet.us-east-1d-public.id}"]
   security_groups = ["${aws_security_group.pac_elb_sg.id}"]
   internal = false
+  cross_zone_load_balancing = true
   
   listener {
     instance_port = 8080
