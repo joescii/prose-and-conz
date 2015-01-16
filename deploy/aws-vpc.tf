@@ -10,25 +10,25 @@ resource "aws_internet_gateway" "default" {
 }
 
 # NAT instance
-resource "aws_security_group" "nat" {
-	name = "nat"
-	description = "Allow services from the private subnet through NAT"
-
-	ingress {
-		from_port = 0
-		to_port = 65535
-		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.us-east-1b-private.cidr_block}"]
-	}
-	ingress {
-		from_port = 0
-		to_port = 65535
-		protocol = "tcp"
-		cidr_blocks = ["${aws_subnet.us-east-1d-private.cidr_block}"]
-	}
-
-	vpc_id = "${aws_vpc.default.id}"
-}
+#resource "aws_security_group" "nat" {
+#	name = "nat"
+#	description = "Allow services from the private subnet through NAT"
+#
+#	ingress {
+#		from_port = 0
+#		to_port = 65535
+#		protocol = "tcp"
+#		cidr_blocks = ["${aws_subnet.us-east-1b-private.cidr_block}"]
+#	}
+#	ingress {
+#		from_port = 0
+#		to_port = 65535
+#		protocol = "tcp"
+#		cidr_blocks = ["${aws_subnet.us-east-1d-private.cidr_block}"]
+#	}
+#
+#	vpc_id = "${aws_vpc.default.id}"
+#}
 
 #resource "aws_instance" "nat" {
 #  tags {
@@ -44,10 +44,10 @@ resource "aws_security_group" "nat" {
 #	source_dest_check = false
 #}
 
-resource "aws_eip" "nat" {
-	instance = "${aws_instance.nat.id}"
-	vpc = true
-}
+#resource "aws_eip" "nat" {
+#	instance = "${aws_instance.nat.id}"
+#	vpc = true
+#}
 
 # Public subnets
 resource "aws_subnet" "us-east-1b-public" {
@@ -100,53 +100,53 @@ resource "aws_subnet" "us-east-1d-private" {
 }
 
 # Routing table for private subnets
-resource "aws_route_table" "us-east-1-private" {
-	vpc_id = "${aws_vpc.default.id}"
+#resource "aws_route_table" "us-east-1-private" {
+#	vpc_id = "${aws_vpc.default.id}"
+#
+#	route {
+#		cidr_block = "0.0.0.0/0"
+#		instance_id = "${aws_instance.nat.id}"
+#	}
+#}
 
-	route {
-		cidr_block = "0.0.0.0/0"
-		instance_id = "${aws_instance.nat.id}"
-	}
-}
+#resource "aws_route_table_association" "us-east-1b-private" {
+#	subnet_id = "${aws_subnet.us-east-1b-private.id}"
+#	route_table_id = "${aws_route_table.us-east-1-private.id}"
+#}
 
-resource "aws_route_table_association" "us-east-1b-private" {
-	subnet_id = "${aws_subnet.us-east-1b-private.id}"
-	route_table_id = "${aws_route_table.us-east-1-private.id}"
-}
-
-resource "aws_route_table_association" "us-east-1d-private" {
-	subnet_id = "${aws_subnet.us-east-1d-private.id}"
-	route_table_id = "${aws_route_table.us-east-1-private.id}"
-}
+#resource "aws_route_table_association" "us-east-1d-private" {
+#	subnet_id = "${aws_subnet.us-east-1d-private.id}"
+#	route_table_id = "${aws_route_table.us-east-1-private.id}"
+#}
 
 # Bastion
-resource "aws_security_group" "bastion" {
-	name = "bastion"
-	description = "Allow SSH traffic from the internet"
+#resource "aws_security_group" "bastion" {
+#	name = "bastion"
+#	description = "Allow SSH traffic from the internet"
+#
+#	ingress {
+#		from_port = 22
+#		to_port = 22
+#		protocol = "tcp"
+#		cidr_blocks = ["0.0.0.0/0"]
+#	}
+#
+#	vpc_id = "${aws_vpc.default.id}"
+#}
 
-	ingress {
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-	vpc_id = "${aws_vpc.default.id}"
-}
-
-resource "aws_instance" "bastion" {
-  tags {
-    Name = "bastion"
-  }
-	ami = "${var.aws_ubuntu_ami}"
-	availability_zone = "us-east-1b"
-	instance_type = "t2.micro"
-	key_name = "${var.aws_key_name}"
-	security_groups = ["${aws_security_group.bastion.id}"]
-	subnet_id = "${aws_subnet.us-east-1b-public.id}"
-}
-
-resource "aws_eip" "bastion" {
-	instance = "${aws_instance.bastion.id}"
-	vpc = true
-}
+#resource "aws_instance" "bastion" {
+#  tags {
+#    Name = "bastion"
+#  }
+#	ami = "${var.aws_ubuntu_ami}"
+#	availability_zone = "us-east-1b"
+#	instance_type = "t2.micro"
+#	key_name = "${var.aws_key_name}"
+#	security_groups = ["${aws_security_group.bastion.id}"]
+#	subnet_id = "${aws_subnet.us-east-1b-public.id}"
+#}
+#
+#resource "aws_eip" "bastion" {
+#	instance = "${aws_instance.bastion.id}"
+#	vpc = true
+#}
