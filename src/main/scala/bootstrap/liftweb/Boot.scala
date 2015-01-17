@@ -60,7 +60,7 @@ class Boot {
     JQueryModule.InitParam.JQuery=JQueryModule.JQuery172
     JQueryModule.init()
 
-    LiftRules.contentParsers :+= ContentParser.basic("adoc", parseAdoc)
+    LiftRules.contentParsers ::= ContentParser("adoc", parseAdoc)
 
     blogResolver()
     requestRewrites()
