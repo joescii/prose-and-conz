@@ -6,7 +6,7 @@
     {
       "type": "amazon-ebs",
       "region": "us-east-1",
-      "source_ami": "ami-bff539d6",
+      "source_ami": "ami-f1589598",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
       "ami_name": "codeshipped {{user `timestamp`}}",
