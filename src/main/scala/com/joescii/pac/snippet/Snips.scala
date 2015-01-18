@@ -3,7 +3,7 @@ package snippet
 
 import net.liftweb.common.{Full, Empty, Box}
 import net.liftweb.http.{RequestVar, S}
-import net.liftweb.util.{ClearNodes, ClearClearable}
+import net.liftweb.util.{PassThru, Props, ClearNodes, ClearClearable}
 import net.liftweb.util.Helpers._
 import scala.util.Random
 import scala.xml.NodeSeq
@@ -170,5 +170,12 @@ object Tag {
     S.param("tag").map { tag =>
       model.tags(tag).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
     }.openOr(NodeSeq.Empty)
+  }
+}
+
+object ProductionOnly {
+  def render = Props.mode match {
+    case Props.RunModes.Production => PassThru
+    case _ => ClearNodes
   }
 }
