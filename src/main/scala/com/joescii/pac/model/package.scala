@@ -29,27 +29,30 @@ package object model {
 
   trait Post {
     def uid:String
-    def year:Int
-    def month:Int
-    def day:Int
-    def yearStr:String
-    def monthStr:String
-    def dayStr:String
-    def title:String
     def tags:List[String]
     def root:String
     def descriptionProp:String
     def published:Date
     def updated:Date
-    def shortPath:String
-    def rawHtml:Box[NodeSeq]
+    def filename:String
 
     def meta(prop:String) = {
       val node = rawHtml.map(s"$prop ^^" #> "noop")
       node.map(_ \ "@content").map(_.toString)
     }
 
+    lazy val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
     lazy val description:String = meta(descriptionProp).openOr("Description/Summary unavailable")
+
+    val regex = Post.vintageFilenameRegex
+    lazy val regex(
+      yearStr,
+      monthStr,
+      dayStr,
+      title) = filename
+    lazy val year = yearStr.toInt
+    lazy val month = monthStr.toInt
+    lazy val day = dayStr.toInt
 
     protected lazy val date = {
       val cal = new GregorianCalendar()
@@ -70,10 +73,10 @@ package object model {
       firstH2Text getOrElse title
     }
     lazy val taggedWith = <lift:TaggedWith post={title}><span class="tagged-with">Tagged with:</span> <span class="tags"></span></lift:TaggedWith>
+    lazy val rawHtml = Templates.findRawTemplate(root :: shortPath :: Nil, Locale.getDefault)
     lazy val html:NodeSeq = {
       Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault).map(WordPress.render).or(
-        Templates.findRawTemplate("modern" ::
-          shortPath.replaceFirst(Post.pathPrefixPattern, "") :: Nil,
+        Templates.findRawTemplate("modern" :: shortPath :: Nil,
           Locale.getDefault).map(AsciiDoctor.render)
       ).map(_ ++ taggedWith).openOr(<div>Post not found! {this}</div>)
     }
@@ -85,30 +88,18 @@ package object model {
     val descriptionProp = "property=og:description"
     val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
-    val regex = Post.vintageFilenameRegex
-    val regex(
-      yearStr,
-      monthStr,
-      dayStr,
-      title) = filename
-    val year = yearStr.toInt
-    val month = monthStr.toInt
-    val day = dayStr.toInt
-    val shortPath = s"$yearStr-$monthStr-$dayStr-$title"
-    val rawHtml = Templates.findRawTemplate(root :: shortPath :: Nil, Locale.getDefault)
 
     val published = meta("property=article:published_time").map(timestamp.parse).openOr(date)
     val updated   = meta("property=article:modified_time").map(timestamp.parse).openOr(published)
   }
 
-  case class ModernPost(uid:String, title:String) extends Post {
+  case class ModernPost(uid:String, filename:String) extends Post {
     // Meta stuff
     val root = "modern"
     val descriptionProp = "name=description"
     val timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
     val twoDigits = new DecimalFormat("00")
 
-    val rawHtml = Templates.findRawTemplate(root :: title :: Nil, Locale.getDefault)
     val tags:List[String] = meta("name=keywords").map { keywords =>
       keywords.split(',').map(_.trim.toLowerCase.replace(' ', '-')).filter(_.length > 0).toList
     }.openOr(List())
@@ -120,13 +111,7 @@ package object model {
       c.setTime(published)
       c
     }
-    val year = cal.get(Calendar.YEAR)
-    val month = cal.get(Calendar.MONTH)
-    val day = cal.get(Calendar.DAY_OF_MONTH)
-    val yearStr = year.toString
-    val monthStr = twoDigits format month
-    val dayStr = twoDigits format day
-    val shortPath = title
+    println(shortPath)
   }
 
   val modernPosts = {
