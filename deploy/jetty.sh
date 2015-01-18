@@ -26,7 +26,7 @@ sudo chown --recursive jetty /opt/jetty/temp
 # Set up service
 sudo sh -c "cat > /etc/init.d/jetty" <<EOF
 #!/usr/bin/env bash
-JAVA_OPTIONS+=("-Drun.mode=production")
+JAVA_OPTIONS="-Drun.mode=production"
 /opt/jetty/jetty-distribution-${version}/bin/jetty.sh \$*
 EOF
 sudo chmod 0750 /etc/init.d/jetty
