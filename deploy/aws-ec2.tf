@@ -29,7 +29,7 @@ resource "aws_security_group" "pac_elb_sg" {
 resource "aws_launch_configuration" "pac_as_conf" {
   name = "pac-as-launch-config-${var.timestamp}"
   image_id = "${var.pac_ami_id}"
-  instance_type = "t1.micro"
+  instance_type = "t2.micro"
   key_name = "joe-pac"
   security_groups = ["${aws_security_group.pac_instance_sg.id}"]
 
