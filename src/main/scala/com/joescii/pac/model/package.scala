@@ -111,7 +111,6 @@ package object model {
       c.setTime(published)
       c
     }
-    println(shortPath)
   }
 
   val modernPosts = {
