@@ -91,7 +91,7 @@ class Boot {
       case (locale, "blog" :: rest) => {
         val post = forPath(rest)
         CurrentPost(post)
-        post.map(_.html).map(surround)
+        post.map(_.html ++ <div data-lift="Disqus"></div>).map(surround)
       }
     }))
   }
