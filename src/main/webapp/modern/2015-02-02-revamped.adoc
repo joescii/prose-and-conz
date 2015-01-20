@@ -1,0 +1,31 @@
+:keywords:
+:description: Welcome to the revamped prose :: and :: conz!
+:published: 2015-02-02T05:00:00-0600
+:updated: 2015-02-02T05:00:00-0600
+
+== Revamped
+
+Welcome to the revamped _prose::and::conz_!
+I have long been telling myself to move away from wordpress.com for my blog, and I finally pulled the trigger.
+_prose::and::conz_ is now a http://liftweb.net[Lift] application running on http://aws.amazon.com[AWS].
+All of the source is available for your viewing on https://github.com/joescii/prose-and-conz[github].
+
+I initially chose to not build my own blog software when I started because I wanted to focus on the content.
+Over time I grew annoyed with Wordpress in particular.
+It is a pain to write posts offline on a flight, for instance.
+The syntax isn't particularly fun either.
+
+A few months ago I wrote my first article for https://nofluffjuststuff.com/home/magazine_subscribe[NFJS Magazine].
+This was my first exposure to http://asciidoctor.org/[Asciidoctor], and I quickly gained much appreciation for writing with it.
+That planted the first seeds of desire for a new way to write my blog posts.
+However, for me to use asciidoctor, I would have to write my own stuff.
+
+Shortly thereafter, I became inducted into the http://liftweb.net/team[Lift committers team].
+I already wanted to build everything web with Lift, but that shot in the arm encouraged me to... like... _really_ build everything with Lift, including my blog.
+Furthermore, it opened the door for me to https://github.com/lift/framework/pull/1652[enhance Lift to support ideas like Asciidcotor content]
+
+Finally, my work at http://www.mentor.com/[Mentor Graphics] had tossed me into the fire with AWS.
+I've learned enough about AWS to confidently host enterprise applications, so hosting my blog there is a walk in the park.
+This also created an opportunity for me to stretch my understanding of AWS infrastructure/deployment.
+I explored how I can use some open source tooling to manage my blog deployment using immutable infrastructure.
+Which leads right into the next series I'm going to launch: _From Commit to Deployment_
