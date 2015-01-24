@@ -1,6 +1,6 @@
 package bootstrap.liftweb
 
-import com.joescii.pac.lib.{MetaDocinfoProcessor, RssFeed, AtomFeed}
+import com.joescii.pac.lib.{LazyLoadedPosts, MetaDocinfoProcessor, RssFeed, AtomFeed}
 import com.joescii.pac.model.{ posts }
 import net.liftweb._
 import net.liftweb.common.Box
@@ -66,6 +66,7 @@ class Boot {
     requestRewrites()
     LiftRules.statelessDispatch.append(RssFeed)
     LiftRules.statelessDispatch.append(AtomFeed)
+    LiftRules.statelessDispatch.append(LazyLoadedPosts)
 
     // Force reading of all posts
     posts.foreach(_.html)
