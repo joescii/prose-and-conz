@@ -115,9 +115,8 @@ object Posts {
 }
 
 object PreviousNext {
-  import model.posts
-
   def render = {
+    val posts = model.posts
     val index = CurrentPost.map(posts.indexOf)
     val prev = index flatMap (i => if(i+1 < posts.length) Full(posts(i+1)) else Empty)
     val next = index flatMap (i => if(i-1 >= 0) Full(posts(i-1)) else Empty)

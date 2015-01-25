@@ -5,6 +5,7 @@ import java.util.{Date, Locale, Calendar, GregorianCalendar}
 
 import com.joescii.pac.snippet.{WordPress, AsciiDoctor}
 import net.liftweb.common.Box
+import net.liftweb.util.Props
 
 import scala.xml.NodeSeq
 
@@ -13,8 +14,6 @@ import net.liftweb.util.Helpers._
 
 package object model {
   object Post {
-    import com.joescii.pac.snippet.WordPress
-
     val pathPrefixPattern = """(\d{4})-(\d{2})-(\d{2})-"""
     val vintageFilenamePattern = pathPrefixPattern+"(.*)"
     val vintageFilenameRegex = vintageFilenamePattern.r
@@ -187,9 +186,14 @@ package object model {
     VintagePost("498689fd-1b03-4a4a-afea-c6463290af14", "2012-01-15-so-i-finally-created-a-blog", List("first-blog"))
   )
 
-  val posts:Seq[Post] = modernPosts ++ vintagePosts
+  def now = new Date()
 
-  val year2month2post:Map[Int, Map[Int, Seq[Post]]] = {
+  def posts:Seq[Post] =
+    (if(Props.mode == Props.RunModes.Development) modernPosts
+    else(modernPosts.filter(_.published before now))) ++
+    vintagePosts
+
+  def year2month2post:Map[Int, Map[Int, Seq[Post]]] = {
     val years = posts.map(_.year).distinct
     val monthByYear = years.map(y =>
       y -> posts.filter(_.year == y).map(_.month).distinct).toMap
@@ -200,7 +204,7 @@ package object model {
     }.toMap
   }
 
-  val tags:Map[String, Seq[Post]] = {
+  def tags:Map[String, Seq[Post]] = {
     val ts = posts.flatMap(_.tags).distinct
     ts.map(tag => tag -> posts.filter(_.tags contains tag)).toMap
   }
