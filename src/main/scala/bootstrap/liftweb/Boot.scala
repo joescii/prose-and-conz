@@ -69,7 +69,8 @@ class Boot {
     LiftRules.statelessDispatch.append(LazyLoadedPosts)
 
     // Force reading of all posts
-    (modernPosts ++ vintagePosts).foreach(_.html)
+    if(Props.mode != Props.RunModes.Development)
+      (modernPosts ++ vintagePosts).foreach(_.html)
   }
 
   val adoc = {
