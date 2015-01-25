@@ -82,8 +82,7 @@ object AsciiDoctor {
 }
 
 object Posts {
-  def render(in:NodeSeq):NodeSeq = {
-    import model.posts
+  def render(posts:Seq[model.Post]):NodeSeq = {
     val contents = (posts.head.html ++ <hr></hr><hr></hr><hr></hr>) +: (posts.tail.map(p => <div id={p.uid} class="post-content"></div>))
     val html:NodeSeq = contents.foldRight(NodeSeq.Empty)(_ ++ _)
     val lazyPosts = posts.tail.map("'"+_.uid+"'").mkString(",")  // Array of posts to lazy-load
@@ -92,6 +91,8 @@ object Posts {
       <img class="spinner" src="images/ajax-loader.gif"></img> ++
       <script>window.lazyPosts=[{lazyPosts}];</script>
   }
+
+  def render(in:NodeSeq):NodeSeq = render(model.posts)
 }
 
 object PreviousNext {
@@ -174,7 +175,7 @@ object TaggedWith {
 object Tag {
   def render(in:NodeSeq):NodeSeq = {
     S.param("tag").map { tag =>
-      model.tags(tag).map(_.html).foldRight(NodeSeq.Empty)(_ ++ <hr></hr><hr></hr><hr></hr> ++ _)
+      Posts.render(model.tags(tag))
     }.openOr(NodeSeq.Empty)
   }
 }
