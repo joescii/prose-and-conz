@@ -1,7 +1,7 @@
 package bootstrap.liftweb
 
 import com.joescii.pac.lib.{LazyLoadedPosts, MetaDocinfoProcessor, RssFeed, AtomFeed}
-import com.joescii.pac.model.{ posts }
+import com.joescii.pac.model.{ modernPosts, vintagePosts }
 import net.liftweb._
 import net.liftweb.common.Box
 import net.liftweb.common.Full
@@ -69,7 +69,7 @@ class Boot {
     LiftRules.statelessDispatch.append(LazyLoadedPosts)
 
     // Force reading of all posts
-    posts.foreach(_.html)
+    (modernPosts ++ vintagePosts).foreach(_.html)
   }
 
   val adoc = {
