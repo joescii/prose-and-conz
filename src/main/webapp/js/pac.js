@@ -74,19 +74,43 @@
           // Make sure all code is highlighted
           SyntaxHighlighter.highlight();
 
-          // Convert any tweets, if twttr is already loaded.
-          // (If it isn't, then it will scan the entire doc for us once loaded)
-          if(window.twttr) window.twttr.widgets.load($('#'+post)[0]);
+          loadTwitter($('#'+post));
         },
         function(code){
           console.log("Sorry, couldn't load post "+post+" due to a "+code+" http status code!");
         }
       )
     } else {
-      $('.spinner').hide();
+      $('#lazy-post-spinner').hide();
     }
   }
 
   // Call lazyLoad immediately to go ahead and fetch the second post as we render the page
   lazyLoad();
+
+  function lazyLoadRightPanel() {
+    console.log('loading right-panel');
+    httpGet('/right-panel',
+      function(js){
+        $('#right-panel-spinner').hide();
+        eval(js);
+        loadTwitter($('#right-panel'));
+      },
+      function(code) {
+        console.log("Sorry, couldn't load the right panel due to a "+code+" http status code!");
+        $('#right-panel-spinner').hide();
+      }
+    );
+  }
+
+  function loadTwitter($el) {
+    // Convert any tweets, timelines etc, if twttr is already loaded.
+    // (If it isn't, then it will scan the entire doc for us once loaded)
+    if(window.twttr && window.twttr.widgets) window.twttr.widgets.load($el[0]);
+  }
+
+  $('#right-panel-spinner').one('inview', function (event, visible) {
+    lazyLoadRightPanel();
+  });
+
 })(jQuery);
