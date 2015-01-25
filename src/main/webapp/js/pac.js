@@ -60,7 +60,15 @@
       console.log('Loading '+post);
       httpGet('/lazy-post/'+post,
         function(js){
+          // The js from the server will set the HTML for the post in its place
           eval(js);
+
+          // If there are more posts, then throw up a divider.
+          if(window.lazyPosts.length > 0) {
+            $('#'+post).append('<hr><hr><hr>');
+          }
+
+          // Set up a trigger to fetch the next post once this new on is in view.
           addNextTrigger(post);
         },
         function(code){
