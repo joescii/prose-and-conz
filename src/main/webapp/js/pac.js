@@ -73,6 +73,10 @@
 
           // Make sure all code is highlighted
           SyntaxHighlighter.highlight();
+
+          // Convert any tweets, if twttr is already loaded.
+          // (If it isn't, then it will scan the entire doc for us once loaded)
+          if(window.twttr) window.twttr.widgets.load($('#'+post)[0]);
         },
         function(code){
           console.log("Sorry, couldn't load post "+post+" due to a "+code+" http status code!");
