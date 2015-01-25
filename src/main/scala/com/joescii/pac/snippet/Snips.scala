@@ -88,7 +88,7 @@ object Posts {
     val lazyPosts = posts.tail.map("'"+_.uid+"'").mkString(",")  // Array of posts to lazy-load
 
     html ++
-      <img class="spinner" src="images/ajax-loader.gif"></img> ++
+      <img class="spinner" src="/images/ajax-loader.gif"></img> ++
       <script>window.lazyPosts=[{lazyPosts}];</script>
   }
 
