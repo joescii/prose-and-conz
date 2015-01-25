@@ -20,3 +20,23 @@
   display: block;
   padding-top: 1em;
 }
+
+@media only screen and (max-width: 40em) {
+  .column,
+  .columns {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .button {
+    padding-top: 0.875rem;
+    padding-right: 1.75rem;
+    padding-bottom: 0.9375rem;
+    padding-left: 1.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .pac-title {
+    float: left;
+  }
+}
