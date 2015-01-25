@@ -1,6 +1,8 @@
 package com.joescii.pac
 package snippet
 
+import java.text.DateFormat
+
 import net.liftweb.common.{Full, Empty, Box}
 import net.liftweb.http.{RequestVar, S}
 import net.liftweb.util.{PassThru, Props, ClearNodes, ClearClearable}
@@ -59,7 +61,9 @@ object Copyright {
 }
 
 object AsciiDoctor {
-  def render(page:NodeSeq):NodeSeq = {
+  import model.Post
+
+  def render(post:Post)(page:NodeSeq):NodeSeq = {
     val extractPost = "#content ^^" #> "noop"
     val liftCode:NodeSeq => NodeSeq = { ns =>
       val code = (".language-scala ^*" #> "noop").apply(ns)
@@ -73,10 +77,14 @@ object AsciiDoctor {
       liftCode andThen
       "pre [class+]" #> "brush: scala; title: ; notranslate"
     }
+    val dateF = DateFormat.getDateInstance(DateFormat.LONG, S.locale)
+    val postedOn = ".sectionbody >*" #>
+      <p class="posted-on">Posted on {dateF.format(post.published)}</p>
 
     (extractPost andThen
       convertReferences andThen
-      highlightScala).apply(page)
+      highlightScala andThen
+      postedOn).apply(page)
   }
 
 }

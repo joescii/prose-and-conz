@@ -77,7 +77,7 @@ package object model {
     lazy val html:NodeSeq = {
       Templates.findRawTemplate("vintage" :: shortPath :: Nil, Locale.getDefault).map(WordPress.render).or(
         Templates.findRawTemplate("modern" :: shortPath :: Nil,
-          Locale.getDefault).map(AsciiDoctor.render)
+          Locale.getDefault).map(AsciiDoctor.render(this))
       ).map(_ ++ taggedWith).openOr(<div>Post not found! {this}</div>)
     }
   }

@@ -35,3 +35,7 @@
     font-size: 0.8125rem;
   }
 }
+
+.posted-on {
+  font-style: italic;
+}
