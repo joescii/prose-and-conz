@@ -80,11 +80,18 @@ object AsciiDoctor {
     val dateF = DateFormat.getDateInstance(DateFormat.LONG, S.locale)
     val postedOn = ".sectionbody >*" #>
       <p class="posted-on">Posted on <a href={post.url}>{dateF.format(post.published)}</a></p>
+    val commentBelow = ".sectionbody *<" #>
+      <p class="leave-comment">Leave a
+        <a href={post.url+"#disqus_thread"}>comment below</a>, or
+        <a href="http://twitter.com/home?status=@joescii">send me a tweet</a>.
+      </p>
 
-    (extractPost andThen
-      convertReferences andThen
-      highlightScala andThen
-      postedOn).apply(page)
+    (extractPost &
+      convertReferences &
+      highlightScala &
+      postedOn &
+      commentBelow
+    ).apply(page)
   }
 
 }

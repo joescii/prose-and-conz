@@ -36,6 +36,7 @@
   }
 }
 
-.posted-on {
+.posted-on,
+.leave-comment {
   font-style: italic;
 }
