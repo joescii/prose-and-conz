@@ -48,7 +48,7 @@ object RssFeed extends RestHelper {
 }
 
 object AtomFeed extends RestHelper {
-  private val time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+  private def time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
 
   private def feed(posts:Seq[Post]):Elem = {
     val latest = posts.map(_.published).sorted.last
