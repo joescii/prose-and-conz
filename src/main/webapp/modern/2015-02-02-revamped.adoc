@@ -1,4 +1,4 @@
-:keywords:
+:keywords: blogging
 :description: Welcome to the revamped prose :: and :: conz!
 :published: 2015-02-02T05:00:00-0600
 :updated: 2015-02-02T05:00:00-0600
