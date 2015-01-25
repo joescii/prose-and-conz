@@ -83,7 +83,11 @@ object AsciiDoctor {
 
 object Posts {
   def render(posts:Seq[model.Post]):NodeSeq = {
-    val contents = (posts.head.html ++ <hr></hr><hr></hr><hr></hr>) +: (posts.tail.map(p => <div id={p.uid} class="post-content"></div>))
+    val contents =
+      (posts.head.html ++
+        (if(posts.tail.length > 0) <hr></hr><hr></hr><hr></hr> else NodeSeq.Empty)) +:
+        (posts.tail.map(p => <div id={p.uid} class="post-content"></div>)
+      )
     val html:NodeSeq = contents.foldRight(NodeSeq.Empty)(_ ++ _)
     val lazyPosts = posts.tail.map("'"+_.uid+"'").mkString(",")  // Array of posts to lazy-load
 
