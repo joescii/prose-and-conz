@@ -79,7 +79,7 @@ object AsciiDoctor {
     }
     val dateF = DateFormat.getDateInstance(DateFormat.LONG, S.locale)
     val postedOn = ".sectionbody >*" #>
-      <p class="posted-on">Posted on {dateF.format(post.published)}</p>
+      <p class="posted-on">Posted on <a href={post.url}>{dateF.format(post.published)}</a></p>
 
     (extractPost andThen
       convertReferences andThen
