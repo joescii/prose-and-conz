@@ -3,7 +3,6 @@
  */
 
 (function ($) {
-  //console.log(window.lazyPosts);
   var httpGet = function (url, success, fail) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -19,25 +18,50 @@
     request.send(null);
   };
 
-  window.addPost = function(id) {
-    $('#'+id).one('inview', function (event, visible) {
-      if (visible == true) {
+  /**
+   * Adds the next trigger for lazy-loading.  This should be called whenever content is lazily-loaded to
+   * get the page ready to fetch the next post.
+   * @param id the ID of the last-added post.
+   */
+  function addNextTrigger(id) {
+    if(elementIsInViewport(id)) {
+      lazyLoad()
+    } else {
+      $('#' + id).one('inview', function (event, visible) {
         lazyLoad();
-      }
-    });
+      });
+    }
+  }
 
-  };
+  /**
+   * Evaluates whether or not the element with the given ID is currently visible in the viewport.
+   * http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
+   * @param id The element ID to test
+   * @returns {boolean} true if the element is in the viewport, false otherwise
+   */
+  function elementIsInViewport (id) {
+    var el = $('#'+id)[0];
+    var rect = el.getBoundingClientRect();
+
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+  }
 
   /**
    * Call when it's time to lazy load the next post.
    */
-  var lazyLoad = function () {
+  function lazyLoad() {
     if(window.lazyPosts && window.lazyPosts.length > 0) {
       var post = window.lazyPosts.shift();
       console.log('Loading '+post);
       httpGet('/lazy-post/'+post,
         function(js){
           eval(js);
+          addNextTrigger(post);
         },
         function(code){
           console.log("Sorry, couldn't load post "+post+" due to a "+code+" http status code!");
@@ -46,7 +70,7 @@
     } else {
       $('.spinner').hide();
     }
-  };
+  }
 
   // Call lazyLoad immediately to go ahead and fetch the second post as we render the page
   lazyLoad();
