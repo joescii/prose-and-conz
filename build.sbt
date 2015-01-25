@@ -13,7 +13,7 @@ liftEdition <<= liftVersion { _.substring(0,3) }
 scalacOptions ++= Seq("-deprecation", "-unchecked")
 
 resolvers ++= Seq(
-  "my-snapshots" at "http://ec2-54-173-168-127.compute-1.amazonaws.com:8080/archiva/repository/snapshots",
+//  "my-snapshots" at "http://ec2-54-173-168-127.compute-1.amazonaws.com:8080/archiva/repository/snapshots",
   "staging"   at "https://oss.sonatype.org/service/local/staging/deploy/maven2",
   "snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   "releases"  at "https://oss.sonatype.org/content/repositories/releases"
