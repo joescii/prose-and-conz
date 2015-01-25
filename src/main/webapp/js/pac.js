@@ -70,6 +70,9 @@
 
           // Set up a trigger to fetch the next post once this new on is in view.
           addNextTrigger(post);
+
+          // Make sure all code is highlighted
+          SyntaxHighlighter.highlight();
         },
         function(code){
           console.log("Sorry, couldn't load post "+post+" due to a "+code+" http status code!");
