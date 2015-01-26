@@ -18,6 +18,6 @@
     <logger name="net.liftweb.http.CoreRequestVarHandler" level="error" />
     <logger name="bootstrap.liftweb" level="info" />
     <root level="warn">
-        <appender-ref ref="SYSLOG-TCP" />
+        <appender-ref ref="STDOUT" />
     </root>
 </configuration>
