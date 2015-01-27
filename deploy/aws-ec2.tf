@@ -40,7 +40,7 @@ resource "aws_launch_configuration" "pac_as_conf" {
 
 resource "aws_autoscaling_group" "pac_as" {
   availability_zones = ["us-east-1b", "us-east-1d"]
-  vpc_zone_identifier = ["${aws_subnet.us-east-1b-public.id}", "${aws_subnet.us-east-1d-public.id}"]
+  vpc_zone_identifier = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
   name = "pac-autoscaling-group-${var.timestamp}"
   max_size = 2
   min_size = 2
