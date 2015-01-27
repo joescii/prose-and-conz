@@ -3,8 +3,7 @@ package bootstrap.liftweb
 import com.joescii.pac.lib.{LazyLoadedPosts, MetaDocinfoProcessor, RssFeed, AtomFeed}
 import com.joescii.pac.model.{ modernPosts, vintagePosts }
 import net.liftweb._
-import net.liftweb.common.Box
-import net.liftweb.common.Full
+import net.liftweb.common.{Loggable, Box, Full}
 import net.liftweb.http.ContentParser
 import net.liftweb.http.LiftRules
 import scala.xml.NodeSeq
@@ -21,8 +20,9 @@ import net.liftweb.http.js.jquery._
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
  */
-class Boot {
+class Boot extends Loggable {
   def boot {
+    logger.info("Booting instance...")
     // where to search snippet
     LiftRules.addToPackages("com.joescii.pac")
 
@@ -69,8 +69,12 @@ class Boot {
     LiftRules.statelessDispatch.append(LazyLoadedPosts)
 
     // Force reading of all posts
-    if(Props.mode != Props.RunModes.Development)
+    if(Props.mode != Props.RunModes.Development) {
+      logger.info("Loading posts...")
       (modernPosts ++ vintagePosts).foreach(_.html)
+    }
+
+    logger.info("Boot complete!")
   }
 
   val adoc = {

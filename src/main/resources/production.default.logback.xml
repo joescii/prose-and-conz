@@ -5,11 +5,12 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35}: %m%n%xEx</pattern>
         </layout>
         <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
-            <host>${PAPERTRAIL_HOST}</host>
-            <port>${PAPERTRAIL_PORT}</port>
+            <host>logs2.papertrailapp.com</host>
+            <port>21843</port>
             <sendLocalName>false</sendLocalName>
             <sendLocalTimestamp>false</sendLocalTimestamp>
             <maxMessageLength>102400</maxMessageLength>
+            <ident>prose-and-conz</ident>
         </syslogConfig>
     </appender>
 
@@ -17,7 +18,7 @@
     <logger name="net.liftweb" level="warn" />
     <logger name="net.liftweb.http.CoreRequestVarHandler" level="error" />
     <logger name="bootstrap.liftweb" level="info" />
-    <root level="warn">
+    <root level="info">
         <appender-ref ref="SYSLOG-TCP" />
     </root>
 </configuration>
