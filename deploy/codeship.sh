@@ -52,7 +52,7 @@ aws s3 cp s3://proseandconz/terraform/terraform.tfstate ./terraform.tfstate
 
 PAC_LAUNCH_CONFIG_NAME=pac-launch-config-${timestamp}
 # Update the AWS infrastructure
-./terraform/terraform destory  \
+./terraform/terraform destroy  \
   -var "access_key=${AWS_ACCESS_KEY_ID}" \
   -var "secret_key=${AWS_SECRET_ACCESS_KEY}" \
   -var "pac_ami_id=${PAC_AMI_ID}" \
