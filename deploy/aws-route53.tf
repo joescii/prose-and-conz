@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "primary" {
-  name = "joescii.com"
+  name = "proseand.co.nz"
 }
 
 # Alias records are not currently supported :( https://github.com/hashicorp/terraform/issues/28
