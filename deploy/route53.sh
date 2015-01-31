@@ -31,7 +31,7 @@ cat > ${rel_json} <<EOF
     {
       "Action": "UPSERT",
       "ResourceRecordSet": {
-        "Name": "joescii.com.",
+        "Name": "proseand.co.nz.",
         "Type": "A",
         "AliasTarget": {
           "HostedZoneId": "${elbZone}",
