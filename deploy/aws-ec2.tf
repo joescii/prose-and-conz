@@ -42,11 +42,11 @@ resource "aws_autoscaling_group" "pac_as" {
   availability_zones = ["us-east-1b", "us-east-1d"]
   vpc_zone_identifier = ["${aws_subnet.us-east-1b-private.id}", "${aws_subnet.us-east-1d-private.id}"]
   name = "pac-autoscaling-group-${var.timestamp}"
-  max_size = 2
-  min_size = 2
+  max_size = 1
+  min_size = 1
   health_check_grace_period = 300
   health_check_type = "ELB"
-  desired_capacity = 2
+  desired_capacity = 1
   force_delete = true
   launch_configuration = "${aws_launch_configuration.pac_as_conf.id}"
   load_balancers = ["${aws_elb.pac-elb.name}"]
