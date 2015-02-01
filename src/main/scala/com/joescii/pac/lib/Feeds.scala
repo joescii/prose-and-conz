@@ -29,7 +29,7 @@ object RssFeed extends RestHelper {
     </rss>
 
   private def items(posts:Seq[Post]):NodeSeq = {
-    val format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
+    val format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
 
     posts.map { post =>
       <item>
