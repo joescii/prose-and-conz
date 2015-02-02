@@ -1,0 +1,76 @@
+:keywords: continuous-integration, web-development, cloud, liftweb
+:description: In this first post for "From Commit to Deployment", I introduce codeship.io as an option for continuous integration.
+:published: 2015-02-02T05:00:00-0600
+:updated: 2015-02-02T05:00:00-0600
+
+== From Commit to Deployment: Codeship
+
+As promised http://proseand.co.nz/2015/01/31/revamped/[last time] I am beginning this series entitled _From Commit to Deployment_.
+In these upcoming blog posts, I'm going to walk you through what I am currently using to deploy my blog web application into production.
+Even if you are not using my particular stack with http://liftweb.net/[Lift], https://aws.amazon.com[AWS], etc., much of what I will outline should be quite useful.
+
+So let's start by assuming you are developing a web application on your local machine.
+You're at a point where you want to put it out on the internet for you and friends to begin using.
+Secondly, I assume you have been using good source control (_ahem_... git...).
+
+=== Introducing Codeship
+
+If you are pushing your commits up to https://github.com/[github] or https://bitbucket.org/[Bitbucket], then the first thing I want to introduce you to is a breeze to integrate.
+https://codeship.io[Codeship] is a fantastic service for running continuous integration tasks triggered by your commits to your source repository.
+They offer their services 100% free for open source projects like _prose::and::conz_.
+Even closed source projects are free up to 100 builds per month.
+I generally hesitate to endorse paid services, but I feel that codeship is a good example of doing pricing the right way.
+_(i.e. free for open source and small projects then reasonable rates from there)_
+
+Out of the box, codeship has _several_ technologies built-in and ready to rock your project from your build automation to your deployment target environment.
+Even if those were not readily available, codeship is a very handy service to use.
+In a nutshell, you can regard it as a unix script that gets triggered by each commit.
+If your tooling is pre-configured for codeship, then great!
+But even if it isn't, you can just `pip install` or `wget` whatever you need.
+
+I also find codeship to be a pleasure to use.
+This is clearly software designed to be enjoyed by the end users.
+The dashboard shows a nice list of my builds and whether they passed or failed.
+During an active build, I am able to see the output of my scripts streaming into the browser.
+It even looks like the command console, including colored output.
+
+=== Setup
+
+So setup is very straight-forward.
+After you setup your SCM, the next thing codeship wants you to configure is your test commands.
+As I mentioned, there are plenty of built-in technologies for you to utilize.
+For our purposes, we go with http://www.scala-sbt.org/[sbt] and configure it to run `sbt test`.
+(Just don't tell anyone that _prose::and::conz_ has zero tests...)
+
+The next thing to set up is deployment.
+Again, your deployment platform may already be included in the default list.
+Initially I played around with the three AWS options.
+However, those approaches in particular are not in line with the other goals I had for deployment, namely the use of _immutable infrastructure_.
+Fortunately it didn't matter that the technologies I wanted to use were not built in to codeship.
+With the _Custom Script_ option for deployment, I am able to do whatever I want, and that is awesome.
+
+You can peep ahead at my `https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh[codeship.sh]` script to see what I am using.
+First I'm able to simply call `sbt` to https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L10[package my war file].
+I then use `wget` to https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L18[grab packer] along with a few other tools.
+I also take advantage of `pip` to https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L30[install the AWS CLI].
+From there I just invoke whatever I need from within my shell script.
+
+=== A Helpful Bunch
+
+In case it is not immediately obvious how to get your project set up (it wasn't for me since I wanted to dabble with https://www.packer.io/[Packer], https://www.terraform.io/[Terraform], etc), the folks at codeship are super helpful.
+When I first got setup, my build failed because I had been using a local snapshot build of Lift which `sbt` couldn't access from the codeship server.
+Within hours, Alex had contacted me asking me if I needed help with my failure.
+Although I understood my particular issue, the open channel of communication proved very helpful as I dabbled into deploying the application.
+Any questions were both welcomed and answered quickly.
+Even if I replied at an odd hour over the weekend, someone at codeship was ready to help.
+
+Also be sure to check out http://blog.codeship.io/[their blog].
+Several of my ideas for using immutable infrastructure came from their posts.
+So not only are they helpful to their customers in particular, they are eager to help the community by sharing experiences.
+
+=== Next Time
+
+That should be good enough to get you started.
+This first post is a bit short.
+Thanks to codeship's ease of use, there isn't much for me to explain.
+In the next post I'll go into much more detail when I share what I've learned about Packer.
