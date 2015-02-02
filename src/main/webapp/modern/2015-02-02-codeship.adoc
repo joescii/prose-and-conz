@@ -1,5 +1,5 @@
 :keywords: continuous-integration, web-development, cloud, liftweb
-:description: In this first post for "From Commit to Deployment", I introduce codeship.io as an option for continuous integration.
+:description: In this first post for From Commit to Deployment, I introduce codeship as an option for continuous integration.
 :published: 2015-02-02T05:00:00-0600
 :updated: 2015-02-02T05:00:00-0600
 
