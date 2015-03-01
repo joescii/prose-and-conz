@@ -18,9 +18,17 @@
   "provisioners": [
     {
       "type": "shell",
+      "execute_command": "echo 'apt-get-update' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 5",
+        "/usr/bin/apt-get update"
+      ]
+    },
+    {
+      "type": "shell",
       "execute_command": "echo 'wget' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
       "inline": [
-        "sleep 10",
+        "sleep 5",
         "/usr/bin/apt-get -y install wget"
       ]
     },
@@ -28,8 +36,7 @@
       "type": "shell",
       "execute_command": "echo 'unzip' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
       "inline": [
-        "sleep 10",
-        "/usr/bin/apt-get update",
+        "sleep 5",
         "/usr/bin/apt-get -y install unzip"
       ]
     },
