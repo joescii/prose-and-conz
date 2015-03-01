@@ -259,3 +259,5 @@ Now we need to bring it to life.
 My next blog post in this series will cover https://www.terraform.io/[Terraform] (also by Hashicorp) for this purpose.
 I hope to give it an equally in-depth treatment as Packer got here, so it will probably be a few weeks for me to pull it together.
 In the meantime, be on the lookout for me to post my upcoming http://scaladays.org/[Scaladays] talk, http://event.scaladays.org/scaladays-sanfran-2015#!#schedulePopupExtras-6559[Type-level Programming in Scala 101].
+
+A special thanks goes out to https://twitter.com/LeviNotik[Levi Notik] who steered me towards both Packer and Terraform.
