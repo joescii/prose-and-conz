@@ -1,0 +1,86 @@
+:keywords: continuous-integration, web-development, cloud, liftweb, packer
+:description: In this second post for From Commit to Deployment, I introduce packer as an option for VM definitions
+:published: 2015-03-02T05:00:00-0600
+:updated: 2015-03-02T05:00:00-0600
+
+== From Commit to Deployment: Packer
+
+http://proseand.co.nz/2015/02/02/codeship/[Last time] I introduced http://codeship.io/[Codeship] as a great option for running your continuous integration jobs after every commit to your repo.
+This time we will take our first step to bringing your web application to life.
+
+No matter how you are deploying your application, you will need a machine that is dressed to run your application.
+If you are using a PaaS provider like http://heroku.com/[Heroku], then this blog post is a no-op for you.
+On the other hand, if you are using an IaaS provider like http://aws.amazon.com[AWS] or https://www.digitalocean.com/[Digital Ocean] this post will help you define your VM.
+In particular, I'll show how to build a http://eclipse.org/jetty/[Jetty server] for hosting your Java Web Archive (WAR) file.
+
+=== Introducing Packer
+
+Unlike my last recommendation of http://codeship.io/[Codeship], today's recommendation is 100% free and open-source.
+http://packer.io/[Packer] is a tool for creating your own virtual machine images.
+Although far from perfect like any tool, I have become completely enamored with Packer as of late.
+In a nutshell, it will run a base VM image, upload files and/or run scripts, shutdown the VM, and save the image for later use.
+Regardless of your VM image philosophy, Packer is the best way I've found to define your images for use.
+To make it a complete slam dunk, Packer works well with the aforementioned cloud providers as well as VMware, VirtualBox, etc.
+
+=== Some philosophy
+
+Before I get going with Packer, let me share the philosophical decisions you have to make at this point.
+You have to decide when you configure your server's application code.
+To offer a loosely-defined stratification, consider these options:
+
+1. The VM image contains only dependencies which rarely are updated, such as Java, Jetty, etc.
+After the image launches. it is configured with the application code and properties/parameters via https://www.chef.io/chef/[Chef], https://puppetlabs.com/[Puppet], https://www.docker.com/[Docker], etc.
+2. The VM image contains the application, but not the properties or configuration.
+After the image launches, the appropriate configuration (backend database and service endpoints, etc) are found and the application is launched.
+3. The VM contains EVERYTHING.
+It is immutable and never changes again.
+
+Based on my budding knowledge on this front, I believe option 1 is the route taken by those who use Puppet, Chef, Ansible, etc to provision their servers.
+The machine image is quite static, and all of the application code and configuration are pulled from a server when it launches.
+This is also what you get when you use http://aws.amazon.com/elasticbeanstalk/[AWS's Elastic Beanstalk].
+Your platform choice dictates which http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html(AMI) you get as a base, but your code and configuration are loaded after the AMI launches.
+
+I have not actually heard of anyone using option 2, but I have given it some consideration myself.
+Here you could make your machine images with your application version and perhaps even default settings.
+Upon launch of the machine, it could request its configuration from a server and launch based on that.
+This would allow you to use the same images in whatever environments your team has (development, testing, staging, production, etc).
+
+Finally, you could choose to bake everything into the image and never look back.
+This is what many cloud-deploying companies like Netflix are advocating.
+If you want to run your application in different environments, then you bake more images.
+
+=== Choosing Immutable
+
+Personally, I am in the last camp with immutable images.
+Surely you didn't expect a functional programming advocate to think differently, did you?
+I think there are an awful lot of advantages with this approach.
+
+Firstly, your images are completely immutable and built through automation.
+This forces you to work out your staging process such that it is precisely the same as production, sans the public traffic.
+It also results in there being no forgotten tweaks and configurations that work in staging but fail to promote to production.
+Anything which passes your acceptance testing in staging WILL promote to production.
+
+Your application minimizes startup time, maximizing your response to scaling increases.
+Each server instance needs to do nothing except boot.
+There are no Ansible playbooks to run or Chef recipes to execute, all of which take time.
+So when your scaling policy necessitates a new instance, you have an instance that can respond to the traffic in minimal time.
+
+Furthermore, there are no Ansible playbooks or Chef recipes to fail either.
+Once you have your stuff in production, the last thing you want to do deal with is the inherent flakiness of this type of tooling.
+I'm not taking the slightest shot at them, but system tooling like this has a tendency to crap out at random.
+Let's avoid doing so in production.
+
+I have not used this in practice for long, but thus far the only disadvantage I have found is time.
+Baking machine images takes time, and requiring more images means more time.
+I am currently developing a hybrid approach at work where I will make an image with the JVM and Jetty preconfigured.
+Then our application image will be based on that one, requiring only that we provide the war file.
+
+== Rubber to the Road
+
+Regardless of what you choose is right for you and your project, Packer will get you there.
+The idea is pretty simple.
+Packer starts with a base VM image from your provider.
+This image is typically has nothing other than the OS at this point.
+Once the image is launched into VM, Packer uploads your files and runs your scripts to configure the image.
+After provisioning completes, the machine is shut down and the image is saved.
+
