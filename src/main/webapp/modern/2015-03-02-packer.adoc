@@ -38,7 +38,7 @@ It is immutable and never changes again.
 Based on my budding knowledge on this front, I believe option 1 is the route taken by those who use Puppet, Chef, Ansible, etc to provision their servers.
 The machine image is quite static, and all of the application code and configuration are pulled from a server when it launches.
 This is also what you get when you use http://aws.amazon.com/elasticbeanstalk/[AWS's Elastic Beanstalk].
-Your platform choice dictates which http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html(AMI) you get as a base, but your code and configuration are loaded after the AMI launches.
+Your platform choice dictates which http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html[AMI] you get as a base, but your code and configuration are loaded after the AMI launches.
 
 I have not actually heard of anyone using option 2, but I have given it some consideration myself.
 Here you could make your machine images with your application version and perhaps even default settings.
@@ -60,7 +60,7 @@ This forces you to work out your staging process such that it is precisely the s
 It also results in there being no forgotten tweaks and configurations that work in staging but fail to promote to production.
 Anything which passes your acceptance testing in staging WILL promote to production.
 
-Your application minimizes startup time, maximizing your response to scaling increases.
+Your application minimizes startup time, thereby minimizing your response an increase in scaling.
 Each server instance needs to do nothing except boot.
 There are no Ansible playbooks to run or Chef recipes to execute, all of which take time.
 So when your scaling policy necessitates a new instance, you have an instance that can respond to the traffic in minimal time.
@@ -75,7 +75,10 @@ Baking machine images takes time, and requiring more images means more time.
 I am currently developing a hybrid approach at work where I will make an image with the JVM and Jetty preconfigured.
 Then our application image will be based on that one, requiring only that we provide the war file.
 
-== Rubber to the Road
+I have also observed that it creates a new problem.
+Now you are producing AMIs like no tomorrow and you need a way to keep them cleaned up.
+
+=== Rubber to the Road
 
 Regardless of what you choose is right for you and your project, Packer will get you there.
 The idea is pretty simple.
@@ -84,3 +87,84 @@ This image is typically has nothing other than the OS at this point.
 Once the image is launched into VM, Packer uploads your files and runs your scripts to configure the image.
 After provisioning completes, the machine is shut down and the image is saved.
 
+==== Builders
+
+Configuring Packer takes place primarily in a JSON file.
+The first thing to do is tell Packer about your VM provider in the `builders` section.
+For the https://github.com/joescii/prose-and-conz/blob/master/deploy/web-srv-packer.json[_prose::and::conz_ configuration], we firstly specify that it will be an `amazon-ebs` instance.
+The next few settings are relevant because we are using Amazon, such as the `region`, `source_ami`, and `instance_type`.
+If you want to use a different VM type than Amazon, you will find the details for each `builder` in the https://www.packer.io/docs[Packer documentation].
+
+.Declaring a builder
+----
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "source_ami": "ami-3ecc7a56",
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ami_name": "codeshipped {{user `timestamp`}}",
+      "tags": {
+        "Timestamp": "{{user `timestamp`}}"
+      }
+    }
+  ],
+----
+
+==== Variables
+
+You may have noticed that above my `builder`, I have a section for `variables`.
+This allows you to define what will be provided to Packer as either command-line arguments or in a variables JSON file.
+For _prose::and::conz_, https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L43[I pass the `timestamp` as a command-line argument].
+At Mentor, I am using a JSON file because I have several variables to pass.
+
+The `timestamp` is particularly important for an Amazon build because an AMI needs to have a unique name.
+It is also handy as a tag for organizing and cleaning up your images.
+
+.Declaring a required variable
+----
+  "variables": {
+    "timestamp": null
+  },
+----
+
+.Referencing a variable
+----
+  "ami_name": "codeshipped {{user `timestamp`}}",
+  "tags": {
+    "Timestamp": "{{user `timestamp`}}"
+  }
+----
+
+==== Provisioners
+
+Once you have the above configurations defined, you can turn your attention to the `provisioners`.
+This is where you tell Packer to upload your files and what scripts to run over SSH.
+
+The first couple of provisioners for _prose::and::conz_ install tools we will use in our scripts, namely `wget` and `unzip` which are not available in our base image.
+
+.Installing tools
+----
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'wget' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 10",
+        "/usr/bin/apt-get -y install wget"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'unzip' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 10",
+        "/usr/bin/apt-get update",
+        "/usr/bin/apt-get -y install unzip"
+      ]
+    },
+----
+
+
+=== It even does Windows!
