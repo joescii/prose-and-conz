@@ -22,6 +22,9 @@ In a nutshell, it will run a base VM image, upload files and/or run scripts, shu
 Regardless of your VM image philosophy, Packer is the best way I've found to define your images for use.
 To make it a complete slam dunk, Packer works well with the aforementioned cloud providers as well as VMware, VirtualBox, etc.
 
+Packer is a project by https://www.hashicorp.com/[Hashicorp].
+it is open source under the https://github.com/mitchellh/packer/blob/master/LICENSE[Mozilla Public License Version 2.0] and written in http://golang.org/[Go].
+
 === Some philosophy
 
 Before I get going with Packer, let me share the philosophical decisions you have to make at this point.
@@ -249,3 +252,10 @@ One good thing you can do here is create a security group that only allows traff
 You can troubleshoot some of these problems by looking at your EC2 instances while Packer is running.
 It will always be tagged with the name `Packer Builder` so it should be easy for you to find.
 
+=== Up next: Terraform
+
+That gets us to a point where we have a server image with our application ready to run.
+Now we need to bring it to life.
+My next blog post in this series will cover https://www.terraform.io/[Terraform] (also by Hashicorp) for this purpose.
+I hope to give it an equally in-depth treatment as Packer got here, so it will probably be a few weeks for me to pull it together.
+In the meantime, be on the lookout for me to post my upcoming http://scaladays.org/[Scaladays] talk, http://event.scaladays.org/scaladays-sanfran-2015#!#schedulePopupExtras-6559[Type-level Programming in Scala 101].
