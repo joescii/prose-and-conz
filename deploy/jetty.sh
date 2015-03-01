@@ -7,7 +7,7 @@ sudo mkdir -p /opt/web/mybase
 sudo mkdir -p /opt/jetty/temp
 
 cd /opt/jetty
-sudo wget http://download.eclipse.org/jetty/${version}/dist/jetty-distribution-${version}.zip
+sudo wget http://archive.eclipse.org/jetty/${version}/dist/jetty-distribution-${version}.zip
 sudo unzip jetty-distribution-${version}.zip
 sudo rm jetty-distribution-${version}.zip
 
