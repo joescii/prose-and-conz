@@ -9,6 +9,7 @@
       "source_ami": "ami-3ecc7a56",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
+      "associate_public_ip_address": "true",
       "ami_name": "codeshipped {{user `timestamp`}}",
       "tags": {
         "Timestamp": "{{user `timestamp`}}"
