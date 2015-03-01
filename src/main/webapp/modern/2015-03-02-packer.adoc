@@ -149,9 +149,17 @@ The first couple of provisioners for _prose::and::conz_ install tools we will us
   "provisioners": [
     {
       "type": "shell",
+      "execute_command": "echo 'apt-get-update' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 5",
+        "/usr/bin/apt-get update"
+      ]
+    },
+    {
+      "type": "shell",
       "execute_command": "echo 'wget' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
       "inline": [
-        "sleep 10",
+        "sleep 5",
         "/usr/bin/apt-get -y install wget"
       ]
     },
@@ -159,12 +167,85 @@ The first couple of provisioners for _prose::and::conz_ install tools we will us
       "type": "shell",
       "execute_command": "echo 'unzip' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
       "inline": [
-        "sleep 10",
-        "/usr/bin/apt-get update",
+        "sleep 5",
         "/usr/bin/apt-get -y install unzip"
       ]
     },
 ----
 
+I've gone the above route and it works, but there is a lot of boilerplate.
+Next time I start an image configuration, I will probably just write one script called `tools.sh` which does all the `apt-get` stuff.
+
+When I went through examples of how to do all of this stuff, I noticed that everyone sprinkles in a `sleep` every time before an `apt-get` call.
+Evidently the scripts run a bit too fast for `apt-get` and your builds will be really flaky without the breaks.
+Trust me, I tried running without them to speed things up.
+
+Once the tooling is in place, you can call scripts or upload files.
+_prose::and::conz_ has only a war file for the application, which is uploaded with the following `provisioner`.
+
+.Uploading a file
+----
+{
+  "type": "file",
+  "source": "root.war",
+  "destination": "/tmp/root.war"
+},
+----
+
+After I have my tooling and application archive in place, I call https://github.com/joescii/prose-and-conz/blob/master/deploy/java.sh[`java.sh`] and https://github.com/joescii/prose-and-conz/blob/master/deploy/jetty.sh[`jetty.sh`].
+
+.Running scripts
+----
+{
+  "type": "shell",
+  "script": "java.sh"
+},
+{
+  "type": "shell",
+  "script": "jetty.sh"
+}
+----
+
+I won't bother to paste both scripts here in this blog post, but you can see both in the links above.
+Basically `java.sh` grabs JDK 1.8, accepts the license, and installs it as the default java installation.
+Then `jetty.sh` plops http://eclipse.org/jetty/[jetty] down, moves the `root.war` into place, and sets it all up as a service.
 
 === It even does Windows!
+
+Out of the box, I believe Packer currently does everything via SSH.
+A typical Windows install does not have SSH, of course.
+Fortunately the Packer community has been hard at work producing an already-stable https://github.com/packer-community/packer-windows-plugins[Windows plugin].
+I know Windows is incredibly evil and you should avoid even needing this.
+Unfortunately not all of us have the liberty to be free from Windows.
+For instance, at Mentor we have a 3rd-party application we are deploying as a micro service which only runs on Windows.
+Rewriting is not even close to an option in cases like this.
+
+The plugin works by utilizing https://msdn.microsoft.com/en-us/library/aa384426%28v=vs.85%29.aspx[WinRM].
+By default, WinRM isn't running nor does the firewall allow communication via its default port.
+Fortunately for AWS in particular, it is possible to pass a powershell script to run on initialization of a new VM.
+This allows us to pass https://github.com/joescii/packer-windows-example/blob/master/setup.ps1[a script] which creates a user and sets up WinRM.
+You could indeed do much or possibly all of your provisioning as part of this initial `user_data_file`.
+However if you are going to send application code, then you'll need WinRM up and running.
+
+You can see an example project I created https://github.com/joescii/packer-windows-example[on github].
+Although not shown in my sample project at this time, I recommend running a final script which kills off WinRM lest it be left running in production.
+
+=== Some tips and details about AWS
+
+If you are doing this with AWS, there are a few common problems you are likely to hit.
+First is making sure Packer can talk to the EC2 server it creates.
+Packer creates the instance via the AWS API, and then waits for SSH or WinRM to become available on the new server.
+Sometimes AWS is just a bit flaky, you simply don't get a server, and Packer times out aborting the process.
+Consistent timeouts are indicative of other problems likely related to where you told Packer to put the EC2.
+
+Without passing IDs for a VPC, subnet, security group, etc., Packer will create a temporary security group and create your instance in your default VPC.
+This may or may not produce a public IP for your EC2 depending on your settings.
+If you are running Packer from outside of AWS, then you will need either a public IP for it to access or perhaps have a VPN set up.
+
+With _prose::and::conz_ I just let it use the default VPC and so forth to run.
+At Mentor I've taken more time to set it up so that these things are specified.
+One good thing you can do here is create a security group that only allows traffic on the appropriate port from the public IP of your machine running Packer.
+
+You can troubleshoot some of these problems by looking at your EC2 instances while Packer is running.
+It will always be tagged with the name `Packer Builder` so it should be easy for you to find.
+
