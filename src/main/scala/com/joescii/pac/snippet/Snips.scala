@@ -65,18 +65,21 @@ object AsciiDoctor {
 
   def render(post:Post)(page:NodeSeq):NodeSeq = {
     val extractPost = "#content ^^" #> "noop"
-    val liftCode:NodeSeq => NodeSeq = { ns =>
-      val code = (".language-scala ^*" #> "noop").apply(ns)
-      ("pre *" #> code).apply(ns)
-    }
     val convertReferences = ".conum" #> { ns:NodeSeq =>
       val ref = ns.text
       s"// See $ref below"
     }
-    val highlightScala = ".listingblock *" #> {
-      liftCode andThen
-      "pre [class+]" #> "brush: scala; title: ; notranslate"
-    }
+    val highlightCode =
+      // Each .listingblock contains a <pre><code>...
+      ".listingblock *" #> { ns:NodeSeq =>
+        val lang = (ns \\ "@data-lang").toString
+        val code = ("code ^*" #> "noop") apply ns
+        // For our highlighter to work, we have to lift the code up to the <pre> tag
+        val lift = "pre *" #> code
+        val brush = "pre [class+]" #> s"brush: $lang; title: ; notranslate"
+
+        (lift andThen brush) apply ns
+      }
     val dateF = DateFormat.getDateInstance(DateFormat.LONG, S.locale)
     val postedOn = ".sectionbody >*" #>
       <p class="posted-on">Posted on <a href={post.url}>{dateF.format(post.published)}</a></p>
@@ -88,7 +91,7 @@ object AsciiDoctor {
 
     (extractPost andThen
       convertReferences andThen
-      highlightScala andThen
+      highlightCode andThen
       postedOn andThen
       commentBelow
     ).apply(page)
