@@ -23,7 +23,7 @@ Regardless of your VM image philosophy, Packer is the best way I've found to def
 To make it a complete slam dunk, Packer works well with the aforementioned cloud providers as well as VMware, VirtualBox, etc.
 
 Packer is a project by https://www.hashicorp.com/[Hashicorp].
-it is open source under the https://github.com/mitchellh/packer/blob/master/LICENSE[Mozilla Public License Version 2.0] and written in http://golang.org/[Go].
+It is open source under the https://github.com/mitchellh/packer/blob/master/LICENSE[Mozilla Public License Version 2.0] and written in http://golang.org/[Go].
 
 === Some philosophy
 
@@ -121,8 +121,8 @@ If you want to use a different VM type than Amazon, you will find the details fo
 
 ==== Variables
 
-You may have noticed that above my `builder`, I have a section for `variables`.
-This allows you to define what will be provided to Packer as either command-line arguments or in a variables JSON file.
+In the code above my `builder`, I have a section for `variables`.
+This allows you to define what will be provided to Packer as either command-line arguments or in a separate variables JSON file.
 For _prose::and::conz_, https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L43[I pass the `timestamp` as a command-line argument].
 At Mentor, I am using a JSON file because I have several variables to pass.
 
@@ -244,8 +244,8 @@ Although not shown in my sample project at this time, I recommend running a fina
 
 === Some tips and details about AWS
 
-If you are doing this with AWS, there are a few common problems you are likely to hit.
-First is making sure Packer can talk to the EC2 server it creates.
+If you using Packer with AWS, there are a few common problems you are likely to hit.
+First you should be sure Packer can talk to the EC2 server it creates.
 Packer creates the instance via the AWS API, and then waits for SSH or WinRM to become available on the new server.
 Sometimes AWS is just a bit flaky, you simply don't get a server, and Packer times out aborting the process.
 Consistent timeouts are indicative of other problems likely related to where you told Packer to put the EC2.
