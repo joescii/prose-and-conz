@@ -1,0 +1,275 @@
+:keywords: continuous-integration, web-development, cloud, liftweb, packer
+:description: In this second post for From Commit to Deployment, I introduce packer as an option for VM definitions
+:published: 2015-03-02T05:00:00-0600
+:updated: 2015-03-02T05:00:00-0600
+
+== From Commit to Deployment: Packer
+
+http://proseand.co.nz/2015/02/02/codeship/[Last time] I introduced http://codeship.io/[Codeship] as a great option for running your continuous integration jobs after every commit to your repo.
+This time we will take our first step to bringing your web application to life.
+
+No matter how you are deploying your application, you will need a machine that is dressed to run your application.
+If you are using a PaaS provider like http://heroku.com/[Heroku], then this blog post is a no-op for you.
+On the other hand, if you are using an IaaS provider like http://aws.amazon.com[AWS] or https://www.digitalocean.com/[Digital Ocean] this post will help you define your VM.
+In particular, I'll show how to build a http://eclipse.org/jetty/[Jetty server] for hosting your Java Web Archive (WAR) file.
+
+=== Introducing Packer
+
+Unlike my last recommendation of http://codeship.io/[Codeship], today's recommendation is 100% free and open-source.
+http://packer.io/[Packer] is a tool for creating your own virtual machine images.
+Although far from perfect like any tool, I have become completely enamored with Packer as of late.
+In a nutshell, it will run a base VM image, upload files and/or run scripts, shutdown the VM, and save the image for later use.
+Regardless of your VM image philosophy, Packer is the best way I've found to define your images for use.
+To make it a complete slam dunk, Packer works well with the aforementioned cloud providers as well as VMware, VirtualBox, etc.
+
+Packer is a project by https://www.hashicorp.com/[Hashicorp].
+It is open source under the https://github.com/mitchellh/packer/blob/master/LICENSE[Mozilla Public License Version 2.0] and written in http://golang.org/[Go].
+
+=== Some philosophy
+
+Before I get going with Packer, let me share the philosophical decisions you have to make at this point.
+You have to decide when you configure your server's application code.
+To offer a loosely-defined stratification, consider these options:
+
+1. The VM image contains only dependencies which rarely are updated, such as Java, Jetty, etc.
+After the image launches. it is configured with the application code and properties/parameters via https://www.chef.io/chef/[Chef], https://puppetlabs.com/[Puppet], https://www.docker.com/[Docker], etc.
+2. The VM image contains the application, but not the properties or configuration.
+After the image launches, the appropriate configuration (backend database and service endpoints, etc) are found and the application is launched.
+3. The VM contains EVERYTHING.
+It is immutable and never changes again.
+
+Based on my budding knowledge on this front, I believe option 1 is the route taken by those who use Puppet, Chef, Ansible, etc to provision their servers.
+The machine image is quite static, and all of the application code and configuration are pulled from a server when it launches.
+This is also what you get when you use http://aws.amazon.com/elasticbeanstalk/[AWS's Elastic Beanstalk].
+Your platform choice dictates which http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html[AMI] you get as a base, but your code and configuration are loaded after the AMI launches.
+
+I have not actually heard of anyone using option 2, but I have given it some consideration myself.
+Here you could make your machine images with your application version and perhaps even default settings.
+Upon launch of the machine, it could request its configuration from a server and launch based on that.
+This would allow you to use the same images in whatever environments your team has (development, testing, staging, production, etc).
+
+Finally, you could choose to bake everything into the image and never look back.
+This is what many cloud-deploying companies like Netflix are advocating.
+If you want to run your application in different environments, then you bake more images.
+
+=== Choosing Immutable
+
+Personally, I am in the last camp with immutable images.
+Surely you didn't expect a functional programming advocate to think differently, did you?
+I think there are an awful lot of advantages with this approach.
+
+Firstly, your images are completely immutable and built through automation.
+This forces you to work out your staging process such that it is precisely the same as production, sans the public traffic.
+It also results in there being no forgotten tweaks and configurations that work in staging but fail to promote to production.
+Anything which passes your acceptance testing in staging WILL promote to production.
+
+Your application minimizes startup time, thereby minimizing your response an increase in scaling.
+Each server instance needs to do nothing except boot.
+There are no Ansible playbooks to run or Chef recipes to execute, all of which take time.
+So when your scaling policy necessitates a new instance, you have an instance that can respond to the traffic in minimal time.
+
+Furthermore, there are no Ansible playbooks or Chef recipes to fail either.
+Once you have your stuff in production, the last thing you want to do deal with is the inherent flakiness of this type of tooling.
+I'm not taking the slightest shot at them, but system tooling like this has a tendency to crap out at random.
+Let's avoid doing so in production.
+
+I have not used this in practice for long, but thus far the only disadvantage I have found is time.
+Baking machine images takes time, and requiring more images means more time.
+I am currently developing a hybrid approach at work where I will make an image with the JVM and Jetty preconfigured.
+Then our application image will be based on that one, requiring only that we provide the war file.
+
+I have also observed that it creates a new problem.
+Now you are producing AMIs like no tomorrow and you need a way to keep them cleaned up.
+Netflix uses their http://techblog.netflix.com/2013/01/janitor-monkey-keeping-cloud-tidy-and.html[Janitor Monkey] for cleaning them up.
+We will need to create something along these lines at work to handle the AMIs we'll be accumulating.
+
+=== Rubber to the Road
+
+Regardless of what you choose is right for you and your project, Packer will get you there.
+The idea is pretty simple.
+Packer starts with a base VM image from your provider.
+This image is typically has nothing other than the OS at this point.
+Once the image is launched into VM, Packer uploads your files and runs your scripts to configure the image.
+After provisioning completes, the machine is shut down and the image is saved.
+
+==== Builders
+
+Configuring Packer takes place primarily in a JSON file.
+The first thing to do is tell Packer about your VM provider in the `builders` section.
+For the https://github.com/joescii/prose-and-conz/blob/master/deploy/web-srv-packer.json[_prose::and::conz_ configuration], we firstly specify that it will be an `amazon-ebs` instance.
+The next few settings are relevant because we are using Amazon, such as the `region`, `source_ami`, and `instance_type`.
+If you want to use a different VM type than Amazon, you will find the details for each `builder` in the https://www.packer.io/docs[Packer documentation].
+
+
+[source,javascript]
+._Declaring a builder_
+----
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "source_ami": "ami-3ecc7a56",
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ami_name": "codeshipped {{user `timestamp`}}",
+      "tags": {
+        "Timestamp": "{{user `timestamp`}}"
+      }
+    }
+  ],
+----
+
+==== Variables
+
+In the code above my `builder`, I have a section for `variables`.
+This allows you to define what will be provided to Packer as either command-line arguments or in a separate variables JSON file.
+For _prose::and::conz_, https://github.com/joescii/prose-and-conz/blob/master/deploy/codeship.sh#L43[I pass the `timestamp` as a command-line argument].
+At Mentor, I am using a JSON file because I have several variables to pass.
+
+The `timestamp` is particularly important for an Amazon build because an AMI needs to have a unique name.
+It is also handy as a tag for organizing and cleaning up your images.
+
+[source,javascript]
+._Declaring a required variable_
+----
+  "variables": {
+    "timestamp": null
+  },
+----
+
+[source,javascript]
+._Referencing a variable_
+----
+  "ami_name": "codeshipped {{user `timestamp`}}",
+  "tags": {
+    "Timestamp": "{{user `timestamp`}}"
+  }
+----
+
+==== Provisioners
+
+Once you have the above configurations defined, you can turn your attention to the `provisioners`.
+This is where you tell Packer to upload your files and what scripts to run over SSH.
+
+The first couple of provisioners for _prose::and::conz_ install tools we will use in our scripts, namely `wget` and `unzip` which are not available in our base image.
+
+[source,javascript]
+._Installing tools_
+----
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'apt-get-update' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 5",
+        "/usr/bin/apt-get update"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'wget' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 5",
+        "/usr/bin/apt-get -y install wget"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'unzip' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 5",
+        "/usr/bin/apt-get -y install unzip"
+      ]
+    },
+----
+
+I've gone the above route and it works, but there is a lot of boilerplate.
+Next time I start an image configuration, I will probably just write one script called `tools.sh` which does all the `apt-get` stuff.
+
+When I went through examples of how to do all of this stuff, I noticed that everyone sprinkles in a `sleep` every time before an `apt-get` call.
+Evidently the scripts run a bit too fast for `apt-get` and your builds will be really flaky without the breaks.
+Trust me, I tried running without them to speed things up.
+
+Once the tooling is in place, you can call scripts or upload files.
+_prose::and::conz_ has only a war file for the application, which is uploaded with the following `provisioner`.
+
+[source,javascript]
+._Uploading a file_
+----
+{
+  "type": "file",
+  "source": "root.war",
+  "destination": "/tmp/root.war"
+},
+----
+
+After I have my tooling and application archive in place, I call https://github.com/joescii/prose-and-conz/blob/master/deploy/java.sh[`java.sh`] and https://github.com/joescii/prose-and-conz/blob/master/deploy/jetty.sh[`jetty.sh`].
+
+[source,javascript]
+._Running scripts_
+----
+{
+  "type": "shell",
+  "script": "java.sh"
+},
+{
+  "type": "shell",
+  "script": "jetty.sh"
+}
+----
+
+I won't bother to paste both scripts here in this blog post, but you can see both in the links above.
+Basically `java.sh` grabs JDK 1.8, accepts the license, and installs it as the default java installation.
+Then `jetty.sh` plops http://eclipse.org/jetty/[jetty] down, moves the `root.war` into place, and sets it all up as a service.
+
+=== It even does Windows!
+
+Out of the box, I believe Packer currently does everything via SSH.
+A typical Windows install does not have SSH, of course.
+Fortunately the Packer community has been hard at work producing an already-stable https://github.com/packer-community/packer-windows-plugins[Windows plugin].
+I know Windows is incredibly evil and you should avoid even needing this.
+Unfortunately not all of us have the liberty to be free from Windows.
+For instance, at Mentor we have a 3rd-party application we are deploying as a micro service which only runs on Windows.
+Rewriting is not even close to an option in cases like this.
+
+The plugin works by utilizing https://msdn.microsoft.com/en-us/library/aa384426%28v=vs.85%29.aspx[WinRM].
+By default, WinRM isn't running nor does the firewall allow communication via its default port.
+Fortunately for AWS in particular, it is possible to pass a powershell script to run on initialization of a new VM.
+This allows us to pass https://github.com/joescii/packer-windows-example/blob/master/setup.ps1[a script] which creates a user and sets up WinRM.
+You could indeed do much or possibly all of your provisioning as part of this initial `user_data_file`.
+However if you are going to send application code, then you'll need WinRM up and running.
+
+You can see an example project I created https://github.com/joescii/packer-windows-example[on github].
+Although not shown in my sample project at this time, I recommend running a final script which kills off WinRM lest it be left running in production.
+
+=== Some tips and details about AWS
+
+If you using Packer with AWS, there are a few common problems you are likely to hit.
+First you should be sure Packer can talk to the EC2 server it creates.
+Packer creates the instance via the AWS API, and then waits for SSH or WinRM to become available on the new server.
+Sometimes AWS is just a bit flaky, you simply don't get a server, and Packer times out aborting the process.
+Consistent timeouts are indicative of other problems likely related to where you told Packer to put the EC2.
+
+Without passing IDs for a VPC, subnet, security group, etc., Packer will create a temporary security group and create your instance in your default VPC.
+This may or may not produce a public IP for your EC2 depending on your settings.
+If you are running Packer from outside of AWS, then you will need either a public IP for it to access or perhaps have a VPN set up.
+
+With _prose::and::conz_ I just let it use the default VPC and so forth to run.
+At Mentor I've taken more time to set it up so that these things are specified.
+One good thing you can do here is create a security group that only allows traffic on the appropriate port from the public IP of your machine running Packer.
+
+You can troubleshoot some of these problems by looking at your EC2 instances while Packer is running.
+It will always be tagged with the name `Packer Builder` so it should be easy for you to find.
+
+=== Up next: Terraform
+
+That gets us to a point where we have a server image with our application ready to run.
+Now we need to bring it to life.
+My next blog post in this series will cover https://www.terraform.io/[Terraform] (also by Hashicorp) for this purpose.
+I hope to give it an equally in-depth treatment as Packer got here, so it will probably be a few weeks for me to pull it together.
+In the meantime, be on the lookout for me to post my upcoming http://scaladays.org/[Scaladays] talk, http://event.scaladays.org/scaladays-sanfran-2015#!#schedulePopupExtras-6559[Type-level Programming in Scala 101].
+
+=== Special thanks
+
+A special thanks goes out to https://twitter.com/LeviNotik[Levi Notik] who took the time to steer me towards both Packer and Terraform.
+Another thanks goes out to https://twitter.com/matthewfellows[Matt Fellows] who walked me through the process of getting Packer to work for a Windows VM.
