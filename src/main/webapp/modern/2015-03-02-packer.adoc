@@ -80,6 +80,8 @@ Then our application image will be based on that one, requiring only that we pro
 
 I have also observed that it creates a new problem.
 Now you are producing AMIs like no tomorrow and you need a way to keep them cleaned up.
+Netflix uses their http://techblog.netflix.com/2013/01/janitor-monkey-keeping-cloud-tidy-and.html[Janitor Monkey] for cleaning them up.
+We will need to create something along these lines at work to handle the AMIs we'll be accumulating.
 
 === Rubber to the Road
 
