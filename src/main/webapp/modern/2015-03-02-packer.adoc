@@ -260,4 +260,7 @@ My next blog post in this series will cover https://www.terraform.io/[Terraform]
 I hope to give it an equally in-depth treatment as Packer got here, so it will probably be a few weeks for me to pull it together.
 In the meantime, be on the lookout for me to post my upcoming http://scaladays.org/[Scaladays] talk, http://event.scaladays.org/scaladays-sanfran-2015#!#schedulePopupExtras-6559[Type-level Programming in Scala 101].
 
-A special thanks goes out to https://twitter.com/LeviNotik[Levi Notik] who steered me towards both Packer and Terraform.
+=== Special thanks
+
+A special thanks goes out to https://twitter.com/LeviNotik[Levi Notik] who took the time to steer me towards both Packer and Terraform.
+Another thanks goes out to https://twitter.com/matthewfellows[Matt Fellows] who walked me through the process of getting Packer to work for a Windows VM.
