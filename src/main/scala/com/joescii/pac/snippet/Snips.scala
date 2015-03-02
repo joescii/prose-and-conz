@@ -86,10 +86,10 @@ object AsciiDoctor {
         <a href="http://twitter.com/home?status=@joescii">send me a tweet</a>.
       </p>
 
-    (extractPost &
-      convertReferences &
-      highlightScala &
-      postedOn &
+    (extractPost andThen
+      convertReferences andThen
+      highlightScala andThen
+      postedOn andThen
       commentBelow
     ).apply(page)
   }
