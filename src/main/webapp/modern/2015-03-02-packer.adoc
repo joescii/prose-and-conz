@@ -100,7 +100,9 @@ For the https://github.com/joescii/prose-and-conz/blob/master/deploy/web-srv-pac
 The next few settings are relevant because we are using Amazon, such as the `region`, `source_ami`, and `instance_type`.
 If you want to use a different VM type than Amazon, you will find the details for each `builder` in the https://www.packer.io/docs[Packer documentation].
 
-.Declaring a builder
+
+[source,javascript]
+._Declaring a builder_
 ----
   "builders": [
     {
@@ -127,14 +129,16 @@ At Mentor, I am using a JSON file because I have several variables to pass.
 The `timestamp` is particularly important for an Amazon build because an AMI needs to have a unique name.
 It is also handy as a tag for organizing and cleaning up your images.
 
-.Declaring a required variable
+[source,javascript]
+._Declaring a required variable_
 ----
   "variables": {
     "timestamp": null
   },
 ----
 
-.Referencing a variable
+[source,javascript]
+._Referencing a variable_
 ----
   "ami_name": "codeshipped {{user `timestamp`}}",
   "tags": {
@@ -149,7 +153,8 @@ This is where you tell Packer to upload your files and what scripts to run over 
 
 The first couple of provisioners for _prose::and::conz_ install tools we will use in our scripts, namely `wget` and `unzip` which are not available in our base image.
 
-.Installing tools
+[source,javascript]
+._Installing tools_
 ----
   "provisioners": [
     {
@@ -188,7 +193,8 @@ Trust me, I tried running without them to speed things up.
 Once the tooling is in place, you can call scripts or upload files.
 _prose::and::conz_ has only a war file for the application, which is uploaded with the following `provisioner`.
 
-.Uploading a file
+[source,javascript]
+._Uploading a file_
 ----
 {
   "type": "file",
@@ -199,7 +205,8 @@ _prose::and::conz_ has only a war file for the application, which is uploaded wi
 
 After I have my tooling and application archive in place, I call https://github.com/joescii/prose-and-conz/blob/master/deploy/java.sh[`java.sh`] and https://github.com/joescii/prose-and-conz/blob/master/deploy/jetty.sh[`jetty.sh`].
 
-.Running scripts
+[source,javascript]
+._Running scripts_
 ----
 {
   "type": "shell",
