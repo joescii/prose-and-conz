@@ -6,7 +6,7 @@ version := "0.0.1"
 
 scalaVersion := "2.11.4"
 
-liftVersion <<= liftVersion ?? "3.0-M3"
+liftVersion <<= liftVersion ?? "3.0-M4"
 
 liftEdition <<= liftVersion { _.substring(0,3) }
 
