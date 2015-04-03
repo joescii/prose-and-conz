@@ -22,8 +22,8 @@ cd ..
 # Install terraform
 mkdir terraform
 cd terraform
-wget https://dl.bintray.com/mitchellh/terraform/terraform_0.3.6_linux_amd64.zip
-unzip terraform_0.3.6_linux_amd64.zip
+wget https://dl.bintray.com/mitchellh/terraform/terraform_0.4.0_linux_amd64.zip
+unzip terraform_0.4.0_linux_amd64.zip
 cd ..
 
 # Install aws cli
