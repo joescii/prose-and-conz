@@ -1,0 +1,136 @@
+:keywords: no-estimates, rant
+:description: An introduction to #NoEstimates
+:published: 2015-04-04T05:00:00-0600
+:updated: 2015-04-04T05:00:00-0600
+
+== Intro to #NoEstimates
+
+Link bait!
+I lured you in just so I can talk about non-Euclidean geometry.
+But I'll get back to that #NoEstimates thing.
+
+=== A Point and a Line
+
+In formal mathematics, we use a strategy of proof called _Proof by Contradiction_.
+The premise is simple:
+A statement is either true or false.
+If you assume a statement is false, and demonstrate that a contradiction necessarily follows, then it is the case that the statement must instead be true.
+
+There is an incredibly interesting property in formal geometry that I like to introduce with a question:
+Given a point and a line in 2-dimensional space where the point is not on the line, how many lines can be drawn through the point such that it never intersects the line?
+
+image::http://proseand.co.nz/images/2015-04-04-point-and-line.png[A crappy hand-drawing of a point and a line]
+
+Most reasonable people will say "exactly one line" as the answer.
+But suppose that isn't true.
+Suppose the line through that point which doesn't intersect the other line is not unique.
+Then what?
+
+I'll cut to the chase and tell you that you never arrive at a contradiction.
+In fact there are geometries such as http://en.wikipedia.org/wiki/Hyperbolic_geometry/[Hyperbolic geometry] which exist without this http://en.wikipedia.org/wiki/Parallel_postulate/[parallel postulate] assumed.
+By assuming the property is false, you can discover an entire universe of intriguing possibility.
+
+It turns out there are http://noneuclidean.tripod.com/applications.html/[fascinating applications of non-Euclidean geometry] which you can discover with a quick google like I performed.
+I have to wonder if we would have ever discovered these had someone not been bold enough to presume perhaps the postulate was false.
+
+=== Learning Through Questioning
+
+I learned quite a lot of formal mathematics at my university, but that bit about non-Euclidean geometry is burned into my memory more strongly that the rest.
+There is so much power in negating a statement and exploring what necessarily follows as a result.
+This has always impacted the way I have discussions and learn about things.
+If I remove something from the system and question the result, I learn a lot about what _doesn't_ depend on that which I removed.
+
+If you listen to the recent http://www.thisagilelife.com/76/[ThisAgileLife podcast] with https://twitter.com/WoodyZuill[Woody Zuill], you will discover that this is precisely what #NoEstimates is about.
+While giving a talk about questioning, Woody questioned the use of estimates and it because quite a heated discussion among audience members.
+Then at some point he wrote and article and hashtagged it with #NoEstimates and it was born.
+
+And that's what #NoEstimates is.
+Questioning.
+Why do you need an estimate for a project?
+How does an estimate help you make the right business decision?
+
+#NoEstimates is NOT insisting that businesses run without estimates.
+No, it is just a questioning of status quo.
+_In fact, #NoEstimates can never be wrong because it is never wrong to ask a question._
+
+With this strategy, you can work your way to an understanding of what is not actually dependent upon estimates.
+You could gain some insights into how your business could look without investing time into estimates.
+It's even within the realm of possibility that you actually find a better solution to the problems of running your business.
+
+=== Our team doesn't estimate
+
+Several months prior to that podcast I had heard a little about #NoEstimates, and thought it meant what it says on the surface.
+At some point during one of my team's retrospectives, I asked the question, "Why are we spending all this time estimating stories?"
+I asked because I suspected we were not getting good value out of the exercise.
+Whenever we would plan for a sprint, we would spend so much time on each story trying to arrive at a consensus on the story-point value.
+Then we would toss in those stories into a sprint, and waste another hour asking if we could accomplish that in two weeks.
+Furthermore, we would fail sprints unpredictably so it was not proving to be a very good predictor of velocity.
+
+What I ultimately saw was waste.
+We were trying to project where we would be in two weeks, when we would have been better off writing working software instead of projecting.
+Then we simply asked, "How does the project benefit from these projections anyway?"
+We were unable to find anyone who could give a justifiable reason for doing them, so we quit to see how things would go.
+
+Ultimately, we threw out iterations and commitments to them altogether.
+With our cloud-deployed product, we release more often than every two weeks, so it's not like that was helping us march towards a release.
+No one worked harder just because there was an estimated commitment thrown out there.
+The more we thought about it, the less we thought we were gaining value from these things.
+
+Now that we've let the ship sail for a while this way, we've found that it's pretty effective.
+Our decisions are much simpler now.
+What is the most important thing to work on?
+Ok, let's go there.
+Since we're releasing continually, we're just pumping in end-user value into that most important area.
+Once that is at a point that it doesn't need more value, we focus on the next area.
+We're always focused on writing working software which is of infinite more value to our end users than our estimates on how long it will be before we are at some ill-defined feature set.
+
+=== Beware: #NoEstimates is a _thing_
+
+Yesterday, one of the agile coaches in my company (https://twitter.com/twoundy[Tom Woundy]) was in town with training and I had the pleasure of joining him for lunch.
+At some point, I brought up the topic of estimating to get his thoughts on how it works at Mentor Graphics.
+It quickly escalated into me asking many questions about why we needed them at all.
+Through that discussion I learned a lot about how we make decisions and where we struggled.
+Interestingly, we both concluded that estimates were completely unrelated to our biggest problems, despite our frequent "black eyes" for not meeting deadlines.
+
+I was tremendously excited about how well that went and wanted to share it with the world:
+++++
+<blockquote class="twitter-tweet" lang="en"><p>The more I play devil&#39;s advocate for <a href="https://twitter.com/hashtag/NoEstimates?src=hash">#NoEstimates</a> the more I buy into it.</p>&mdash; Joe Barnes (@joescii) <a href="https://twitter.com/joescii/status/583682124580052992">April 2, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+++++
+Then the replies to that tweet happened.
+At first I thought I was getting into some more intriguing conversations.
+And oh my god did they keep happening.
+Ok, so half of it is my fault for participating.
+But I quickly learned what I already knew:
+Twitter is a horrible platform for having discussions.
+
+To my dismay, I also learned that there are a handful of very difficult individuals who think #NoEstimate people have it all wrong.
+Firstly, I find it funny that these big enterprise people assume #NoEstimates are some kind of organized people in the first place.
+Secondly, as I already explained, questioning is never be wrong so therefore #NoEstimates isn't wrong.
+Finally, they're already wrong because they assume I believe estimates are never appropriate in any situation.
+
+So let me settle a few things more things.
+
+Are you using estimates and effectively achieving your goals?
+_GREAT!_
+I hope the questioning exercises helped reinforce your conclusion.
+
+Is your domain different than mine?
+_Highly_ likely.
+Although I'm encased in a big corporate setting, my team has been charged to be as lean and agile we can be so we can deliver.
+Big coordinated plans and all that mess is not applicable.
+
+Can my work be reliably estimated?
+_NO_.
+Knowledge work is different than say manufacturing, accounting, and all that crap that those fancy MBAs are based on.
+Fundamentally knowledge work is not repeatable.
+As soon as I can repeat something, I automate it and never do it again.
+If you're working with teams that are doing work that is so similar that it can now be predicted, I feel badly they've not learned how to generalize and/or automate.
+And don't insist that my work of writing code is predictable when you quit writing code 20 years ago to be a manager.
+
+Finally, perhaps not using estimates just indeed doesn't scale, and that's why all these big boy company stiff-collared shirt wearing folk need them.
+I'm willing to believe this is a strong likelihood.
+Furthermore, a wasteful practice (remember, estimates != working software) can be readily absorbed in a larger organization.
+I'm also willing to believe a larger organization may require more sophisticated machinery to operate.
+But I'm just looking for a hand to help me carry an awkward box across the street.
+https://twitter.com/joescii/status/584057417547157504[I don't need your enterprise-grade helicopter to do that].
