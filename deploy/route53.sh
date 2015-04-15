@@ -23,6 +23,10 @@ aws elb describe-load-balancers --load-balancer-name ${elbName} > elb.json
 elbZone=`./jq --raw-output '.LoadBalancerDescriptions[0].CanonicalHostedZoneNameID' elb.json`
 elbDns=`./jq --raw-output '.LoadBalancerDescriptions[0].DNSName' elb.json`
 
+# Describe the Zone to get its Name
+aws route53 get-hosted-zone --id ${zone} > r53.json
+r53Name=`./jq --raw-output '.HostedZone.Name' r53.json`
+
 # Write our command for AWS Route 53 to a json file
 cat > ${rel_json} <<EOF
 {
@@ -31,7 +35,7 @@ cat > ${rel_json} <<EOF
     {
       "Action": "UPSERT",
       "ResourceRecordSet": {
-        "Name": "proseand.co.nz.",
+        "Name": "${r53Name}",
         "Type": "A",
         "AliasTarget": {
           "HostedZoneId": "${elbZone}",
