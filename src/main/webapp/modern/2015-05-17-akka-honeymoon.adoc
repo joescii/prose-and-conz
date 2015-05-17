@@ -1,0 +1,85 @@
+:keywords: akka, reactive, scala, functional-programming
+:description: A reflection after a year and a half of Akka.
+:published: 2015-05-17T11:00:00-0600
+:updated: 2015-05-17T11:00:00-0600
+
+== The Honeymoon Is Over: Reflections after 1.5 years of Akka
+
+As you may well know, I am a lead developer for http://PartQuest.com[PartQuest] from Mentor Graphics.
+In the past two weeks I have been whipping together a walking skeleton of a new major component of the application.
+While building this out, I had to modify several http://akka.io/[Akka] actors we have written in our application.
+This was the first time in a while that I had gotten into that area of our code base, and I came away not liking what I saw.
+I've spent the past several days reflecting on how we got to where we are, and I felt it appropriate that I share.
+
+Before I dive in, I want to make sure several things about the context are clear.
+
+Firstly, please don't read this as a slam on the Akka library.
+The library is well-written, very well-documented, and the community is polite and helpful.
+I have met several key contributors to the project and they are all outstanding individuals who I greatly admire.
+
+Secondly, I'm the most experienced Scala and JVM developer on my team, and I've only been doing Scala since late 2012 when I took the inaugural Coursera online class from Odersky.
+My first exposure to a proper actor library (hence excluding http://proseand.co.nz/2014/01/13/i-once-built-a-crappy-actor-library-on-j2ee/[the crappy one I wrote]) was in the follow-up Coursera offering in late 2013.
+Most of the work done with our actor system was written by two young developers barely a year out of college.
+I say that because it's likely the pain is due to us screwing it up and nothing to do with Akka.
+Perhaps we could have made just as much of a mess with any other available approach.
+
+When I discovered Akka in that online course, I welcomed it with an equal amount of enthusiasm as I had welcomed functional programming.
+After years of complecting my business logic with semaphores, locks, and threads, I felt this would be the answer to those problems just like FP was the solution to writing code I could reason about.
+Now that I reflect on a year and a half of using Akka, I have learned that I just exchanged one problem for another.
+My honeymoon with Akka is definitely over.
+After seeing how much pain it is to modify a system of actors as business requirements change, I wish I just had a bunch of functions which return a `Future` composed together to build our application.
+
+=== Well-Known Problems
+There are several well-known problems with using actor systems and Akka in particular.
+We know that actors do not compose, nor do they make use of type safety (see http://noelwelsh.com/programming/2013/03/04/why-i-dont-like-akka-actors/[Why I Don't Like Akka Actors]).
+I did not have an appropriate appreciation for either of these when I picked Akka.
+I am only now at a point that I understand functions well enough to feel comfortable learning a language without objects (been thoroughly enjoying http://www.purescript.org/[Purescript] lately).
+At the time I started Scala, I was done with static typing and preferring Groovy (see http://proseand.co.nz/2013/05/04/maybe-type-checking-is-a-good-idea/[Maybe Type Checking Is a Good Idea]) so not having static-type checking was not a big loss in my mind.
+The debate to use static types is interesting in its own right, but I do like static types and I don't think it makes sense to abandon one of Scala's most touted strengths.
+
+I also didn't see the innate danger in building a system propped up on the type signature `Any => Unit`.
+In addition to forgoing static typing, this also means actors are only useful if they produce side-effects.
+The only thing useful you can do is send another message (a side-effect) or change your actor's state (a side-effect).
+This is terrible for reasoning about your software system.
+Uncontrolled side-effects are the biggest reason I ran from Java and Groovy to functional programming in the first place.
+
+=== Actors Don't Make You A Better Programmer
+This is a point that I am afraid no one is talking about.
+As I already hinted at, I had a young team when this project started.
+We have added a few new members since then, but thus far we have not added someone with significant experience in functional programming or the actor model.
+Using actors does not enforce a useful discipline that helps us less-experienced developers write better code.
+
+This is in stark contrast to programming with pure functions and immutable values.
+The functional programming paradigm is a powerful _restriction_ which drives better program design.
+I would say the same about test-driven development using either example-based testing or generative property-based testing.
+All of these take much time to master, but I have never seen someone produce messier code while trying to make the transition.
+
+You would not believe the mess we are capable of with actors.
+Do you want to send some data from actor `A` to an actor `B` and get a response?
+Well now you have to update your state in `A` to even know that you sent a message to `B` so you know to anticipate the response.
+(You told us to always `tell` and never `ask`, so we didn't use the `ask` pattern which returns a handy `Future`!)
+Uh-oh, now your actor `A` needs to interact with `C` and `C` wants to ask you something that you have to interact with `B` for.
+So now you could have multiple outstanding requests from `C` while waiting for responses from `B` hence you need a `Map` just to keep up with where the conversation is.
+In that `Map` you must now fabricate some message IDs just to help you keep up with it all.
+
+Wouldn't it have been better if we just had functions in this _common_ scenario?
+Actor `B` _is_ a function logically.
+Does it needs to process concurrently?
+If _yes_ wrap result in `Future` _else_ just return the damn thing.
+Actor `A` could also just be a function which calls `B`.
+Finally `C` could just invoke `A`, the function.
+
+Instead of letting functions on the callstack do all of that bookkeeping for us, we have this nasty `Map` of the fabricated identifiers and crap just to log the interactions.
+This produces an explosion of bug-prone code (not to mention the explosion of tests we had to write and maintain to get these interactions correct).
+None of that code actually solving our business problem.
+Instead, we are solving the problem of using an actor system for solving our problem.
+Whereas functions and values give us nice constraints to help us reason about our program, actors rip everything apart and demand that the developers do all of the work.
+Assuming you got all of the code right, I found it extremely difficult to visit later and modify to meet new requirements.
+
+I don't doubt that we made a lot of mistakes in our code base that could have been made with other libraries.
+Someone far more savvy in the mind-share of actor-based concurrency would probably spot lots of mistakes we made in our code base.
+The same could be said for our pure functions: They could be much better.
+However, I'm confident that our badly-written pure functions are better than our badly-written impure functions would have been in Java.
+I can't say the same about our actor code.
+I don't think it made us better.
+Instead it opened up more opportunities for failure.
