@@ -23,6 +23,11 @@ Most of the work done with our actor system was written by two young developers 
 I say that because it's likely the pain is due to us screwing it up and nothing to do with Akka.
 Perhaps we could have made just as much of a mess with any other available approach.
 
+_(UPDATE)_ After a good conversation with https://twitter.com/tlockney[Thomas Lockney] I should point out a third thing about this post.
+I am responding to the notion of using actors as a general programming model.
+Akka and the actor model has some fantastic use cases where I'm confident it shines.
+But "Akka All The Things!!!" is what we did and what I am responding to.
+
 When I discovered Akka in that online course, I welcomed it with an equal amount of enthusiasm as I had welcomed functional programming.
 After years of complecting my business logic with semaphores, locks, and threads, I felt this would be the answer to those problems just like FP was the solution to writing code I could reason about.
 Now that I reflect on a year and a half of using Akka, I have learned that I just exchanged one problem for another.
