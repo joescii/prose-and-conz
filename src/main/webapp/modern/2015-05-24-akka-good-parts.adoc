@@ -1,0 +1,45 @@
+:keywords: akka, reactive, scala, functional-programming
+:description: Another reflection after a year and a half of Akka.
+:published: 2015-05-24T11:00:00-0500
+:updated: 2015-05-24T11:00:00-0500
+
+== The Good Parts: Reflections after 1.5 years of Akka
+
+http://proseand.co.nz/2015/05/17/akka-honeymoon[Last week], I let the world know about my struggles to use the actor model as implemented in http://akka.io/[Akka] as an all-purpose solution to programming.
+While I still maintain that is a mistake and will make you a worse programmer, there are problems we solved where I am still happy we used Akka actors.
+In this post I will share a problem in particular and what factors will make me consider using an actor next time.
+
+Back at https://parquest.com[PartQuest], we depend on a 3rd-party SOAP service for a bulk of our data.
+Early in our development with this API, we learned that sometimes it's just finicky and second try will succeed.
+Given we had already written an actor for wrapping up the http://scalaxb.org/[scalaxb]-provided http://dispatch.databinder.net/Dispatch.html[dispatch] API, we naturally wrote a second actor to handle the retries.
+
+Looking back I still feel this is a good solution to this particular problem because we're dealing with I/O and retries.
+Furthermore, the dispatch API is actually a blocking call (later versions of scalaxb now utilize the non-blocking calls, but I've yet to get the WSDL to compile with the updates).
+Since this will consume threads, we need to constrain the number of concurrent requests we will allow in the system.
+Thanks to Akka, it is a cinch to create a fixed-size pool of actors.
+What is really nice here is that a pool of actors looks exactly like a single actor, so there is essentially no difference in our code.
+
+The second thing I liked about this approach is the actor which translates from our case classes to the scalaxb-provided case classes for the SOAP API can be mocked out for testing.
+We can easily test our retry actor without having to do any tricky mocking because an `ActorRef` is easily backed by a `TestProbe`.
+Unit testing is particularly important for code responsible for failure conditions because they tend to not be easily reproduced.
+
+Another key importance here is while this API is critical to our application, it is not code we should anticipate modifying often.
+We may make tweaks here and there to deal with changes to the WSDL, but the business will not likely need us to make changes to the overall logic of _"call API"_ and _"retry n times"_.
+Since the code rarely changes, we don't need assistance from static types and such to help us reason about the modules when we revisit them after a long period of absence.
+
+My rule of thumb with actors now is to only use them where these two troublesome conditions are unavoidable: statefulness and concurrency.
+In this scenario actors certainly shine.
+With this example I shared today, there really is no way to get around these two problems.
+It is inherently asynchronous with concurrent operations due to multiple requests from multiple users at any given time.
+The need to count retries makes it stateful.
+Thankfully we have the actor model to make this straight-forward by handling the really nasty stuff for us.
+Being able to construct a pool of this particularly resource-hungry actor is a nice add-on that I will also watch for in the future.
+
+I am a strong proponent of functional design which aims to have nothing but pure functions comprise the core of the application with minimal impure operations at the boundaries for handling impure interactions with the outside world.
+As you can gather from my last post, building an application full of actors is not consistent with this vision as it invites a mess of side-effecting code throughout the system.
+However, actors can work beautifully in this impure edge just as ours does for handling the SOAP API.
+Using the ask pattern, we are even able to turn them into a nice composable function in which to build our application.
+
+So I'm certainly not _done_ with Akka actors.
+As I stressed at the beginning of the last post, I have no interest in slamming this excellent library.
+I just know a lot more about when and where they are appropriate, and I hope these two posts help others to learn from my mistakes.
