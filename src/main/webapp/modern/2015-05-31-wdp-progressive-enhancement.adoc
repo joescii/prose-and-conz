@@ -1,0 +1,57 @@
+:keywords: web-development-principles, web-development, functional-programming
+:description: The next principle for my ideal web application stack by embracing progressive enhancement
+:published: 2015-05-31T06:00:00-0500
+:updated: 2015-05-31T06:00:00-0500
+
+== Web Development Principles: Progressive Enhancement
+
+http://blog.teamtreehouse.com/progressive-enhancement-past-present-future[Progressive enhancement] is quite an old topic in web development yet it seems to resurface every few years as we break things.
+In a nutshell, web applications should not be developed as if the end user always has a powerful machine and a fast internet connection like you have as you sit and develop.
+My eyes were really opened up to this when I first visited my team in Santiago, Chile and saw that Juan was rocking an iPhone 3GS on a slow cellular network.
+It had been easy for me to forget that not everyone lived in a high-tech town like Huntsville with the latest smart phones, LTE networks, broadband home internet connections, and fast PCs.
+
+Not only should we consider the end users, we should also consider search engines, crawlers, etc which have no interest in running our JavaScript or applying CSS.
+When our applications do not deliver HTML content from the server, our applications miss out on things the web can offer.
+Some even go as far as claiming we're _breaking the web_ when we build this way.
+
+In addition to these considerations, we should favor progressive enhancement because the mindset pushes you towards more reliable applications.
+A bug in your JavaScript that only occurs on some browser/device combo you didn't anticipate results in only one little feature of your page breaking.
+Compare this to Angular, where a problem in a controller will cause the entire page to be garbage.
+Although browsers are far more consistent these days avoiding this once-common problem, less moving parts is always a good thing.
+
+I was mindful of this philosophy when I wrote the code for serving this blog.
+One thing you may notice is the panel on the right (assuming you're on a desktop) loads via ajax once the container element is visible.
+To see this, scroll to the bottom of this post and refresh the browser.
+Scroll/page up and near the top you will momentarily notice a spinner before the right panel pops into existence.
+I did this because I used a responsive layout which will push the right panel below the post on a small device.
+This way I delay loading that part of the page, possibly never loading it for visitors who don't finish reading the post.
+I haven't burdened that page load with the twitter feed, Google calendar, etc which will bog down the page load and eat up more data.
+Once a user does find the bottom of the page, the right panel will load and allow navigation to more content.
+
+Progressive enhancement is not a free or easy approach, and in some cases doesn't make much sense.
+My team's project https://partquest.com/[PartQuest] is a great example of not needing progressive enhancement.
+The application does not have a sensible mobile use case worth investing in.
+We don't actually own the content we're serving (it is retrieved from a 3rd party SOAP API), and we have no value in allowing crawlers to index it.
+In fact that content is not even accessible unless the user is logged in.
+The application is a complement to Mentor Graphics's desktop applications, which already require a respectable machine to operate.
+We expect such workstations to always exist in an office with a good internet connection.
+In my mind the only thing we could gain from progressive enhancement is the resilience against failure.
+While this is important, plenty of other factors weighed in where we felt that Angular would buy us enough benefit to forgo this principle.
+
+I believe that most applications would benefit from progressive enhancement as the default philosophy.
+Web application libraries should have a happy path which walks the code base down a road of progressive enhancement yet without preventing deviation when desirable
+(in general, you'll find I always insist that friction to deviate should be minimized).
+Many front-end application frameworks have taken us away from this philosophy entirely, and I don't think that is a good thing.
+I completely understand the benefit of using them (I _did_ pick one for my day job), but I feel we're too eagerly throwing something away without thinking enough about it.
+I know I'm not the only one thinking this is a problem for our client-side rendering frameworks.
+I doubt that server-side prerendering would be such a big topic right now otherwise.
+
+The implication here is that the page should be rendered on the server fully for any data which is readily available.
+Means of loading data later with ajax should likewise be provided, but should not be the default approach.
+The idea of always serving a skeleton, letting a client-side framework initialize, and calling back home across the entire internet for the data is silly.
+What we need to do is render that page to the client ready to rock whether it be a powerful modern browser, a limited mobile device, or a web crawler.
+Then we can use our JS/ajax magic to update the DOM on the fly for an enhanced user experience.
+
+While I think Angular has served my PartQuest team well, the approach of client-side rendering is not something I want to do again.
+In my dream web stack, we still could have succeeded because its preference of server-side rendering would not have prevented us from serving everything but the data which loads later.
+My ideal web stack will definitely be serving the pages ready to render from the server.
