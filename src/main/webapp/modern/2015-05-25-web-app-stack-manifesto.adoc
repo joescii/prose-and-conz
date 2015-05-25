@@ -1,0 +1,185 @@
+:keywords: web-development, functional-programming, purescript
+:description:
+:published: 2015-05-25T06:00:00-0500
+:updated: 2015-05-25T06:00:00-0500
+
+== Web Application Stack Manifesto
+
+Over the past few weeks I've taken a step back from the day-to-day grind of building all things web to think about what the hell we're trying to do here.
+Although I am a generally happy http://liftweb.net/[Lift] user, there are things I would have done differently if I had built it knowing what I know now.
+I have decided to ask myself, _"What exactly should be be building the web with?"_
+A lot has changed since https://twitter.com/dpp[DPP] wrote his http://blog.goodstuff.im/web-framework-manifesto-republished-from-2006-[Web Framework Manifesto] in 2006 which formed the foundation for what became Lift.
+I don't know I'm ready to embark on my own web framework creation journey, but I am ready for my own manifesto.
+So for those interested, this is my rant on what we could be doing to build the web.
+
+=== We Don't Need a Framework
+First off, I don't think we need a big surrounding and opinionated web framework.
+What we need is a set of orthogonal libraries which you can select from _a la carte_ and compose into solutions for the web.
+Back in 2006 I think building a big web application framework made a lot of sense because that's just where we were as a community (I say this while looking back at a community I was not yet a part of).
+It appears to me that it was just the primary trend and big frameworks owned the majority of the mind share.
+
+Since then I think we've learned that too often web applications need to go off the rails to do something particular for the problem at hand.
+I played a lot with https://grails.org/[Grails] in late 2011/early 2012.
+As long as I was doing crud, this worked fine.
+Anything I wanted to do beyond that was met with much friction and it was never obvious how to do it.
+This is not to suggest it couldn't be done, but that the happy path was a limited-access highway ill-fit for anything other than main-stream development.
+
+Although Lift _is_ a framework, I've found it to be on the lighter end of the weight spectrum.
+It is very easy to forgo both of its built-in persistence frameworks and use your own for instance.
+Yet if I'm building the webs, I'm ready to go the full distance and not have a framework at all.
+Instead, I want a stack of libraries that I picked out for my particular problem.
+
+=== An Opinion Is a Good Start
+Now about the opinionated part...
+An opinion is a good start.
+The ideal stack of libraries should have a low entry barrier which opinions go a long way to help.
+Rather than have a framework provide these opinions and marry you to them, I like the idea of having template projects.
+Pick from among the templates, perhaps even with a Q/A guide to help you pick the best fit.
+
+Another reasonable alternative is to have an opinion about the defaults.
+I really like how http://www.scala-sbt.org/[sbt] does this.
+Any directory can be an sbt project.
+All you need to do is run `sbt` in the directory and you are in your sbt project.
+You then specify any deviation from the defaults in your `build.sbt` file.
+So perhaps we have a library of some sort which ties the libraries all together into a set of defaults with a config file to let you deviate as needed.
+
+Either approach would make me happy, although I would favor the former if I were building something.
+
+=== Do Not Abstract The Web Away
+Continuing on the topic of being a set of libraries, we should not abstract the web away.
+What I mean is that I really felt that Grails tried really hard to hide the fact I was building web pages.
+I never fully understood what I was slinging to the browser.
+
+Lift on the other hand feels like it leaves it all bare with powerful tooling to deal with it.
+This feeling for me all started with the templates which I still hold as Lift's greatest strength.
+It's just HTML with some `data-lift` attributes sprinkled in for where your functions will be called to transform it with the data to produce the desired HTML.
+There is no controller crap and other abstractions which frankly have nothing to do with slinging HTML.
+It's just HTML with functions to dynamically produce HTML.
+
+From day one I felt like Lift was there just helping me build HTML, serve assets, and run JS on the client.
+I'm not suggesting there is little learning curve to Lift, but everything Lift does quickly maps to what you are trying to do.
+I never felt I had to learn a set of abstractions that then later magically map to web development.
+
+=== View-First
+Speaking of Lift's templating, view-first is the way to go and I feel very strongly about that.
+If you take a peek at https://partquest.com/[PartQuest] what you see is HTML/CSS/JS written by a team of designers using https://middlemanapp.com/[Middleman].
+They were able to use Middleman or any static page building tooling of their liking because Lift doesn't care.
+There is not any stupid templating of its own that the designers had to concern themselves with.
+Again, it's just HTML where we sprinkled in `data-lift` and `ng-*` for Lift and https://angularjs.org/[Angular] to drop in real data.
+
+Not only does this leave the designers working on your project with full freedom to do their work as efficiently as they know how, it is good for agility.
+Even before we were working with designers, a view-first approach allowed us to whip static pages together that people could see.
+We could quickly show these to stakeholders and get feedback on how we envisioned the solution without writing too much code.
+A walking skeleton is quickly achievable and your team can begin writing value-add stories to make it come to life.
+There is very little time between the start of the project and value-adding cycles.
+No one had to write any controllers or boilerplate to get us there.
+
+=== Progressive Enhancement
+I could certainly write an entire post about http://blog.teamtreehouse.com/progressive-enhancement-past-present-future[progressive enhancement], but I'll hijack my manifesto for it.
+In a nutshell, web applications should not be developed as if the end user always has a powerful machine with a fast internet connection.
+My eyes were really opened up to this when I visited my team in Santiago, Chile when my buddy was using an iPhone 3GS on a slow cellular network.
+It was easy for me to forget that not everyone lived in a high-tech town like Huntsville with the latest smart phones, LTE networks, broadband home internet connections, and fast PCs.
+
+Not only should we consider the end users, we should also consider search engines, crawlers, etc which have no interest in running our JavaScript or applying CSS.
+When our applications do not deliver HTML content from the server, our applications miss out on things the web can offer.
+Some even go as far to say it _breaks the web_.
+
+In principle, we should favor progressive enhancement because the mindset pushes you towards more reliable applications.
+A bug in your JavaScript that only occurs on some browser/device combo you are not testing against just means one little feature of your page is missing.
+Compare this to Angular, where a problem in a controller will cause the entire page to be garbage.
+Browsers are far more consistent these days, but less moving parts is always a good thing.
+
+I was mindful of these considerations when I wrote the code for serving this blog.
+One thing you may notice is the panel on the right loads via ajax once the container element is visible.
+To see this, scroll to the bottom of this post and refresh the browser.
+Start scrolling back to the top and you will eventually notice the right panel pop into existence.
+I did this because I used a responsive layout which will push the right panel to the bottom of the post on a small device.
+The user may read the first of my blog post, rightfully realize that it's crap, and move on.
+I haven't burdened that page load with the twitter feed, Google calendar, etc which will bog down the page load and eat up more data.
+If the user was interested in my content, the right panel will load once the bottom of the page has been reached and allow them to navigate to the next thing.
+
+Progressive enhancement is not a free or easy approach, and in some cases doesn't make as much sense.
+PartQuest is a great example of not needing progressive enhancement (as much).
+The application does not have a sensible mobile use case worth investing in.
+We don't actually own the content we're serving (it is retrieved from a 3rd party SOAP API), and we have no value in allowing crawlers to index that content.
+In fact that content is not even accessible unless the user is logged in.
+The application is a complement to Mentor Graphics's desktop applications, which already require a respectable machine to operate.
+Such desktops are expected to always exist in an office with a good internet connection.
+In my mind the only thing we could gain from progressive enhancement is the resilience against failure.
+While this is important, plenty of other factors weighed in where we felt that Angular would buy us enough benefit to forgo this principle.
+
+I believe that most applications would benefit from progressive enhancement as the default philosophy.
+Web application libraries should have a happy path which walks the team down a road of progressive enhancement without preventing deviation.
+Front-end application frameworks have taken us away from this philosophy, and I don't think that is a good thing.
+I completely understand the benefit of using them (I _did_ pick one for my day job), but I feel we're throwing something away without thinking enough about it.
+If I was wrong for this, I doubt that server-side prerendering would be such a big topic right now.
+
+I think the implication here is that the page should be rendered on the server as fully as possible.
+The idea of serving a skeleton, letting a client-side framework initialize, and calling back home across the entire internet for the data is silly.
+What we need to do is render that page to the client ready to rock.
+Then we can use our JS/ajax magic to update the DOM on the fly for an enhanced user experience.
+
+=== No Difference Between Client and Server
+All of that rambling about progressive enhancement has a natural consequence in my mind.
+There should be little to no difference between the client and server.
+I should be able to write an HTML template along with transformation functions which execute in either environment.
+As much as I love Lift, I don't dig writing Scala to render a template on the server or JavaScript to render it on the client.
+I want to write one function which takes as input my template and my data, and outputs the desired HTML.
+This should be run on the server at page load time, then re-run on the client if the data can change.
+
+So here we go.
+JavaScript love from the Scala guy.
+Well, no.
+JavaScript is an absolute terrible and broken language.
+Only two good decisions were made in the design of JavaScript with respect to using it for application development:
+(1) Functions/lambdas are first class (yet they still screwed it up by requiring too much ceremony)
+(2) The world is single-threaded
+Everything else about it is crap.
+It is absolutely riddled with gotchas and I don't care about the tools we've written to catch them.
+
+We can do so much better.
+Thankfully, compiling good languages to JS is a thing.
+My team decided to use http://coffeescript.org/[CoffeeScript] to give us a slight boost in this regard.
+It greatly reduces the syntactic noise, provides a few higher-level abstractions, and gives us expression-based semantics which is my favorite value add.
+While this was a good choice for my team at that point in time, we can do much better than CoffeeScript.
+
+The first JS alternative that comes to my mind is https://github.com/clojure/clojurescript[Clojurescript].
+I like it primarily because it is a functional, expression-based programming language with default immutability.
+There is an awesome community around it with folks who I enjoy running around with.
+
+I could also consider http://www.scala-js.org/[Scala.js].
+I got interested in Scala.js really early on when https://groups.google.com/forum/#!topic/scala-js/gYPl16lPe5I[I wanted to play around with scraping Craigslist posts].
+Unfortunately, I abandoned the idea and never tried it.
+By the time Scala.js was http://www.scala-lang.org/news/2015/02/05/scala-js-no-longer-experimental.html[announced as no longer being experimental], I had completely lost interest.
+
+I feel that neither Clojurescript and Scala.js are what I want to deal with.
+Neither one was designed to compile to JS.
+It was an afterthought.
+Clojurescript has https://github.com/clojure/clojurescript/wiki/Differences-from-Clojure[a page dedicated to the differences from Clojure].
+Scala.js likewise has http://www.scala-js.org/doc/semantics.html[its differences].
+
+If I'm dreaming of all the webs from scratch, I'm not picking one of these two which had to deviate from the original vision to make compilation to JS work.
+I want something that was designed with JS in mind from day one.
+Furthermore, I see no value in supporting multiple platforms with my language of choice.
+The browser runs JS.
+https://nodejs.org/[Node] lets us just push this down to the server.
+I know that Node is not a great runtime compared to the JVM at this point in time, but I strongly suspect this will greatly improve in the near term.
+Too many people are keen on it working well, so the work is being done.
+If my gamble on Node being awesome is right, then compilation to other platforms is just an optimization (assuming it is still faster than Node)
+
+Having multiple platforms for the language may actually even hurt the community a bit.
+What I mean is that a new language's success depends greatly on leveraging its parent platform's existing libraries.
+Having multiple platforms means libraries and applications need to be mindful of _where_ the code will run and hence which library to use.
+This code then isn't portable between client and server the way I want it to be.
+If you want it to be portable, you either have to write adapters for the different libraries or rewrite them from scratch.
+Both exercises are expensive and counterproductive.
+
+=== Ease of Microservices
+
+=== Ease of Offline
+
+=== Cloud-ready
+
+=== Performance per Monetary Unit
+
+=== Prefer Getting It "Right" Over Delivering

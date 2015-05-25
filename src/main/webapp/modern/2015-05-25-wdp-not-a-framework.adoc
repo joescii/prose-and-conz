@@ -1,0 +1,53 @@
+:keywords: web-development-principles, web-development, functional-programming
+:description:
+:published: 2015-05-25T12:00:00-0500
+:updated: 2015-05-25T12:00:00-0500
+
+== Web Development Principles: We Don't Need a Framework
+
+Over the past few weeks I've taken a step back from the day-to-day grind of building all things web to think about what the hell we're trying to do here.
+Although I am a generally happy http://liftweb.net/[Lift] user, there are things I would have done differently if I had built it knowing what I know now.
+I have decided to ask myself, _"What exactly should be be building the web with?"_
+A lot has changed since https://twitter.com/dpp[DPP] wrote his http://blog.goodstuff.im/web-framework-manifesto-republished-from-2006-[Web Framework Manifesto] in 2006 which formed the foundation for what became Lift.
+I don't know I'm ready to embark on my own web framework creation journey, but I am ready to build up to my own manifesto.
+
+I began to write up an entire manifesto, but it turned in to an unmanageable monolithic rant that no one will pay attention to.
+Instead I have decided to break this up into a series of posts on principles that I have learned to value in web development.
+So for those interested, this is part one of my rant which will later become condensed into a manifesto.
+
+=== We Don't Need a Framework
+First off, I don't think we need a big surrounding and opinionated web framework.
+What we need is a set of orthogonal libraries which you can select from _a la carte_ and compose into solutions for the web.
+Back in 2006 I think building a big web application framework made a lot of sense because that's just where we were as a community (I say this while looking back at a community I was not yet a part of).
+It appears to me that it was just the primary trend and big frameworks owned the majority of the mind share.
+
+Since then I think we've learned that too often web applications need to go off the rails to do something particular for the problem at hand.
+I played a lot with https://grails.org/[Grails] in late 2011/early 2012.
+As long as I was doing crud, this worked fine.
+Anything I wanted to do beyond that was met with much friction and it was never obvious how to do it.
+This is not to suggest it couldn't be done, but that the happy path was a limited-access highway ill-fit for anything other than main-stream development.
+
+Although Lift _is_ a framework, I've found it to be on the lighter end of the weight spectrum.
+It is very easy to forgo both of its built-in persistence frameworks and use your own for instance.
+Yet if I'm building the webs, I'm ready to go the full distance and not have a framework at all.
+Instead, I want a stack of libraries that I picked out for my particular problem.
+
+=== An Opinion Is a Good Start
+Now about the opinionated part...
+An opinion is a good start.
+The ideal stack of libraries should have a low entry barrier which opinions go a long way to help.
+Rather than have a framework provide these opinions and marry you to them, I like the idea of having template projects.
+Pick from among the templates, perhaps even with a Q/A guide to help you pick the best fit.
+
+Another reasonable alternative is to have an opinion about the defaults.
+I really like how http://www.scala-sbt.org/[sbt] does this.
+Any directory can be an sbt project.
+All you need to do is run `sbt` in the directory and you are in your sbt project.
+You then specify any deviation from the defaults in your `build.sbt` file.
+So perhaps we have a library of some sort which ties the libraries all together into a set of defaults with a config file to let you deviate as needed.
+
+Either approach would make me happy, although I would favor the former if I end up building something.
+
+My first guiding principle for my ideal framework is that it is not a framework at all, but a set of libraries.
+I think I'll call it a _stack_ until I decide that is inappropriate.
+Although it isn't a framework, there should be an easy way to get started via opinionated templates or defaults.
