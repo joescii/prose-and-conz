@@ -6,59 +6,6 @@
 == Web Application Stack Manifesto
 
 === No Difference Between Client and Server
-All of that rambling about progressive enhancement has a natural consequence in my mind.
-There should be little to no difference between the client and server.
-I should be able to write an HTML template along with transformation functions which execute in either environment.
-As much as I love Lift, I don't dig writing Scala to render a template on the server or JavaScript to render it on the client.
-I want to write one function which takes as input my template and my data, and outputs the desired HTML.
-This should be run on the server at page load time, then re-run on the client if the data can change.
-
-So here we go.
-JavaScript love from the Scala guy.
-Well, no.
-JavaScript is an absolute terrible and broken language.
-Only two good decisions were made in the design of JavaScript with respect to using it for application development:
-(1) Functions/lambdas are first class (yet they still screwed it up by requiring too much ceremony)
-(2) The world is single-threaded
-Everything else about it is crap.
-It is absolutely riddled with gotchas and I don't care about the tools we've written to catch them.
-
-We can do so much better.
-Thankfully, compiling good languages to JS is a thing.
-My team decided to use http://coffeescript.org/[CoffeeScript] to give us a slight boost in this regard.
-It greatly reduces the syntactic noise, provides a few higher-level abstractions, and gives us expression-based semantics which is my favorite value add.
-While this was a good choice for my team at that point in time, we can do much better than CoffeeScript.
-
-The first JS alternative that comes to my mind is https://github.com/clojure/clojurescript[Clojurescript].
-I like it primarily because it is a functional, expression-based programming language with default immutability.
-There is an awesome community around it with folks who I enjoy running around with.
-
-I could also consider http://www.scala-js.org/[Scala.js].
-I got interested in Scala.js really early on when https://groups.google.com/forum/#!topic/scala-js/gYPl16lPe5I[I wanted to play around with scraping Craigslist posts].
-Unfortunately, I abandoned the idea and never tried it.
-By the time Scala.js was http://www.scala-lang.org/news/2015/02/05/scala-js-no-longer-experimental.html[announced as no longer being experimental], I had completely lost interest.
-
-I feel that neither Clojurescript and Scala.js are what I want to deal with.
-Neither one was designed to compile to JS.
-It was an afterthought.
-Clojurescript has https://github.com/clojure/clojurescript/wiki/Differences-from-Clojure[a page dedicated to the differences from Clojure].
-Scala.js likewise has http://www.scala-js.org/doc/semantics.html[its differences].
-
-If I'm dreaming of all the webs from scratch, I'm not picking one of these two which had to deviate from the original vision to make compilation to JS work.
-I want something that was designed with JS in mind from day one.
-Furthermore, I see no value in supporting multiple platforms with my language of choice.
-The browser runs JS.
-https://nodejs.org/[Node] lets us just push this down to the server.
-I know that Node is not a great runtime compared to the JVM at this point in time, but I strongly suspect this will greatly improve in the near term.
-Too many people are keen on it working well, so the work is being done.
-If my gamble on Node being awesome is right, then compilation to other platforms is just an optimization (assuming it is still faster than Node)
-
-Having multiple platforms for the language may actually even hurt the community a bit.
-What I mean is that a new language's success depends greatly on leveraging its parent platform's existing libraries.
-Having multiple platforms means libraries and applications need to be mindful of _where_ the code will run and hence which library to use.
-This code then isn't portable between client and server the way I want it to be.
-If you want it to be portable, you either have to write adapters for the different libraries or rewrite them from scratch.
-Both exercises are expensive and counterproductive.
 
 === Ease of Microservices
 
