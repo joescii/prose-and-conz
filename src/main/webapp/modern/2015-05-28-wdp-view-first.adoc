@@ -1,0 +1,63 @@
+:keywords: web-development-principles, web-development, functional-programming
+:description: Continuing my thoughts on the ideal web application stack by not being too abstract and embracing view-first development.
+:published: 2015-05-30T06:00:00-0500
+:updated: 2015-05-30T06:00:00-0500
+
+== Web Development Principles: View-First
+
+http://proseand.co.nz/2015/05/25/wdp-not-a-framework/[Last weekend], I began exploring my thoughts on today's available tooling for web development.
+I left off last time with the thought we should not aim to make an opinionated, application-surrounding framework.
+Instead we should aim for a set of libraries designed to work together, but can be omitted and even replaced as the developers see fit.
+
+While designing these libraries, we should be careful to never abstract the web away.
+When we write a web application, we are serving HTML/CSS/JS over HTTP.
+Don't try to hide that.
+Expose it for precisely what it is and provide powerful tools for dealing with it.
+
+An extreme example of this hiding of web development is http://www.gwtproject.org/[Google Web Toolkit].
+It is so hidden from us, we never even see HTML, CSS, or JS.
+I believe the thought process goes like this:
+_Developing for the web is this big scary thing that is hard to learn, so you should just stick with the Java you already know and let us do all of the work for you._
+There is nothing about this approach that I like.
+
+Even frameworks which aren't hiding the entire process from me have a feeling of abstracting too much.
+For instance I really felt that https://grails.org/[Grails] tried really hard to hide the fact I was building web pages.
+I never fully understood what I was slinging to the browser.
+There was way too much magical wiring and assembling being done for me.
+I had to examine the resulting DOM and dig around the project, search the web, etc. just to understand where the pieces came from.
+I don't doubt I could have eventually learned how to customize all of that stuff, but I was having to learn the tooling in addition to knowing the basics.
+
+http://liftweb.net/[Lift] on the other hand feels like it leaves it all bare while providing powerful tooling to conquer it.
+This feeling for me all started with the templates which I still hold as Lift's greatest strength.
+It's just HTML with some `data-lift` attributes sprinkled in for where your functions will be called to transform it with the data to produce the desired HTML.
+There is no controller crap and other abstractions which frankly have nothing to do with slinging HTML.
+It's just HTML with functions to dynamically produce the final HTML to serve.
+
+From day one I felt like Lift was there just helping me build HTML, serve assets, and run JS on the client.
+I'm not suggesting the learning curve to Lift is small, but that everything Lift does quickly maps to what you are trying to do.
+I never felt I had to learn a set of abstractions existing to provide another layer of indirection from accomplishing what I set out to do.
+
+=== View-First
+I say all of that to set up my strong love for a view-first approach.
+I feel that being view-first guards against the over-abstraction I began this post with.
+Serving pages is not the only thing I want to do, but it is one of the main objectives of a web stack.
+By starting with the view, I feel like it makes us think about exactly the problem we want to solve:
+Serving HTML and its assets to the browser (note: not only the browser, but more on that later).
+
+Additionally I have found that view-first has other powerful implications.
+If you take a peek at https://partquest.com/[PartQuest] what you see is HTML/CSS/JS written by a team of designers using https://middlemanapp.com/[Middleman].
+They were able to use Middleman or any static page building tooling of their liking because Lift doesn't care.
+There is not any stupid templating of its own that the designers had to concern themselves with.
+It's just HTML where we sprinkled in `data-lift` and `ng-*` for Lift and https://angularjs.org/[Angular] to drop in real data.
+I love that we were able to allow our designers free-reign to do their work without restrictions or slowing them down to teach any constraints associated with our stack.
+
+Not only does view-first empower the designers, it is good for agility.
+Even before we were working with designers, a view-first approach allowed us to whip static pages together that people could see.
+We could quickly show these to stakeholders and get feedback on how we envisioned the solution without writing too much code.
+A walking skeleton is quickly achievable and your team can begin writing value-add stories to make it come to life.
+There is very little time between the start of the project and value-adding cycles.
+No one had to write any controllers or boilerplate to get us there.
+
+There you have it.
+The second principle my ideal web application stack embraces is view-first development.
+Whether I end up building or buying, this is something I expect to find where I land next.

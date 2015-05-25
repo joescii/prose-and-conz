@@ -5,75 +5,6 @@
 
 == Web Application Stack Manifesto
 
-Over the past few weeks I've taken a step back from the day-to-day grind of building all things web to think about what the hell we're trying to do here.
-Although I am a generally happy http://liftweb.net/[Lift] user, there are things I would have done differently if I had built it knowing what I know now.
-I have decided to ask myself, _"What exactly should be be building the web with?"_
-A lot has changed since https://twitter.com/dpp[DPP] wrote his http://blog.goodstuff.im/web-framework-manifesto-republished-from-2006-[Web Framework Manifesto] in 2006 which formed the foundation for what became Lift.
-I don't know I'm ready to embark on my own web framework creation journey, but I am ready for my own manifesto.
-So for those interested, this is my rant on what we could be doing to build the web.
-
-=== We Don't Need a Framework
-First off, I don't think we need a big surrounding and opinionated web framework.
-What we need is a set of orthogonal libraries which you can select from _a la carte_ and compose into solutions for the web.
-Back in 2006 I think building a big web application framework made a lot of sense because that's just where we were as a community (I say this while looking back at a community I was not yet a part of).
-It appears to me that it was just the primary trend and big frameworks owned the majority of the mind share.
-
-Since then I think we've learned that too often web applications need to go off the rails to do something particular for the problem at hand.
-I played a lot with https://grails.org/[Grails] in late 2011/early 2012.
-As long as I was doing crud, this worked fine.
-Anything I wanted to do beyond that was met with much friction and it was never obvious how to do it.
-This is not to suggest it couldn't be done, but that the happy path was a limited-access highway ill-fit for anything other than main-stream development.
-
-Although Lift _is_ a framework, I've found it to be on the lighter end of the weight spectrum.
-It is very easy to forgo both of its built-in persistence frameworks and use your own for instance.
-Yet if I'm building the webs, I'm ready to go the full distance and not have a framework at all.
-Instead, I want a stack of libraries that I picked out for my particular problem.
-
-=== An Opinion Is a Good Start
-Now about the opinionated part...
-An opinion is a good start.
-The ideal stack of libraries should have a low entry barrier which opinions go a long way to help.
-Rather than have a framework provide these opinions and marry you to them, I like the idea of having template projects.
-Pick from among the templates, perhaps even with a Q/A guide to help you pick the best fit.
-
-Another reasonable alternative is to have an opinion about the defaults.
-I really like how http://www.scala-sbt.org/[sbt] does this.
-Any directory can be an sbt project.
-All you need to do is run `sbt` in the directory and you are in your sbt project.
-You then specify any deviation from the defaults in your `build.sbt` file.
-So perhaps we have a library of some sort which ties the libraries all together into a set of defaults with a config file to let you deviate as needed.
-
-Either approach would make me happy, although I would favor the former if I were building something.
-
-=== Do Not Abstract The Web Away
-Continuing on the topic of being a set of libraries, we should not abstract the web away.
-What I mean is that I really felt that Grails tried really hard to hide the fact I was building web pages.
-I never fully understood what I was slinging to the browser.
-
-Lift on the other hand feels like it leaves it all bare with powerful tooling to deal with it.
-This feeling for me all started with the templates which I still hold as Lift's greatest strength.
-It's just HTML with some `data-lift` attributes sprinkled in for where your functions will be called to transform it with the data to produce the desired HTML.
-There is no controller crap and other abstractions which frankly have nothing to do with slinging HTML.
-It's just HTML with functions to dynamically produce HTML.
-
-From day one I felt like Lift was there just helping me build HTML, serve assets, and run JS on the client.
-I'm not suggesting there is little learning curve to Lift, but everything Lift does quickly maps to what you are trying to do.
-I never felt I had to learn a set of abstractions that then later magically map to web development.
-
-=== View-First
-Speaking of Lift's templating, view-first is the way to go and I feel very strongly about that.
-If you take a peek at https://partquest.com/[PartQuest] what you see is HTML/CSS/JS written by a team of designers using https://middlemanapp.com/[Middleman].
-They were able to use Middleman or any static page building tooling of their liking because Lift doesn't care.
-There is not any stupid templating of its own that the designers had to concern themselves with.
-Again, it's just HTML where we sprinkled in `data-lift` and `ng-*` for Lift and https://angularjs.org/[Angular] to drop in real data.
-
-Not only does this leave the designers working on your project with full freedom to do their work as efficiently as they know how, it is good for agility.
-Even before we were working with designers, a view-first approach allowed us to whip static pages together that people could see.
-We could quickly show these to stakeholders and get feedback on how we envisioned the solution without writing too much code.
-A walking skeleton is quickly achievable and your team can begin writing value-add stories to make it come to life.
-There is very little time between the start of the project and value-adding cycles.
-No one had to write any controllers or boilerplate to get us there.
-
 === Progressive Enhancement
 I could certainly write an entire post about http://blog.teamtreehouse.com/progressive-enhancement-past-present-future[progressive enhancement], but I'll hijack my manifesto for it.
 In a nutshell, web applications should not be developed as if the end user always has a powerful machine with a fast internet connection.
@@ -183,3 +114,5 @@ Both exercises are expensive and counterproductive.
 === Performance per Monetary Unit
 
 === Prefer Getting It "Right" Over Delivering
+
+=== Security
