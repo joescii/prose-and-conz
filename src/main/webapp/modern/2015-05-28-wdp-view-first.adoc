@@ -1,7 +1,7 @@
 :keywords: web-development-principles, web-development, functional-programming
 :description: Continuing my thoughts on the ideal web application stack by not being too abstract and embracing view-first development.
-:published: 2015-05-30T06:00:00-0500
-:updated: 2015-05-30T06:00:00-0500
+:published: 2015-05-28T06:00:00-0500
+:updated: 2015-05-28T06:00:00-0500
 
 == Web Development Principles: View-First
 
