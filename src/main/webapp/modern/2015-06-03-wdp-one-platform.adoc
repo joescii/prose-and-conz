@@ -8,7 +8,7 @@
 All of that rambling http://proseand.co.nz/2015/05/31/wdp-progressive-enhancement/[last time] about progressive enhancement has a natural consequence in my mind.
 There should be little to no difference between the client and server.
 I should be able to write an HTML template along with transformation functions which execute in either environment.
-As much as I love http://liftweb.net/[Lift], I don't dig writing Scala to render a template on the server or JavaScript to render it on the client.
+As much as I love http://liftweb.net/[Lift], I don't dig writing Scala to render a template on the server then JavaScript to modify it on the client.
 I want to write one function which takes as input my template and my data, and outputs the desired HTML.
 This should be run on the server at page load time, then re-run on the client if the data can change.
 
@@ -41,7 +41,8 @@ Why?
 I feel that neither Clojurescript and Scala.js are what I want to deal with.
 Neither one was _designed_ to compile to JS.
 It was an afterthought.
-Clojurescript has https://github.com/clojure/clojurescript/wiki/Differences-from-Clojure[a page dedicated to the differences from Clojure].
+As a result, there are pages dedicated to stuff that does not work the same as on the original platform.
+Clojurescript has https://github.com/clojure/clojurescript/wiki/Differences-from-Clojure[this page dedicated to the differences from Clojure].
 Scala.js likewise has http://www.scala-js.org/doc/semantics.html[its differences].
 
 If I'm dreaming of all the webs from scratch, I'm not picking one of these two which had to deviate from the original vision to make the compilation to JS use case work.
@@ -64,12 +65,23 @@ If you want it to be portable, you either have to write adapters for the differe
 Both exercises are expensive and counterproductive.
 I could see a community spending a lot of time on writing these backends, dealing with the portability problem, and not focusing on solutions which build on what is already available.
 
-Just to be clear, I don't mean to be _against_ writing alternative platforms for languages like Purescript.
+From what little bit of paying attention I have done, the only multi-platform success I have observed for languages are ones that initially supported a server-side platform and later added JavaScript.
+I would argue that Clojure/Clojurescript is successful, and the verdict is still out for the still-young Scala.js effort.
+Scala tried supporting both the JVM and .NET, but the latter eventually died.
+I Googled around to get an idea of why it died without any good hints.
+It just seems that no one cares enough to invest more into it.
+This makes sense to me.
+Once you have a solid backend platform, what is the value in having a second?
+So in my mind if you are a JavaScript platform language like Purescript, supporting a server-side backend is now redundant thanks to Node.
+I suspect that alternative backends will survive about as well as Scala's .NET support.
+
+Just to be clear, I don't mean to be antagonistic towards writing alternative platforms for languages like Purescript.
 I'll support doing so because there are other benefits which may be important to other people in the community.
-I just mean that my search does not require multiple backends to be available, nor is it likely I will apply much effort towards those efforts.
+I just mean that my needs do not require multiple backends, nor is it likely I will apply much effort towards those efforts.
+Furthermore, I doubt the alternative backend will gain enough attraction in the community as a whole to survive long-term.
 
 While I'm talking about Purescript, I should mention the implicit requirement I have here.
-The language will embrace the functional programming paradigm.
+The language of my ideal stack will fully embrace the functional programming paradigm.
 Although I understand http://proseand.co.nz/2014/08/11/javascript-is-not-a-functional-language/[it is possible to write functional code in any language], I want one which apologetically favors the paradigm.
 Furthermore, I want the entire stack to embrace functional programming, avoiding side effects and mutation.
 
@@ -80,11 +92,11 @@ It is a costly effort with maintenance and should be considered alongside the be
 
 Even if this ideal stack is written in and for another language like Purescript, I would hope that it is easily consumable from pure JS and other JS-targeting languages.
 Because Purescript compiles to clean and legible JavaScript, I feel it has much potential for fulfilling this goal.
-Although I am not a strong proponent for either Play or Akka, I like that the http://www.typesafe.com/products/typesafe-reactive-platform[Typesafe Stack] embraces using the frameworks from either Scala or Java.
+Although I am not a strong proponent for either https://www.playframework.com/[Play] or http://akka.io/[Akka], I like that the http://www.typesafe.com/products/typesafe-reactive-platform[Typesafe Stack] embraces using the frameworks from either Scala or Java.
 Both seem to be better suited for Scala, but they never preclude use by Java.
 I believe it is a good move to make the library innovation suitable for consumption by the wider community.
 
 There you have it.
-I'm looking to make the jump from the JVM to Node for my future web adventures.
+I'm looking to make the jump from the JVM to Node for my long-term future web adventures.
 I think that the principle of having one platform for development is just too compelling to ignore.
 Add to that the fact we have some really strong functional languages targeting JS, I see no reason to continue avoiding it.
