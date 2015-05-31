@@ -14,14 +14,13 @@ A library stack with a default happy path to statelessness strikes me as a nice 
 I want my application servers to be stateless adapters from http to the backend services.
 The first reason for this is failure.
 Failure happens and we should build our systems to expect it.
-A stateless server is easily replaced.
 
 Deploying to the cloud makes failures a guaranteed event when we consider auto scaling.
 Once traffic gets low, we purposefully decommission instances of the application.
-If the instances are stateful in any respect, we have to port that state to the other instances.
+If the instances are stateful in any respect, we have to port the state of any active sessions to the other instances.
 However, if they are stateless in the first place the job is already done.
 
-This is probably my least favorite part of http://liftweb.net[Lift].
+This is easily my least favorite part of http://liftweb.net[Lift].
 From the beginning the design of Lift has favored trading statefulness for ease of (rapid) development and security.
 For instance, it is insanely easy to http://exploring.liftweb.net/master/index-11.html[write a server-side function that gets called by the client via AJAX].
 You just write the function and Lift wires it all up beautifully for you.
@@ -43,11 +42,16 @@ The stack should be clear about what parts need to be saved off outside of the a
 We should aim to ease the integration into backend persistence, caching, etc to handle this.
 To make life easy for the new-comers and development in general, there should be a configuration-free in-memory default for this layer.
 
-Assuming I do strike out on my own, I'll be hard-pressed to achieve Lift's straight-forwardness and security in AJAX and server pushes while maintaining the stateless server story.
-My guess is that re-establishing server pushes whether by comet or web sockets will be a tricky to do securely.
-I love the challenge this poses, and Lift will serve as my model for the developer experience that I hope to achieve.
+At this point in time I'm imagining a uni-directional flow much like https://facebook.github.io/react/[React] and https://github.com/slamdata/purescript-halogen[Halogen].
+I'd like to try out this concept where session state is analogous to the page state in those libraries.
+Part of that flow would be serialization/deserialization to the backend technology of your choice.
 
 Deployment and failure considerations aside, functional programming in general has pushed me towards this desire for my applications.
 It seems to me that our application servers should just be stateless http-to-backend-whatever adapters whether it be a database or some microservice.
 Those backend things can fail too, of course.
 However, I certainly expect stuff I write to be far more likely to fail than a database backend which has received a lot of work to be good at that.
+
+Assuming I strike out on my own, I'll be hard-pressed to achieve Lift's straight-forwardness and security in AJAX and server pushes while maintaining the stateless server story.
+My guess is that re-establishing server pushes whether by comet or web sockets will be a tricky to do securely.
+I love the challenge this poses, and Lift will serve as my model for the developer experience that I hope to achieve.
+
