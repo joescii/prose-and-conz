@@ -11,9 +11,12 @@
 
 === Ease of Offline
 
-=== Cloud-ready
+=== Rapid Development and Continuous Deployment
 
 === Performance per Monetary Unit
+I used to believe the number of requests per second for a server was important because of scale.
+Now with servers being practically liquid in the cloud, we can always create more servers to handle more requests.
+Yet, these measures are still important because those cloud resources aren't free.
 
 === Prefer Getting It "Right" Over Delivering
 
