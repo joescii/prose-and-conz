@@ -22,6 +22,12 @@ It should be possible to render the tweet modal on the server for when a browser
 Certainly this optimization would be overkill for the tweet button, but this is the idea.
 I want to build in such a way the content can be rendered in either place, client or server.
 
+This inevitably leads me down the road of JavaScript.
+It's unavoidable on the browser, so the only choice to realize this vision is to run JavaScript on the server perhaps with https://nodejs.org/[Node].
+It even turns out that we can use JavaScript in native iOS apps, as I learned today during https://twitter.com/joescii/status/605786217242697729[a demo of clojurescript on iOS].
+If we can reuse our JavaScript even in native apps, then damn.
+Not to suggest I'm interested in _write-once-run-everywhere_ apps, but having one common language for your browser, server, and native apps sounds fantastic to me.
+
 So here we go.
 JavaScript love from the Scala guy.
 Well, no.
