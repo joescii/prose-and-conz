@@ -6,11 +6,21 @@
 == Web Development Principles: One Platform
 
 All of that rambling http://proseand.co.nz/2015/05/31/wdp-progressive-enhancement/[last time] about progressive enhancement has a natural consequence in my mind.
-There should be little to no difference between the client and server.
+There should be little-to-no difference between the client and server.
 I should be able to write an HTML template along with transformation functions which execute in either environment.
 As much as I love http://liftweb.net/[Lift], I don't dig writing Scala to render a template on the server then JavaScript to modify it on the client.
 I want to write one function which takes as input my template and my data, and outputs the desired HTML.
-This should be run on the server at page load time, then re-run on the client if the data can change.
+This should be available to run on the server at page load time, then re-run on the client if the data can change.
+
+As it is today, we have to decide very early in our development where the code will run.
+I want to delay that decision as long as possible, even until runtime if needed.
+A good example of this could be the tweet button on Twitter.
+Let's assume that pressing the button not only showed us the modal, but updated the URL.
+(Arguably when we press the tweet button, we should have another URL since it's another resource, but that's an argument for a different blog entry).
+Hence it would be possible to link directly to the tweet modal in addition to summoning it via the tweet button on the timeline.
+It should be possible to render the tweet modal on the server for when a browser directly links or render in the browser when the user clicks.
+Certainly this optimization would be overkill for the tweet button, but this is the idea.
+I want to build in such a way the content can be rendered in either place, client or server.
 
 So here we go.
 JavaScript love from the Scala guy.
@@ -25,8 +35,8 @@ It is absolutely riddled with gotchas and I don't care about the tools we've wri
 We can do so much better.
 Thankfully, compiling good languages to JS is a thing.
 My team decided to use http://coffeescript.org/[CoffeeScript] to give us a slight boost in this regard.
-It greatly reduces the syntactic noise, provides a few higher-level abstractions, and gives us expression-based semantics which is my favorite value add.
-While this was a good choice for my team at that point in time, we can do much better than CoffeeScript.
+It greatly reduces the syntactic noise, provides a few higher-level abstractions, and gives us expression-based semantics (my favorite enhancement).
+While this was a good choice for my team at that point in time, the community as a whole can do much better than CoffeeScript.
 
 The first compile-to-JS alternative that comes to my mind is https://github.com/clojure/clojurescript[Clojurescript].
 I like it primarily because it is a functional, expression-based programming language with default immutability.
@@ -52,7 +62,7 @@ Although work is being done to target alternative back ends, the very descriptio
 
 Furthermore, I see little value in supporting multiple platforms with my language of choice.
 The browser runs JS.
-https://nodejs.org/[Node] lets us run the same code on the server.
+Node lets us run the same code on the server.
 I know that Node is not a great runtime compared to the JVM at this point in time, but I strongly suspect this will greatly improve in the near term.
 Too many people are keen on it working well, so the work is being done.
 If my gamble on Node being awesome is right, then compilation to other platforms only benefits us by opening up more library reuse.
