@@ -31,8 +31,8 @@ libraryDependencies <++= (liftVersion, liftEdition) { (ver, ed) =>
     "net.liftmodules"         %% ("lift-jquery-module_"+ed) % "2.9"           % "compile",
     "org.asciidoctor"         %  "asciidoctorj"     % "1.5.2"                 % "compile",
     "com.papertrailapp"       %  "logback-syslog4j" % "1.0.0"                 % Runtime,
-    "org.eclipse.jetty"       %  "jetty-webapp"     % "9.2.7.v20150116"       % "compile",
-    "org.eclipse.jetty"       %  "jetty-plus"       % "9.2.7.v20150116"       % "container,test", // For Jetty Config
+    "org.eclipse.jetty"       %  "jetty-webapp"     % "9.3.7.v20160115"       % "compile",
+    "org.eclipse.jetty"       %  "jetty-plus"       % "9.3.7.v20160115"       % "container,test", // For Jetty Config
     "org.eclipse.jetty.orbit" %  "javax.servlet"    % "3.0.0.v201112011016"   % "container,test" artifacts Artifact("javax.servlet", "jar", "jar"),
     "ch.qos.logback"          %  "logback-classic"  % "1.0.6"
   )
