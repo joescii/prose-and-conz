@@ -14,8 +14,8 @@
         </syslogConfig>
     </appender>
 
-    <logger name="org.eclipse.jetty" level="debug" />
-    <logger name="org.eclipse.jetty.webapp.WebAppClassLoader" level="info" />
+    <!--<logger name="org.eclipse.jetty" level="debug" />-->
+    <!--<logger name="org.eclipse.jetty.webapp.WebAppClassLoader" level="info" />-->
     <logger name="com.joescii.pac" level="info" />
     <logger name="net.liftweb" level="warn" />
     <logger name="net.liftweb.http.CoreRequestVarHandler" level="error" />
